@@ -47,7 +47,7 @@ const [isProfileVisible, setIsProfileVisible] = useState(false);
   return (
     <div className={`navbar ${scrolled ? 'scrolled' : ''} ${isVisible ? 'visible' : 'hidden'} ${isAtTop ? 'at-top' : ''}`}>
       <div className="logo">
-        <img src={logo} alt="logo" className='orange-logo'/>
+        <a href=""><img src={logo} alt="logo" className='orange-logo'/></a>
         <h3>Pisha Gaming</h3>
       </div>
       <div className={`menu ${menuClass}`}>
