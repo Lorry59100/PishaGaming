@@ -1,0 +1,124 @@
+/* NAVBAR */
+
+.navbar {
+display: flex;
+justify-content: space-between;
+height: 100px;
+position: sticky;
+z-index: 1;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+z-index: 2;
+}
+
+.navbar.scrolled {
+background-color: black;
+}
+
+.navbar.hidden .links {
+display: none;
+}
+
+.navbar.at-top .searchbar {
+margin-top: 3.5em; /* Ajuste la marge supérieure selon tes besoins */
+}
+
+.center-menu {
+align-self: center; /* Centre le menu verticalement quand il n'est pas tout en haut */
+}
+
+.orange-logo {
+filter: invert(56%) sepia(92%) saturate(1011%) hue-rotate(0deg) brightness(104%) contrast(105%);
+}
+
+.logo {
+display: flex;
+align-items: center;
+height: 100%;
+margin-left: 0.5em;
+}
+
+.logo>img {
+height: 50%;
+}
+
+.logo>h3 {
+width: 30px;
+color: white;
+}
+
+.menu {
+width: 100%;
+display: flex;
+justify-content: center;
+flex-direction: column;
+}
+
+.links {
+display: flex;
+justify-content: center;
+margin-top: 0.5em;
+margin-bottom: 1em;
+position: fixed;
+top: 0;
+width: 90%;
+}
+
+.links>a, .cart-profile>a {
+margin: auto 1em;
+color: white;
+}
+
+.cart-profile {
+margin-right: 1em;
+display: flex;
+color: white;
+}
+
+.cart-profile>button {
+color: white;
+}
+
+.cart-profile button:hover > svg, .cart-profile a:hover > svg {
+color: var(--orange)
+}
+
+/* Menu Icone de profil */
+
+.profile-content {
+    width: 180px;
+    height: 200px;
+    transform: translateY(100px);
+    right: 2em;
+    border-radius: 5px;
+    color: white;
+    background: var(--grey-tr);
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    z-index: 2;
+  }
+
+  .profile-content>ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+  }
+
+  .profile-content>ul>li {
+    padding: 0.5em 1em;
+    border-radius: 50px;
+  }
+
+  .profile-content>ul>li:hover {
+    background: var(--primary-nogradient);
+    padding: 0.5em 1em;
+    border-radius: 50px;
+  }

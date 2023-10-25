@@ -1,0 +1,22 @@
+
+
+.submit-button {
+background: var(--orange-gradient);
+color: white;
+border: none;
+border-radius: 5px;
+padding: 15px 20px;
+font-size: 18px;
+cursor: pointer;
+transition: background-color 0.3s ease;
+}
+
+.button-container {
+grid-column: span 2;
+display: flex;
+justify-content: center;
+}
+
+.submit-button:hover {
+background: var(--orange-gradient-hover);
+}
