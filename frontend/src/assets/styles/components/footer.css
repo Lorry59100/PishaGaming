@@ -1,0 +1,201 @@
+/* FOOTER */
+
+footer {
+background-color: black;
+color: white;
+padding:15px 30px 30px 30px;
+}
+
+.footer-main-container {
+display: flex;
+justify-content: space-evenly;
+margin: 0 2em;
+min-height: 200px;
+}
+
+.logo-footer {
+display: flex;
+justify-content: center;
+}
+
+.logo-footer>img {
+width: 30%;
+}
+
+.logos, .medias {
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+}
+
+.media-dl {
+display: flex;
+justify-content: space-evenly;
+}
+
+.trustpilot {
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+
+.trustpilot-title-container {
+display: flex;
+align-items: center;
+margin-bottom: 0.5em;
+}
+
+.trustpilot-title-container>h3 {
+margin: 0;
+margin-left: 0.2em;
+}
+
+.trustpilot-stars-container {
+display: flex;
+}
+
+.star-container {
+padding: 0.2em;
+background-color: #00B67A;
+display: flex;
+margin: 0 0.1em;
+}
+
+.media-icons a {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+position: relative;
+margin: 0 10px;
+}
+
+.media-icons a svg {
+padding: 0.3em;
+border-radius: 50%;
+transition: transform 0.3s ease-in-out;
+}
+
+.media-icons a:hover svg {
+transform: scale(1.2); 
+}
+
+.discord>svg {
+background-color: #1E213E;
+color: #5865F2;
+}
+
+.twitter>svg {
+background-color: #0D2F3D;
+color: #00ACED;
+}
+
+.instagram>svg {
+background-color: #56413A;
+color: #BD8A77;
+}
+
+.facebook>svg {
+background-color: #11253E;
+color: #1877F2;
+}
+
+.youtube>svg {
+background-color: #3A1514;
+color: #E22B26;
+}
+
+.twitch>svg {
+background-color: #2B2040;
+color: #9861FF;
+}
+
+.download-btn {
+margin: 0;
+outline: none;
+background: none;
+font-family: inherit;
+font-size: inherit;
+color: inherit;
+cursor: pointer;
+display: flex;
+align-items: center;
+padding: 0.5em 1em;
+border-radius: 10px;
+border: 1px solid white;
+background-color: #101010;
+}
+
+.download-btn:hover {
+background-color: #939393;
+transition: .2s
+}
+
+.download-btn>.dl-text>p {
+margin: 0;
+padding: 0;
+font-size: 0.7em;
+}
+
+.download-btn>svg {
+margin-right: 0.5em;
+}
+
+.download-btn>.dl-text>h4 {
+margin: 0;
+}
+
+.footer-links ul {
+display: flex;
+flex-direction: column;
+justify-content: space-around;
+height: 100%;
+list-style-type: none;
+}
+
+.footer-links ul li:hover {
+cursor: pointer;
+color: var(--primary-nogradient);
+}
+
+.li-icons {
+display: flex;
+align-items: center;
+}
+
+.li-icons>svg {
+margin-right: 0.5em;
+}
+
+.cutline {
+height: 1px;
+background: linear-gradient(to right, rgba(204, 204, 204, 0), rgba(204, 204, 204, 1), rgba(204, 204, 204, 0));
+margin-top: 20px;
+}
+
+.locale-info {
+display: flex;
+align-items: center;
+}
+
+.locale-info:hover {
+color: var(--primary-nogradient);
+cursor: pointer;
+}
+
+.locale-info>svg {
+margin-right: 0.2em;
+}
+
+.white-spacer {
+background-color: white;
+width: 1px;
+height: 20px;
+margin: 0 10px;
+}
+
+.infos {
+display: flex;
+justify-content: space-evenly;
+align-items: center;
+margin-top: 1em;
+}
