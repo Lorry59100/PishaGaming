@@ -1,0 +1,35 @@
+/* GENERAL */
+
+/* Couleurs */
+:root {
+--orange-gradient: linear-gradient(10deg, #ff8000, transparent) #ff4020;
+--orange-gradient-hover: linear-gradient(190deg, #ff2020, transparent) #ff8000;
+--orange: #ff5400;
+--grey : #919191;
+--grey-tr : rgba(50, 50, 50, 0.8);
+--dark: #272727;
+}
+
+/* Eléments */
+body {
+background-color: var(--dark);
+}
+
+a {
+text-decoration: none;
+color: inherit; 
+background: none;
+border: none;
+padding: 0;
+margin: 0;
+font: inherit; 
+}
+
+button {
+appearance: none;
+-webkit-appearance: none;
+-moz-appearance: none;
+border: none;
+background-color: transparent;
+cursor: pointer;
+}
