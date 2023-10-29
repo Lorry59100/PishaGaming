@@ -36,13 +36,13 @@ function Searchbar() {
 <div className="searchbar-layout-container">
         <div className="consoles">
             {areConsolesVisible && (
-            <div className="console">
+            <div className="console first-console">
                 <a href="/">
                     <IconContext.Provider value={{ size: "1.5em", color: "white" }}>
                         <HiMiniComputerDesktop />
                     </IconContext.Provider>
                 <h5>PC</h5>
-                    <IconContext.Provider value={{ size: "1em", color: "white" }}>
+                    <IconContext.Provider value={{ size: "0.8em", color: "white" }}>
                         <SlArrowDown />
                     </IconContext.Provider>
                 </a>
@@ -56,7 +56,7 @@ function Searchbar() {
                         <BsPlaystation />
                     </IconContext.Provider>
                 <h5>Playstation</h5>
-                    <IconContext.Provider value={{ size: "1em", color: "white" }}>
+                    <IconContext.Provider value={{ size: "0.8em", color: "white" }}>
                         <SlArrowDown />
                     </IconContext.Provider>
                 </a>
@@ -70,7 +70,7 @@ function Searchbar() {
                         <BsXbox />
                     </IconContext.Provider>
                 <h5>Xbox</h5>
-                    <IconContext.Provider value={{ size: "1em", color: "white" }}>
+                    <IconContext.Provider value={{ size: "0.8em", color: "white" }}>
                         <SlArrowDown />
                     </IconContext.Provider>
                 </a>
@@ -84,7 +84,7 @@ function Searchbar() {
                         <BsNintendoSwitch />
                     </IconContext.Provider>
                 <h5>Nintendo</h5>
-                    <IconContext.Provider value={{ size: "1em", color: "white" }}>
+                    <IconContext.Provider value={{ size: "0.8em", color: "white" }}>
                         <SlArrowDown />
                     </IconContext.Provider>
                 </a>
