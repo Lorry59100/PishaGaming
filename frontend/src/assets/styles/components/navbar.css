@@ -14,7 +14,8 @@ z-index: 2;
 }
 
 .navbar.scrolled {
-background-color: black;
+backdrop-filter: blur(60px) saturate(100%);
+background-color: rgba(0,0,0,.75);
 }
 
 .navbar.hidden .links {
@@ -84,37 +85,37 @@ color: var(--orange)
 /* Menu Icone de profil */
 
 .profile-content {
-    width: 180px;
-    height: 200px;
-    transform: translateY(100px);
-    right: 2em;
-    border-radius: 5px;
-    color: white;
-    background: var(--grey-tr);
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    z-index: 2;
-  }
+  width: 180px;
+  height: 200px;
+  transform: translateY(100px);
+  right: 2em;
+  border-radius: 5px;
+  color: white;
+  background: var(--grey-tr);
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  z-index: 2;
+}
 
-  .profile-content>ul {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-    padding: 0;
-    justify-content: space-evenly;
-    align-items: center;
-    width: 100%;
-  }
+.profile-content>ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100%;
+}
 
-  .profile-content>ul>li {
-    padding: 0.5em 1em;
-    border-radius: 50px;
-  }
+.profile-content>ul>li {
+  padding: 0.5em 1em;
+  border-radius: 50px;
+}
 
-  .profile-content>ul>li:hover {
-    background: var(--primary-nogradient);
-    padding: 0.5em 1em;
-    border-radius: 50px;
-  }
+.profile-content>ul>li:hover {
+  background: var(--primary-nogradient);
+  padding: 0.5em 1em;
+  border-radius: 50px;
+}
