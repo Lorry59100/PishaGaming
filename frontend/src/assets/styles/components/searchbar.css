@@ -10,7 +10,7 @@ height: 60px;
 }
 
 .searchbar.expanded {
-min-height: 80px;
+min-height: 66px;
 }
 
 .searchbar-layout-container {
@@ -20,8 +20,8 @@ width: 564px;
 }
 
 .searchbar-container.expanded {
-min-width: 80px; 
-min-height: 80px;
+min-width: 66px; 
+min-height: 66px;
 }
 
 .consoles {
@@ -29,7 +29,8 @@ display: flex;
 backdrop-filter: blur(60px) saturate(100%);
 border-top-left-radius: 50px;
 border-bottom-left-radius: 50px;
-margin-right: 3em;
+margin-right: 2.5em;
+width: 564px;
 }
 .console {
 margin: auto 0.5em;
@@ -37,6 +38,10 @@ margin: auto 0.5em;
 
 .last-console {
 margin-right: 2em;
+}
+
+.first-console {
+margin-left: 1.5em;
 }
 
 .search-icon {
@@ -55,7 +60,7 @@ margin-top: 0.2em;
 }
 
 .search-icon.expanded {
-width: 50px;
+width: 36px;
 }
 .searchbar-container {
 display: flex;
