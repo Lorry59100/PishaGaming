@@ -8,3 +8,8 @@ products_list:
     path: /products-list
     controller: App\Controller\ProductsController::productsList
     methods: GET
+
+sub_lists:
+    path: /sub-lists
+    controller: App\Controller\AdminController::subLists
+    methods: GET
