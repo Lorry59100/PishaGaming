@@ -1,0 +1,82 @@
+/* ADMIN */
+
+.admin-interface-container {
+display: flex;
+align-items: center;
+flex-direction: column;
+margin: 2em;
+color: white;
+}
+.title-admin-container {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin: 0.5em 1em;
+}
+.add-product-container {
+display: flex;
+align-items: center;
+}
+.add-product-container:hover {
+color: var(--orange);
+cursor: pointer;
+}
+.add-product-container>* {
+margin: 0 0.1em;
+}
+.panel-container {
+width: 100%;
+display: flex;
+min-height: 220px;
+}
+.table-entity {
+width: 85%;
+display: flex;
+justify-content: center;
+}
+.entity-panel {
+display: flex;
+flex-direction: column;
+padding: 10px;
+width: 15%;
+margin-top: 1.5em;
+}
+.entity-panel>* {
+margin: 0.5em 0;
+}
+.entity-panel>button {
+padding: 1em;
+color: black;
+}
+.entity-panel>button:hover {
+color: white;
+}
+.submit-button.active {
+color: white;
+}
+.submit-button {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+.submit-button>svg {
+margin-right: 0.5em;
+}
+.entity-button:hover {
+background-color: #ccc;
+}
+.img-cell-container>img {
+width: 100px;
+height: 50px;
+}
+.edit-icon {
+margin-right: 0.5em;
+}
+.title-container {
+display: flex;
+width: 100%;
+justify-content: center;
+}
+.title-container>* {
+margin: 0 1em;
+}

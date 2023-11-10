@@ -1,0 +1,71 @@
+/* table.css */
+
+table {
+width: 100%;
+border-collapse: collapse;
+background-color: #343a40; /* Couleur de fond du tableau */
+color: white; /* Couleur du texte */
+border-spacing: 0;
+border-collapse: separate;
+border-radius: 10px;
+border: 1px solid black;
+}
+
+th, td {
+padding: 12px;
+text-align: left;
+border-bottom: 1px solid #454d55; /* Bordure entre les lignes */
+}
+
+th {
+background-color: #212529; /* Couleur de fond de l'en-tête */
+}
+
+/* Style pour les lignes impaires */
+tr:nth-child(odd) {
+background-color: #343a40; /* Couleur de fond des lignes impaires */
+}
+
+/* Style pour les lignes impaires */
+tr:nth-child(odd):hover td {
+background-color: #2d3339; /* Couleur de fond des lignes impaires */
+}
+
+/* Style pour les lignes paires */
+tr:nth-child(even) {
+background-color: #212529; /* Couleur de fond des lignes paires */
+}
+
+/* Style pour les lignes paires */
+tr:nth-child(even):hover td {
+background-color: #2b2e34; /* Couleur de fond des lignes paires */
+}
+
+table tr:last-child,
+table tr:last-child td,
+table tr:last-child:hover,
+table tr:last-child:hover td {
+background-color: unset;
+border-bottom: unset;
+}
+
+/* Arrondi en bas à gauche pour le premier td de la dernière ligne */
+table tr:last-child:hover td:first-child {
+border-bottom-left-radius: 10px;
+}
+
+/* Bord en bas à droite pour le dernier td de la dernière ligne */
+table tr:last-child:hover td:last-child {
+border-bottom-right-radius: 10px;
+}
+
+/* Style pour la dernière ligne au survol (ligne paire) */
+table tr:last-child:nth-child(even):hover td {
+background-color: #2b2e34;; /* Couleur de fond pour la dernière ligne si c'est une ligne paire */
+}
+
+/* Style pour la dernière ligne au survol (ligne impaire) */
+table tr:last-child:nth-child(odd):hover td {
+background-color: #2d3339; /* Couleur de fond pour la dernière ligne si c'est une ligne impaire */
+}
+
