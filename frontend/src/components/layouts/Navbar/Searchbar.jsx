@@ -94,7 +94,7 @@ function Searchbar() {
                 <div className={`searchbar-container ${isSearchExpanded ? 'expanded' : ''}`}>
                 {isSearchClicked && (
                     <div className="search-input">
-                        <input type="text" placeholder='Minecraft, RPG, multijoueur...' />
+                        <input type="text" className='searchbar-input' placeholder='Minecraft, RPG, multijoueur...' />
                         <p><a href="/">Recherche avancée</a></p>
                     </div>
                 )}
