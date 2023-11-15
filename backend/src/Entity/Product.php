@@ -28,7 +28,7 @@ class Product
     #[ORM\Column(length: 255)]
     private ?string $editor = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, name: "`release`")]
     private ?\DateTimeInterface $release = null;
 
     #[ORM\Column(type: Types::TEXT)]
