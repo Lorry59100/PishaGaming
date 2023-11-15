@@ -13,3 +13,8 @@ sub_lists:
     path: /sub-lists
     controller: App\Controller\AdminController::subLists
     methods: GET
+
+add_product:
+    path: /add-product
+    controller: App\Controller\AdminController::addProduct
+    methods: POST
