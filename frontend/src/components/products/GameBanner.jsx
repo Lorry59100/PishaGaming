@@ -14,7 +14,7 @@ function GameBanner() {
             // Filtrer les produits par catégorie et édition
             const filteredProducts = response.data.map(product => {
                 const hasJeuxCategory = product.categorys.some(category => category.id === 1);
-                const standardEdition = product.editions.find(edition => edition.edition_category === 'Standart Edition');
+                const standardEdition = product.editions.find(edition => edition.edition_category === 'Standart');
                 // Vérifier s'il y a une édition Standart Edition
                 if (hasJeuxCategory && standardEdition) {
                     return {
