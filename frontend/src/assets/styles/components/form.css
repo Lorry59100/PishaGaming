@@ -164,6 +164,7 @@ text-align: center;
 display: flex;
 justify-content: center;
 color: #979797;
+user-select: none;
 }
 select:invalid {
     color: #979797;
@@ -231,4 +232,10 @@ grid-column-end: 3;
 .tag-title {
   display: flex;
   justify-content: center;
+}
+.datepicker-container {
+  width: calc(100% - 15px);
+}
+.react-datepicker-wrapper {
+  width: 100%;
 }

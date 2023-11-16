@@ -22,7 +22,7 @@ function AddProductForm({onClose}) {
   const [selectedGenreIds, setSelectedGenreIds] = useState([]);
   const [selectedPlatformIds, setSelectedPlatformIds] = useState([]);
   const [startDate, setStartDate] = useState(null);
-  const [editionsData, setEditionsData] = useState([]);
+ /*  const [editionsData, setEditionsData] = useState([]); */
   const [editionsFormData, setEditionsFormData] = useState([]);
 
   const handleTagChange = (tagId) => {
@@ -124,12 +124,12 @@ function AddProductForm({onClose}) {
             <h3>Ajout de produit</h3>
             <div className="cutline-form first-cutline"></div>
             <Formik initialValues={{name: '', dev: '', editor: '', trailer: '', img: ''}} onSubmit={onSubmit}>
-            {(formik) => (
+
             <Form>
               <div className="fields-container">
                 <Field type="text" name="name" placeholder="Name" className="hoverize" />
 
-                <div className="">
+                <div className="datepicker-container">
 
                 <DatePicker 
                 className="datepicker"
@@ -153,8 +153,8 @@ function AddProductForm({onClose}) {
                   ))}
                 </Field>
 
-                <div className="cutline-form three-span"></div>
-      <h4 className="middle-column tag-title">Genres</h4>
+
+      <h5 className="middle-column tag-title">Genres</h5>
                 <div className="tag-selector three-span genre-selector">
       {genres.map((genre) => (
         <div key={genre.id} className="tag-checkbox">
@@ -171,8 +171,8 @@ function AddProductForm({onClose}) {
       ))}
       </div>
 
-      <div className="cutline-form three-span"></div>
-      <h4 className="middle-column tag-title">Plateformes</h4>
+
+      <h5 className="middle-column tag-title">Plateformes</h5>
 
 <div className="tag-selector three-span platform-selector">
                 {platforms.map((platform) => (
@@ -255,7 +255,7 @@ function AddProductForm({onClose}) {
 ))}
 
         <div className="edition-buttons-container three-span">
-          <h5 className="btn-edit-text">Ajout / Suppression</h5>
+          <h5 className="btn-edit-text">Ajout / Suppression d'édition</h5>
             <button type="button" onClick={handleAddEdition}>
               <IconContext.Provider value={{ size: "3em" }}>
                 <IoIosAddCircle />
@@ -276,7 +276,7 @@ function AddProductForm({onClose}) {
         </button>
   </div>
             </Form> 
-            )}
+
             </Formik>
           </div>
         </div>
