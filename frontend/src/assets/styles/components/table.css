@@ -68,3 +68,7 @@ table tr:last-child:nth-child(odd):hover td {
 background-color: #2d3339; /* Couleur de fond pour la dernière ligne si c'est une ligne impaire */
 }
 
+td>a>svg:hover {
+    color: var(--orange);
+}
+
