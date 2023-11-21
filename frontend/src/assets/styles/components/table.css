@@ -45,7 +45,6 @@ table tr:last-child,
 table tr:last-child td,
 table tr:last-child:hover,
 table tr:last-child:hover td {
-background-color: unset;
 border-bottom: unset;
 }
 
