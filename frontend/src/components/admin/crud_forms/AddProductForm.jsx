@@ -22,7 +22,6 @@ function AddProductForm({onClose}) {
   const [selectedGenreIds, setSelectedGenreIds] = useState([]);
   const [selectedPlatformIds, setSelectedPlatformIds] = useState([]);
   const [startDate, setStartDate] = useState(null);
- /*  const [editionsData, setEditionsData] = useState([]); */
   const [editionsFormData, setEditionsFormData] = useState([]);
 
   const handleTagChange = (tagId) => {
@@ -61,8 +60,7 @@ function AddProductForm({onClose}) {
         setTags(response.data.tags);
 
         // Ajoutez une édition par défaut
-      setEditionsFormData([{ edition: '', old_price: '', price: '', img: '' }]);
-        
+      setEditionsFormData([{ edition: '', old_price: '', price: '', img: '', stock: '' }]);
       })
       .catch((error) => {
         console.error("Erreur lors de la récupération des sous listes :", error);
@@ -76,8 +74,8 @@ function AddProductForm({onClose}) {
     ]);
   };
   
+  //Empêcher la supression de l'édition par défaut.
   const handleRemoveEdition = (index) => {
-    // Ne supprimez pas le premier élément
     if (index !== 0) {
       const updatedEditions = [...editionsFormData];
       updatedEditions.splice(index, 1);
@@ -94,9 +92,11 @@ function AddProductForm({onClose}) {
   const onSubmit = (values) => {
     const formattedValues = {
       ...values,
-      tags: selectedTagIds, // Ajoutez le tableau des tags sélectionnés à l'objet values
+      tags: selectedTagIds,
       release: startDate ? startDate.toISOString() : null,
       editions: editionsFormData,
+      genres : selectedGenreIds,
+      platforms: selectedPlatformIds,
     };
     axios.post(`${URL}${URL_ADD_PRODUCT}`, {...formattedValues})
     .then((res) => {
@@ -109,184 +109,176 @@ function AddProductForm({onClose}) {
     });
   };
 
-
   return (
-
-      <div className="add-product-panel">
-        <div className="form-container">
+        <div className="add-product-panel">
+          <div className="form-container">
           <div className="logo-form">
-            <a href="/">
-              <img src={logo} alt="logo" className="orange-logo" />
-            </a>
-            <h3>Pisha Gaming</h3>
+          <a href="/">
+          <img src={logo} alt="logo" className="orange-logo" />
+          </a>
+          <h3>Pisha Gaming</h3>
           </div>
           <div className="little-form-container">
-            <h3>Ajout de produit</h3>
-            <div className="cutline-form first-cutline"></div>
-            <Formik initialValues={{name: '', dev: '', editor: '', trailer: '', img: ''}} onSubmit={onSubmit}>
+          <h3>Ajout de produit</h3>
+          <div className="cutline-form first-cutline"></div>
+          <Formik initialValues={{name: '', dev: '', editor: '', trailer: '', img: ''}} onSubmit={onSubmit}>
 
-            <Form>
-              <div className="fields-container">
-                <Field type="text" name="name" placeholder="Name" className="hoverize" />
+          <Form>
+          <div className="fields-container">
+            <Field type="text" name="name" placeholder="Name" className="hoverize" />
+            <div className="datepicker-container">
+              <DatePicker 
+              className="datepicker"
+              placeholderText="Date de sortie"
+              selected={startDate} 
+              onChange={(date) => setStartDate(date)}
+              locale={fr}
+              />
+            </div>
 
-                <div className="datepicker-container">
+            <Field type="text" name="dev" placeholder="Développeur" />
+            <Field type="text" name="editor" placeholder="Editeur" />
+            <Field type="text" name="trailer" placeholder="Trailer-url" />
 
-                <DatePicker 
-                className="datepicker"
-                placeholderText="Date de sortie"
-                selected={startDate} 
-                onChange={(date) => setStartDate(date)}
-                locale={fr}
-                />
-                </div>
-
-                <Field type="text" name="dev" placeholder="Développeur" />
-                <Field type="text" name="editor" placeholder="Editeur" />
-                <Field type="text" name="trailer" placeholder="Trailer-url" />
-                
-                <Field component= "select" name="category" required >
-                  <option value="">Categorie</option>
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </Field>
-
-
-      <h5 className="middle-column tag-title">Genres</h5>
-                <div className="tag-selector three-span genre-selector">
-      {genres.map((genre) => (
-        <div key={genre.id} className="tag-checkbox">
-          <Field
+            <Field component= "select" name="category" required >
+            <option value="">Categorie</option>
+            {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+            {category.name}
+            </option>
+            ))}
+            </Field>
+            <h5 className="middle-column tag-title">Genres</h5>
+            <div className="tag-selector three-span genre-selector">
+            {genres.map((genre) => (
+            <div key={genre.id} className="tag-checkbox">
+            <Field
             type="checkbox"
             id={`genre-${genre.id}`}
             name={`genre-${genre.id}`}
             value={genre.id}
             checked={selectedGenreIds.includes(genre.id)}
             onChange={() => handleGenreChange(genre.id)}
-          />
-          <label htmlFor={`genre-${genre.id}`}>{genre.name}</label>
-        </div>
-      ))}
-      </div>
-
-
-      <h5 className="middle-column tag-title">Plateformes</h5>
-
-<div className="tag-selector three-span platform-selector">
-                {platforms.map((platform) => (
-        <div key={platform.id} className="tag-checkbox">
-          <Field
+            />
+            <label htmlFor={`genre-${genre.id}`}>{genre.name}</label>
+            </div>
+            ))}
+            </div>
+            <h5 className="middle-column tag-title">Plateformes</h5>
+            <div className="tag-selector three-span platform-selector">
+            {platforms.map((platform) => (
+            <div key={platform.id} className="tag-checkbox">
+            <Field
             type="checkbox"
             id={`platform-${platform.id}`}
             name={`platform-${platform.id}`}
             value={platform.id}
             checked={selectedPlatformIds.includes(platform.id)}
             onChange={() => handlePlatformChange(platform.id)}
-          />
-          <label htmlFor={`platform-${platform.id}`}>{platform.name}</label>
-        </div>
-      ))}
-      </div>
-
-                
-                <Field as="textarea" name="description" placeholder="Description" className="three-span"/>
-                <Field type="number" name="stock" placeholder="Stock" />
-          
-
-                <div className="tag-selector two-span">
-    <div className="tag-checkboxes">
-      {tags.map((tag) => (
-        <div key={tag.id} className="tag-checkbox">
-          <Field
+            />
+            <label htmlFor={`platform-${platform.id}`}>{platform.name}</label>
+            </div>
+            ))}
+            </div>
+            <Field as="textarea" name="description" placeholder="Description" className="three-span"/>
+            <div className="tag-selector two-span">
+            <div className="tag-checkboxes">
+            {tags.map((tag) => (
+            <div key={tag.id} className="tag-checkbox">
+            <Field
             type="checkbox"
             id={`tag-${tag.id}`}
             name={`tag-${tag.id}`}
             value={tag.id}
             checked={selectedTagIds.includes(tag.id)}
             onChange={() => handleTagChange(tag.id)}
-          />
-          <label htmlFor={`tag-${tag.id}`}>{tag.name}</label>
-        </div>
-      ))}
-    </div>
-  </div>
+            />
+            <label htmlFor={`tag-${tag.id}`}>{tag.name}</label>
+            </div>
+            ))}
+            </div>
+            </div>
 
-  {editionsFormData.map((edition, index) => (
-  <div key={index} className="edition-container">
-    <Field
-      component="select"
-      name={`editions[${index}].edition`}
-      placeholder="Edition"
-      value={edition.edition}
-      onChange={(e) => onEditionChange(index, 'edition', e.target.value)}
-    >
-      <option value="">Sélectionnez une édition</option>
-      {editions.map((edition) => (
-        <option key={edition.id} value={edition.id}>
-          {edition.name}
-        </option>
-      ))}
-    </Field>
-    <Field
-      type="number"
-      name={`editions[${index}].old_price`}
-      placeholder="Raw price (in cents)"
-      value={edition.old_price}
-      onChange={(e) => onEditionChange(index, 'old_price', e.target.value)}
-    />
-    <Field
-      type="number"
-      name={`editions[${index}].price`}
-      placeholder="Price (in cents)"
-      value={edition.price}
-      onChange={(e) => onEditionChange(index, 'price', e.target.value)}
-    />
-    <Field
-      type="text"
-      name={`editions[${index}].img`}
-      placeholder="Img-url"
-      value={edition.img}
-      onChange={(e) => onEditionChange(index, 'img', e.target.value)}
-      className="three-span"
-    />
-  </div>
-))}
+            {editionsFormData.map((edition, index) => (
+            <div key={index} className="edition-container">
+            <Field
+            component="select"
+            name={`editions[${index}].edition`}
+            placeholder="Edition"
+            value={edition.edition}
+            onChange={(e) => onEditionChange(index, 'edition', e.target.value)}
+            >
+            <option value="">Sélectionnez une édition</option>
+            {editions.map((edition) => (
+            <option key={edition.id} value={edition.id}>
+            {edition.name}
+            </option>
+            ))}
+            </Field>
+            <Field
+            type="number"
+            name={`editions[${index}].old_price`}
+            placeholder="Raw price (in cents)"
+            value={edition.old_price}
+            onChange={(e) => onEditionChange(index, 'old_price', e.target.value)}
+            />
+            <Field
+            type="number"
+            name={`editions[${index}].price`}
+            placeholder="Price (in cents)"
+            value={edition.price}
+            onChange={(e) => onEditionChange(index, 'price', e.target.value)}
+            />
+            <Field
+            type="number"
+            name={`editions[${index}].stock`}
+            placeholder="Stock"
+            value={edition.stock}
+            onChange={(e) => onEditionChange(index, 'stock', e.target.value)}
+            />
+            <Field
+            type="text"
+            name={`editions[${index}].img`}
+            placeholder="Img-url"
+            value={edition.img}
+            onChange={(e) => onEditionChange(index, 'img', e.target.value)}
+            className="two-span"
+            />
+            </div>
+            ))}
 
-        <div className="edition-buttons-container three-span">
-          <h5 className="btn-edit-text">Ajout / Suppression d'édition</h5>
+            <div className="edition-buttons-container three-span">
+            <h5 className="btn-edit-text">Ajout / Suppression d'édition</h5>
             <button type="button" onClick={handleAddEdition}>
-              <IconContext.Provider value={{ size: "3em" }}>
-                <IoIosAddCircle />
-              </IconContext.Provider>
-              </button>
-          <button type="button" onClick={() => handleRemoveEdition(editionsFormData.length - 1)}>
             <IconContext.Provider value={{ size: "3em" }}>
-              <IoIosRemoveCircle />
+            <IoIosAddCircle />
             </IconContext.Provider>
+            </button>
+            <button type="button" onClick={() => handleRemoveEdition(editionsFormData.length - 1)}>
+            <IconContext.Provider value={{ size: "3em" }}>
+            <IoIosRemoveCircle />
+            </IconContext.Provider>
+            </button>
+            </div>
+
+          </div>
+          <div className="cutline-form"></div>
+          <div className="btn-container">
+          <button className="submit-button middle-column" type="submit">
+          Ajouter
           </button>
-        </div>
+          </div>
+          </Form> 
+          </Formik>
+          </div>
+          </div>
 
-        </div>
-  <div className="cutline-form"></div>
-  <div className="btn-container">
-        <button className="submit-button middle-column" type="submit">
-        Ajouter
-        </button>
-  </div>
-            </Form> 
-
-            </Formik>
+          <div className="wallpaper-container">
+          <IconContext.Provider value={{ size: "1.5em" }}>
+          <ImCross onClick={onClose}/>
+          </IconContext.Provider>
           </div>
         </div>
-        
-        <div className="wallpaper-container">
-          <IconContext.Provider value={{ size: "1.5em" }}>
-            <ImCross onClick={onClose}/>
-          </IconContext.Provider>
-        </div>
-      </div>
 
   );
 }
