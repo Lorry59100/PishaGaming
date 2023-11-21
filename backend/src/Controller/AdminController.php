@@ -93,32 +93,22 @@ class AdminController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $product = new Product;
         $category = $categoryRepository->find($data['category']);
-        
-        $editionCategory = $editionCategoryRepository->find($data['edition']);
-        $edition = new Edition;
-        $edition->setEditionCategory($editionCategory)
-                ->setOldPrice($data['old_price'])
-                ->setPrice($data['price'])
-                ->setStock($data['stock'])
-                ->setImg($data['img']);
-        $em->persist($edition);
-        $em->flush(); 
-
-        $tagIds = $data['tags'];
-        $tags = [];
-        foreach($tagIds as $tagId) {
-        $tag = $tagRepository->find($tagId);
-        if ($tag) {
-        $tags[] = $tag;
-        }
-        }
-
+        $tags = $this->getEntitiesByIds($data['tags'], $tagRepository);
         foreach ($tags as $tag) {
-        $product->addTag($tag);
+            $product->addTag($tag);
         }
-
-        $genre = $genreRepository->find($data['genre']);
-        $platform = $platformRepository->find($data['platform']);
+        $genres = $this->getEntitiesByIds($data['genres'], $genreRepository);
+        foreach ($genres as $genre) {
+            $product->addGenre($genre);
+        }
+        $platforms = $this->getEntitiesByIds($data['platforms'], $platformRepository);
+        foreach ($platforms as $platform) {
+            $product->addPlatform($platform);
+        }
+        $editions = $this->createEditions($data['editions'], $em, $editionCategoryRepository);
+        foreach ($editions as $edition) {
+            $product->addEdition($edition);
+        }
         $release = new \DateTime($data['release']);
         $product->setName($data['name'])
                 ->setTrailer($data['trailer'])
@@ -126,12 +116,46 @@ class AdminController extends AbstractController
                 ->setDescription($data['description'])
                 ->setEditor($data['editor'])
                 ->setRelease($release)
-                ->addCategory($category)
-                ->addEdition($edition)
-                ->addGenre($genre)
-                ->addPlatform($platform);
+                ->addCategory($category);
         $em->persist($product);
         $em->flush();
         return new JsonResponse($data, 200);
      }
+
+    private function createEditions(array $editionData, EntityManagerInterface $em, EditionCategoryRepository $editionCategoryRepository): array
+    {
+        $editions = [];
+        foreach ($editionData as $editionItem) {
+            $editionId = $editionItem['edition'];
+            $editionCategory = $editionCategoryRepository->find($editionId);
+            $oldPrice = $editionItem['old_price'];
+            $price = $editionItem['price'];
+            $img = $editionItem['img'];
+            $stock = $editionItem['stock'];
+            if ($editionCategory) {
+                $edition = new Edition();
+                $edition->setEditionCategory($editionCategory)
+                    ->setOldPrice($oldPrice)
+                    ->setPrice($price)
+                    ->setImg($img)
+                    ->setStock($stock);
+                $em->persist($edition);
+                $em->flush();
+                $editions[] = $edition;
+            } 
+        }
+        return $editions;
+    }
+
+    private function getEntitiesByIds(array $entityIds, $repository): array
+    {
+        $entities = [];
+        foreach ($entityIds as $entityId) {
+            $entity = $repository->find($entityId);
+            if ($entity) {
+                $entities[] = $entity;
+            }
+        }
+        return $entities;
+    }
 }
