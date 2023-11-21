@@ -7,9 +7,11 @@ import {fr} from "date-fns/locale"
 import {FaTrash} from "react-icons/fa"
 import {FiEdit} from "react-icons/fi"
 import { Link } from "react-router-dom"
+import EditProductForm from "./crud_forms/EditProductForm"
 
 export function GamesAdmin() {
 const [games, setGames] = useState([]);
+const [editingProductId, setEditingProductId] = useState(null);
 
 useEffect(() => {
     axios
@@ -29,10 +31,21 @@ useEffect(() => {
         console.error("Erreur lors de la récupération de la liste de jeux :", error);
       });
   }, []);
+
+  const handleEditClick = (productId) => {
+    setEditingProductId(productId);
+  };
+
+  const closeEditForm = () => {
+    setEditingProductId(null);
+  };
   
 
   return (
     <div className="contenu1">
+      {editingProductId && (
+        <EditProductForm productId={editingProductId} onClose={closeEditForm} /*autres props*/ />
+      )}
       <div className="title-admin-container">
         <h1>Jeux</h1>
       </div>
@@ -65,7 +78,7 @@ useEffect(() => {
                                 <td>{convertToEuros(edition.old_price)} €</td>
                                 <td>{edition.stock}</td>
                                 <td className="action-cell-container">
-                                 <Link to={`/edit-game/${game.id}`}><FiEdit className="edit-icon"/></Link>
+                                 <Link onClick={() => handleEditClick(game.id)}><FiEdit className="edit-icon"/></Link>
                                  <Link><FaTrash/></Link>
                                 </td>
                                 {console.log(edition)}
