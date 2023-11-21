@@ -65,7 +65,7 @@ useEffect(() => {
                                 <td>{convertToEuros(edition.old_price)} €</td>
                                 <td>{edition.stock}</td>
                                 <td className="action-cell-container">
-                                 <Link><FiEdit className="edit-icon"/></Link>
+                                 <Link to={`/edit-game/${game.id}`}><FiEdit className="edit-icon"/></Link>
                                  <Link><FaTrash/></Link>
                                 </td>
                                 {console.log(edition)}
