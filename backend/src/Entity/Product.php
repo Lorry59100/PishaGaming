@@ -37,9 +37,6 @@ class Product
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'products')]
     private Collection $category;
 
-    #[ORM\OneToMany(mappedBy: 'product', targetEntity: Edition::class)]
-    private Collection $edition;
-
     #[ORM\ManyToMany(targetEntity: Genre::class, inversedBy: 'products')]
     private Collection $genre;
 
@@ -49,10 +46,25 @@ class Product
     #[ORM\ManyToMany(targetEntity: Platform::class, inversedBy: 'products')]
     private Collection $platform;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $old_price = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $price = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $img = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $stock = null;
+
+    #[ORM\OneToOne(inversedBy: 'product', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Edition $edition = null;
+
     public function __construct()
     {
         $this->category = new ArrayCollection();
-        $this->edition = new ArrayCollection();
         $this->genre = new ArrayCollection();
         $this->tag = new ArrayCollection();
         $this->platform = new ArrayCollection();
@@ -160,36 +172,6 @@ class Product
     }
 
     /**
-     * @return Collection<int, Edition>
-     */
-    public function getEdition(): Collection
-    {
-        return $this->edition;
-    }
-
-    public function addEdition(Edition $edition): static
-    {
-        if (!$this->edition->contains($edition)) {
-            $this->edition->add($edition);
-            $edition->setProduct($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEdition(Edition $edition): static
-    {
-        if ($this->edition->removeElement($edition)) {
-            // set the owning side to null (unless already changed)
-            if ($edition->getProduct() === $this) {
-                $edition->setProduct(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, Genre>
      */
     public function getGenre(): Collection
@@ -260,4 +242,65 @@ class Product
 
         return $this;
     }
+
+    public function getOldPrice(): ?int
+    {
+        return $this->old_price;
+    }
+
+    public function setOldPrice(?int $old_price): static
+    {
+        $this->old_price = $old_price;
+
+        return $this;
+    }
+
+    public function getPrice(): ?int
+    {
+        return $this->price;
+    }
+
+    public function setPrice(?int $price): static
+    {
+        $this->price = $price;
+
+        return $this;
+    }
+
+    public function getImg(): ?string
+    {
+        return $this->img;
+    }
+
+    public function setImg(?string $img): static
+    {
+        $this->img = $img;
+
+        return $this;
+    }
+
+    public function getStock(): ?int
+    {
+        return $this->stock;
+    }
+
+    public function setStock(?int $stock): static
+    {
+        $this->stock = $stock;
+
+        return $this;
+    }
+
+    public function getEdition(): ?Edition
+    {
+        return $this->edition;
+    }
+
+    public function setEdition(Edition $edition): static
+    {
+        $this->edition = $edition;
+
+        return $this;
+    }
+
 }
