@@ -37,12 +37,8 @@ class ProductsController extends AbstractController
             $editions = [];
             foreach($product->getEdition() as $edition) {
                 $editions[] = [
-                    'id' => $category->getId(),
-                    'old_price' => $edition->getOldPrice(),
-                    'price' => $edition->getPrice(),
-                    'stock' => $edition->getStock(),
-                    'img' => $edition->getImg(),
-                    'edition_category' => $edition->getEditionCategory()->getName(),
+                    'id' => $edition->getId(),
+                    'name' => $edition->getName(),
                 ];
             }
             $genres = [];
@@ -75,6 +71,9 @@ class ProductsController extends AbstractController
                 'editor' => $product->getEditor(),
                 'release' => $product->getRelease(),
                 'description' => $product->getDescription(),
+                'old_price' => $product->getOldPrice(),
+                'price' => $product->getPrice(),
+                'img' => $product->getImg(),
                 'categorys' => $categorys,
                 'editions' => $editions,
                 'genres' => $genres,
