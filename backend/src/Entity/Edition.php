@@ -13,73 +13,25 @@ class Edition
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $old_price = null;
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $price = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?int $stock = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img = null;
-
-    #[ORM\ManyToOne(inversedBy: 'edition')]
+    #[ORM\OneToOne(mappedBy: 'edition', cascade: ['persist', 'remove'])]
     private ?Product $product = null;
-
-    #[ORM\ManyToOne(inversedBy: 'editions')]
-    private ?EditionCategory $edition_category = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getOldPrice(): ?int
+    public function getName(): ?string
     {
-        return $this->old_price;
+        return $this->name;
     }
 
-    public function setOldPrice(?int $old_price): static
+    public function setName(string $name): static
     {
-        $this->old_price = $old_price;
-
-        return $this;
-    }
-
-    public function getPrice(): ?int
-    {
-        return $this->price;
-    }
-
-    public function setPrice(?int $price): static
-    {
-        $this->price = $price;
-
-        return $this;
-    }
-
-    public function getStock(): ?int
-    {
-        return $this->stock;
-    }
-
-    public function setStock(?int $stock): static
-    {
-        $this->stock = $stock;
-
-        return $this;
-    }
-
-    public function getImg(): ?string
-    {
-        return $this->img;
-    }
-
-    public function setImg(?string $img): static
-    {
-        $this->img = $img;
+        $this->name = $name;
 
         return $this;
     }
@@ -89,22 +41,20 @@ class Edition
         return $this->product;
     }
 
-    public function setProduct(?Product $product): static
+    public function setProduct(Product $product): static
     {
+        // set the owning side of the relation if necessary
+        if ($product->getEdition() !== $this) {
+            $product->setEdition($this);
+        }
+
         $this->product = $product;
 
         return $this;
     }
 
-    public function getEditionCategory(): ?EditionCategory
+    public function __toString()
     {
-        return $this->edition_category;
-    }
-
-    public function setEditionCategory(?EditionCategory $edition_category): static
-    {
-        $this->edition_category = $edition_category;
-
-        return $this;
+        return $this->name;
     }
 }
