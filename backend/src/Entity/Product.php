@@ -34,9 +34,6 @@ class Product
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
-    #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'products')]
-    private Collection $category;
-
     #[ORM\ManyToMany(targetEntity: Genre::class, inversedBy: 'products')]
     private Collection $genre;
 
@@ -58,13 +55,17 @@ class Product
     #[ORM\Column(nullable: true)]
     private ?int $stock = null;
 
-    #[ORM\OneToOne(inversedBy: 'product', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(inversedBy: 'products')]
     private ?Edition $edition = null;
+
+    #[ORM\Column]
+    private ?bool $isPhysical = null;
+
+    #[ORM\ManyToOne(inversedBy: 'products')]
+    private ?Category $category = null;
 
     public function __construct()
     {
-        $this->category = new ArrayCollection();
         $this->genre = new ArrayCollection();
         $this->tag = new ArrayCollection();
         $this->platform = new ArrayCollection();
@@ -143,30 +144,6 @@ class Product
     public function setDescription(string $description): static
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Category>
-     */
-    public function getCategory(): Collection
-    {
-        return $this->category;
-    }
-
-    public function addCategory(Category $category): static
-    {
-        if (!$this->category->contains($category)) {
-            $this->category->add($category);
-        }
-
-        return $this;
-    }
-
-    public function removeCategory(Category $category): static
-    {
-        $this->category->removeElement($category);
 
         return $this;
     }
@@ -296,9 +273,33 @@ class Product
         return $this->edition;
     }
 
-    public function setEdition(Edition $edition): static
+    public function setEdition(?Edition $edition): static
     {
         $this->edition = $edition;
+
+        return $this;
+    }
+
+    public function isIsPhysical(): ?bool
+    {
+        return $this->isPhysical;
+    }
+
+    public function setIsPhysical(bool $isPhysical): static
+    {
+        $this->isPhysical = $isPhysical;
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): static
+    {
+        $this->category = $category;
 
         return $this;
     }
