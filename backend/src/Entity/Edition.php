@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\EditionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EditionRepository::class)]
@@ -16,8 +18,13 @@ class Edition
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\OneToOne(mappedBy: 'edition', cascade: ['persist', 'remove'])]
-    private ?Product $product = null;
+    #[ORM\OneToMany(mappedBy: 'edition', targetEntity: Product::class)]
+    private Collection $products;
+
+    public function __construct()
+    {
+        $this->products = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -36,25 +43,38 @@ class Edition
         return $this;
     }
 
-    public function getProduct(): ?Product
+    public function __toString()
     {
-        return $this->product;
+        return $this->name;
     }
 
-    public function setProduct(Product $product): static
+    /**
+     * @return Collection<int, Product>
+     */
+    public function getProducts(): Collection
     {
-        // set the owning side of the relation if necessary
-        if ($product->getEdition() !== $this) {
+        return $this->products;
+    }
+
+    public function addProduct(Product $product): static
+    {
+        if (!$this->products->contains($product)) {
+            $this->products->add($product);
             $product->setEdition($this);
         }
-
-        $this->product = $product;
 
         return $this;
     }
 
-    public function __toString()
+    public function removeProduct(Product $product): static
     {
-        return $this->name;
+        if ($this->products->removeElement($product)) {
+            // set the owning side to null (unless already changed)
+            if ($product->getEdition() === $this) {
+                $product->setEdition(null);
+            }
+        }
+
+        return $this;
     }
 }
