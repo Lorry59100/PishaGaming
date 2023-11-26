@@ -27,20 +27,6 @@ class ProductsController extends AbstractController
         $products = $productRepository->findAll();
         $productsArray = [];
         foreach($products as $product) {
-            $categorys = [];
-            foreach($product->getCategory() as $category) {
-                $categorys[] = [
-                    'id' => $category->getId(),
-                    'name' => $category->getName(),
-                ];
-            }
-            $editions = [];
-            foreach($product->getEdition() as $edition) {
-                $editions[] = [
-                    'id' => $edition->getId(),
-                    'name' => $edition->getName(),
-                ];
-            }
             $genres = [];
             foreach($product->getGenre() as $genre) {
                 $genres[] = [
@@ -74,8 +60,14 @@ class ProductsController extends AbstractController
                 'old_price' => $product->getOldPrice(),
                 'price' => $product->getPrice(),
                 'img' => $product->getImg(),
-                'categorys' => $categorys,
-                'editions' => $editions,
+                'category' => $product->getCategory() ? [
+                    'id' => $product->getCategory()->getId(),
+                    'name' => $product->getCategory()->getName(),
+                ] : null ,
+                'edition' => $product->getEdition() ? [
+                    'id' => $product->getEdition()->getId(),
+                    'name' => $product->getEdition()->getName(),
+                ] : null,
                 'genres' => $genres,
                 'platforms' => $platforms,
                 'tags' => $tags,
