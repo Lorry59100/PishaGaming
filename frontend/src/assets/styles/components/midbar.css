@@ -1,0 +1,62 @@
+/* MIDBAR */
+.midbar-container {
+display: flex;
+align-items: center;
+justify-content: space-evenly;
+height: 80px;
+background-color: black;
+margin-bottom: 1em;
+padding: 2em;
+}
+
+.midbar-container>.white-spacer {
+margin: 0 2.5em;
+height: 4em;
+}
+
+.feature-container {
+display: flex;
+align-items: center;
+color: white;
+}
+
+.feature-icon {
+margin-right: 1em;
+}
+
+.feature-icon>svg {
+color: var(--orange);
+}
+
+.feature-content>h2,h5 {
+margin: 0;
+}
+
+.feature-content>h5 {
+color: var(--grey);
+display: block ruby;
+}
+
+.trustpilot-container {
+color: white;
+}
+
+.trustpilot-midbar-title-container {
+display: flex;
+align-items: center;
+margin-right: 0.5em;
+}
+
+.trustpilot-icon {
+display: flex;
+}
+
+.trustpilot-icon>.trustpilot-stars-container {
+display: flex;
+align-items: center;
+}
+
+.trustpilot-content {
+display: flex;
+justify-content: center;
+}

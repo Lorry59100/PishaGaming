@@ -1,0 +1,76 @@
+/* GAMELIST */
+.game-list-container {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 2em;
+margin: 1em 1em;
+padding: 5em;
+}
+.game-list-container-first {
+margin-top: 30em;
+}
+
+.game-container {
+width: 100%;
+}
+
+.game-card > a> img {
+width: 100%;
+height: 100%;
+border-radius: 10px;
+}
+
+.game-card img {
+transition: transform 0.3s ease;
+}
+
+.game-card img:hover {
+transform: scale(1.1);
+}
+
+.game-card:hover .discount-label {
+opacity: 0; /* Rend l'étiquette invisible au survol de l'image */
+}
+
+.game-card {
+position: relative;
+width: 100%;
+height: 300px;
+border-radius: 10px;
+overflow: hidden;
+}
+
+.discount-label-cards {
+position: absolute;
+bottom: 0;
+left: 0;
+background-color: var(--orange);
+color: #fff;
+padding: 0 20px;
+border-top-right-radius: 10px;
+border-bottom-left-radius: 10px;
+height: 2em;
+}
+
+.discount-label-cards>h5 {
+height: 100%;
+margin: 0;
+display: flex;
+align-items: center;
+}
+
+.sub-title {
+height: 2.5em;
+color: white;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+.three-span {
+grid-column: span 3; 
+}
+
+h1 {
+    color: white;
+}

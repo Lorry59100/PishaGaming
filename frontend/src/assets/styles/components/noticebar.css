@@ -1,0 +1,31 @@
+/* NOTICE BAR */
+
+.notice-bar-container {
+    background-color: var(--grey-tr);
+    height: 330px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .notice-bar-container>img {
+    height: 456px;
+    margin-bottom: 7.9em;
+  }
+  
+  .content {
+    height: 100%;
+    width: 60%;
+    color: var(--grey);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .notice-text {
+    text-align: center;
+  }
+
+  .noticebar-button-container {
+    margin-top: 1em;
+  }
