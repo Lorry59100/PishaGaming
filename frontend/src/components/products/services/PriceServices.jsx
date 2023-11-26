@@ -20,5 +20,5 @@ export function calculateDiscountPercentage(oldPriceInCents, priceInCents) {
     // Calculer le pourcentage de remise
     var discountPercentage = ((oldPriceInEuros - priceInEuros) / oldPriceInEuros) * 100;
     // Formater le résultat avec deux décimales et ajouter le symbole de pourcentage
-    return discountPercentage.toFixed(2) + "%";
+    return discountPercentage.toFixed(0) + "%";
 }
