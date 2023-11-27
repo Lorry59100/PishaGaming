@@ -9,6 +9,11 @@ register:
     controller: App\Controller\RegistrationController::register
     methods: POST
 
+login:
+    path: /login
+    controller: App\Controller\LoginController::login
+    methods: POST
+
 products_list:
     path: /products-list
     controller: App\Controller\ProductsController::productsList
