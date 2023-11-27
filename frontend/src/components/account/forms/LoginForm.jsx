@@ -1,8 +1,30 @@
+import axios from "axios";
 import { Formik, Form, Field } from 'formik';
 import { FaFacebookF } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import { IconContext } from "react-icons";
+import { URL, URL_LOGIN} from "../../../constants/urls/URLBack";
 export function LoginForm() {
+
+  const initialValues= {
+    email: '',
+    password: '',
+    };
+
+  const onSubmit=(values) => {
+    console.log(values);
+    axios.post(`${URL}${URL_LOGIN}`, {
+      email: values.email,
+      password: values.password,
+    })
+    .then((response) => {
+      console.log('Response data', response.data);
+    })
+    .catch((error) => {
+      console.error('Erreur lors de la récupération des données :', error);
+    });
+  };
+
   return (
     <div className="little-form-container">
             <h2>Se connecter</h2>
@@ -31,7 +53,7 @@ export function LoginForm() {
             <div className="cutline-form first-cutline">
               <span className="cutline-text">OU</span>
             </div>
-            <Formik initialValues={{}} onSubmit={""}>
+            <Formik initialValues={initialValues} onSubmit={onSubmit}>
               <Form>
                 <div className="fields-container">
                   <Field type="email" name="email" placeholder="Email"/>
