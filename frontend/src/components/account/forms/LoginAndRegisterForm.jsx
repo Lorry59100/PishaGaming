@@ -17,8 +17,8 @@ export function LoginAndRegisterForm() {
             <h3>Pisha Gaming</h3>
             </a>
           </div>
-          {/* <LoginForm/> */}
-          <RegisterForm/>
+          <LoginForm/>
+          {/* <RegisterForm/> */}
         </div>
         <div className="wallpaper-container">
         <IconContext.Provider value={{ size: "1.5em" }}>
