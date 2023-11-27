@@ -4,6 +4,11 @@ controllers:
         namespace: App\Controller
     type: attribute
 
+register:
+    path: /register
+    controller: App\Controller\RegistrationController::register
+    methods: POST
+
 products_list:
     path: /products-list
     controller: App\Controller\ProductsController::productsList
