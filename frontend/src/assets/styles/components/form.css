@@ -101,8 +101,8 @@ display: flex;
 flex-direction: column;
 align-items: center;
 margin: 2em;
-transform: translate(50%, 50%);
-width: 50%;
+transform: translate(30%, 30%);
+width: 60%;
 }
 .little-form-container>h2 {
 width: 100%;
@@ -126,6 +126,16 @@ transform: translate(-50%, -50%);
 color: white;
 background: var(--dark);
 padding: 0 1em;
+}
+.consent {
+  margin: 0.5em 0;
+  display: flex;
+  align-items: center;
+  color: #999;
+}
+.preserve-space>a {
+  color: white;
+  text-decoration: underline;
 }
 
 input:not(.searchbar-input), select, textarea {
@@ -180,29 +190,14 @@ input[type="checkbox"] {
   width: 20px;
   margin-right: 10px;
   flex-shrink: 0;
-  margin-top: -1px;
-  transition: .2s;
   cursor: pointer;
-  box-shadow: 0 0 0 2px var(--orange);
   transform-origin: left;
 }
+input[type="checkbox"]:hover {
+  box-shadow: 0 0 0 2px var(--orange);
+}
 input[type="checkbox"]:checked {
-color: orange;
-border-color: orange;
-}
-/* input[type="checkbox"]:checked + label {
-border-top: 1px solid var(--orange);
-border-bottom: 1px solid var(--orange);
-border-right: 1px solid var(--orange);
-border-left: 1px solid var(--orange);
-border-radius: 5rem;
-color: white;
-} */
-select:invalid {
-color: #979797;
-}
-select:valid {
-color: white;
+  accent-color: var(--orange);
 }
 select {
 appearance: none;
@@ -224,4 +219,30 @@ background-color: rgba(16,16,16,.4);
 .btn-container, .btn-container>button {
 width: 100%;
 margin-top: 0.5em;
+}
+
+/* Définition des keyframes standard */
+@keyframes autofill {
+  0%, 100% {
+      color: white;
+      background: rgba(16,16,16,.4);
+  }
+}
+
+/* Définition des keyframes spécifiques à WebKit */
+@-webkit-keyframes autofill {
+  0%, 100% {
+      color: white;
+      background: rgba(16,16,16,.4);
+  }
+}
+
+/* Application des keyframes pour le remplissage automatique */
+input:-webkit-autofill {
+  -webkit-animation-delay: 1s; /* Safari support - any positive time runs instantly */
+  -webkit-animation-name: autofill;
+  -webkit-animation-fill-mode: both;
+  animation-delay: 1s;
+  animation-name: autofill;
+  animation-fill-mode: both;
 }
