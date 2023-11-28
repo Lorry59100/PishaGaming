@@ -25,7 +25,7 @@ export function RegisterForm() {
         lastname: values.lastname,
         email: values.email,
         password: values.password,
-        birthDate: birthDate,
+        birthDate: birthDate.toISOString(),
       })
       .then((response) => {
         console.log('Response data', response.data);
@@ -47,7 +47,7 @@ export function RegisterForm() {
                   <Field type="password" name="confirmPassword" placeholder="Confirmez votre mot de passe"/>
                   <Field type="email" name="email" placeholder="Email"/>
                   <div className="datepicker-container">
-                  <DatePicker dateFormat="dd/MM/yyyy" placeholderText="Date de naissance" selected={birthDate} onChange={(date) => {
+                  <DatePicker dateFormat="dd/MM/yyyy" placeholderText="Date de naissance" locale={fr} selected={birthDate} onChange={(date) => {
                     setFieldValue('birthDate', date); // Met à jour la valeur du champ
                     setBirthDate(date); // Met à jour l'état local
                   }}/>
