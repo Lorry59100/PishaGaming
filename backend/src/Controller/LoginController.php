@@ -3,13 +3,12 @@
 namespace App\Controller;
 
 use App\Repository\UserRepository;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
 class LoginController extends AbstractController
 {
@@ -32,14 +31,12 @@ class LoginController extends AbstractController
                 'id' => $user->getId(),
             ];
             $token = $jwtManager->createFromPayload($user, $payload);
-            return $this->json([
+ 
+            return new JsonResponse([
                 'user'  => $user->getUserIdentifier(),
                 'token' => $token,
             ]);
-            // Utilisateur authentifié
-            return new JsonResponse(['message' => 'Connexion réussie'], 200);
         }
-
         return new JsonResponse(['message' => 'Identifiants invalides'], 401);
        
     }
