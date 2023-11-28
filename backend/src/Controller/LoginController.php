@@ -29,10 +29,9 @@ class LoginController extends AbstractController
             $payload = [
                 'firstname' => $user->getFirstname(),
                 'lastname' => $user->getLastname(),
-                'role' => $user->getRoles(),
                 'id' => $user->getId(),
             ];
-            $token = $jwtManager->create($user, $payload);
+            $token = $jwtManager->createFromPayload($user, $payload);
             return $this->json([
                 'user'  => $user->getUserIdentifier(),
                 'token' => $token,
