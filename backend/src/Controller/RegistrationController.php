@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+use DateTimeZone;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -11,6 +12,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class RegistrationController extends AbstractController
 {
+    
     /**
      * @Route("/register", name="register", methods={"POST"})
      */
@@ -23,7 +25,13 @@ class RegistrationController extends AbstractController
         if($userInDb) {
             return new JsonResponse(['Cette adresse mail est déjà prise', 201]);
         }
-        $dateBirthday = new \DateTime($data['birthDate']);
+
+        $birthDateStr = $data['birthDate'];
+        // Créer un objet DateTime à partir de la chaîne (en supposant le fuseau horaire UTC)
+        $dateBirthday = new \DateTime($birthDateStr, new \DateTimeZone('UTC'));
+        // Convertir le fuseau horaire en Europe/Paris (ou le fuseau horaire que vous souhaitez utiliser)
+        $dateBirthday->setTimezone(new DateTimeZone('Europe/Paris'));
+
         /* Vérifier si l'utilisateur a bien 16 ans ou + */
         $currentDate = new \DateTime();
         $age = $currentDate->diff($dateBirthday)->y;
