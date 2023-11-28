@@ -4,8 +4,9 @@ import { FaFacebookF } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import { IconContext } from "react-icons";
 import { URL, URL_LOGIN} from "../../../constants/urls/URLBack";
+import { useAuth } from '../../account/services/tokenService';
 export function LoginForm() {
-
+  const { login } = useAuth();
   const initialValues= {
     email: '',
     password: '',
@@ -19,6 +20,7 @@ export function LoginForm() {
     })
     .then((response) => {
       console.log('Response data', response.data);
+      login(response.data.token);
     })
     .catch((error) => {
       console.error('Erreur lors de la récupération des données :', error);
