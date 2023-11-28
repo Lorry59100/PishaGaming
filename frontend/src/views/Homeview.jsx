@@ -8,7 +8,7 @@ import { RetroGamingSelection } from "../components/products/RetroGamingSelectio
 function Homeview() {
   return (
     <div>
-      <LoginAndRegisterForm/>
+      {/* <LoginAndRegisterForm/> */}
        <GameBanner/>
        <GameStaffSelection/>
        <Midbar/>
