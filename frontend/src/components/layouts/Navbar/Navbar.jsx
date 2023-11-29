@@ -66,7 +66,6 @@ function Navbar() {
         <Searchbar />
       </div>
 
-      {/* Icônes droite de la navbar */}
       <div className="cart-profile">
         <IconContext.Provider value={{ size: '2em' }}>
           <a href="/"><TiShoppingCart /></a>
@@ -86,13 +85,15 @@ function Navbar() {
                 <a href="/">Wishlist</a>
               </li>
               {decodedUserToken && (
-              <div>
+              <div className='user-panel-connected'>
                 <li>
                   <a href="/" onClick={logout}>Déconnexion</a>
                 </li>
-                <li>
-                <Link to={`${URL}${URL_ADMIN}`}>Admin</Link>
-                </li>
+                {decodedUserToken.roles.includes('ROLE_ADMIN') && (
+                    <li>
+                      <Link to={`${URL}${URL_ADMIN}`}>Admin</Link>
+                    </li>
+                  )}
               </div>
               )}
             </ul>
