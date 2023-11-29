@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Login{% endblock %}
+
+{% block body %}
+    <div style="text-align: center; margin-top: 50px;">
+        <h1>Admin Login</h1>
+
+        <form action="{{ path('log_admin') }}" method="post" style="max-width: 400px; margin: 0 auto;">
+            <div style="margin-bottom: 15px;">
+                <label for="username" style="display: block; margin-bottom: 5px;">Email:</label>
+                <input style="width: 100%; padding: 8px;" type="text" id="username" name="_username" value="{{ last_username }}" />
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="password" style="display: block; margin-bottom: 5px;">Password:</label>
+                <input style="width: 100%; padding: 8px;" type="password" id="password" name="_password" />
+            </div>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            <div>
+                <button type="submit" style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px;">Connexion</button>
+            </div>
+            <a href="{{ path('app_logout') }}" style="color: red;">Déconnexion</a>
+        </form>
+    </div>
+{% endblock %}
