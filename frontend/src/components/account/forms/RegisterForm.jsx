@@ -8,9 +8,12 @@ import { registerLocale } from "react-datepicker";
 import fr from "date-fns/locale/fr";
 registerLocale("fr", fr);
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
+import { URL_HOME } from "../../../constants/urls/URLFront";
 
 export function RegisterForm(props) {
   const [birthDate, setBirthDate] = useState(null);
+  const navigate = useNavigate();
     // Logique de controle du formulaire
     const initialValues= {
       firstname: '',
@@ -31,6 +34,8 @@ export function RegisterForm(props) {
       })
       .then((response) => {
         console.log('Response data', response.data);
+        navigate(URL_HOME);
+        window.location.reload();
       })
       .catch((error) => {
         console.error('Erreur lors de la récupération des données :', error);

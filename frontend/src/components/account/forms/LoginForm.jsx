@@ -1,13 +1,17 @@
 import axios from "axios";
 import { Formik, Form, Field } from 'formik';
-import { FaFacebookF } from "react-icons/fa";
+import { FaFacebookF, FaApple, FaDiscord } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 import { Link } from 'react-router-dom';
 import { IconContext } from "react-icons";
 import { URL, URL_LOGIN} from "../../../constants/urls/URLBack";
+import { URL_HOME } from "../../../constants/urls/URLFront";
 import { useAuth } from '../../account/services/tokenService';
+import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 export function LoginForm(props) {
   const { login } = useAuth();
+  const navigate = useNavigate();
   const initialValues= {
     email: '',
     password: '',
@@ -22,6 +26,8 @@ export function LoginForm(props) {
     .then((response) => {
       console.log('Response data', response.data);
       login(response.data.token);
+      navigate(URL_HOME);
+      window.location.reload();
     })
     .catch((error) => {
       console.error('Erreur lors de la récupération des données :', error);
@@ -37,19 +43,19 @@ export function LoginForm(props) {
                   <FaFacebookF />
                 </IconContext.Provider>
               </div>
-              <div className="single-logo fb-logo">
+              <div className="single-logo google-logo">
                 <IconContext.Provider value={{ size: "1.5em" }}>
-                  <FaFacebookF />
+                  <FcGoogle />
                 </IconContext.Provider>
               </div>
-              <div className="single-logo fb-logo">
+              <div className="single-logo apple-logo">
                 <IconContext.Provider value={{ size: "1.5em" }}>
-                  <FaFacebookF />
+                  <FaApple />
                 </IconContext.Provider>
               </div>
-              <div className="single-logo fb-logo">
+              <div className="single-logo discord-logo">
                 <IconContext.Provider value={{ size: "1.5em" }}>
-                  <FaFacebookF />
+                  <FaDiscord />
                 </IconContext.Provider>
               </div>
             </div>
