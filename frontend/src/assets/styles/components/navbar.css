@@ -115,7 +115,24 @@ color: var(--orange)
 }
 
 .profile-content>ul>li:hover {
-  background: var(--primary-nogradient);
+  background: var(--orange);
+  padding: 0.5em 1em;
+  border-radius: 50px;
+}
+
+.user-panel-connected {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.user-panel-connected>li {
+  padding: 0.5em 1em;
+}
+
+.user-panel-connected>li:hover {
+  background: var(--orange);
   padding: 0.5em 1em;
   border-radius: 50px;
 }
