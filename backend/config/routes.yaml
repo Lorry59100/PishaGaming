@@ -14,6 +14,10 @@ login:
     controller: App\Controller\LoginController::login
     methods: POST
 
+log_admin:
+    path: /logadmin
+    controller: App\Controller\AdminLoginController::logAdmin
+
 products_list:
     path: /products-list
     controller: App\Controller\ProductsController::productsList
@@ -23,3 +27,7 @@ add_product:
     path: /add-product
     controller: App\Controller\AdminController::addProduct
     methods: POST
+
+app_logout:
+    path: /logout
+    methods: GET
