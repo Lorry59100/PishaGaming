@@ -8,6 +8,7 @@ import '../../../assets/styles/components/navbar.css';
 import { useAuth } from '../../account/services/tokenService';
 import { URL, URL_ADMIN } from '../../../constants/urls/URLBack';
 import { Link } from 'react-router-dom';
+import { LoginAndRegisterForm } from '../../account/forms/LoginAndRegisterForm';
 
 function Navbar() {
   const { userToken, decodedUserToken, logout } = useAuth();
@@ -16,9 +17,15 @@ function Navbar() {
   const [isVisible, setIsVisible] = useState(true);
   const [isAtTop, setIsAtTop] = useState(true);
   const [menuClass, setMenuClass] = useState('');
+  const [isLoginFormVisible, setIsLoginFormVisible] = useState(false);
 
   const toggleProfileVisibility = () => {
-    setIsProfileVisible(!isProfileVisible);
+    if (!userToken) {
+      // Show the login form only if the user is not logged in
+      setIsLoginFormVisible(!isLoginFormVisible);
+    } else {
+      setIsProfileVisible(!isProfileVisible);
+    }
   };
 
   useEffect(() => {
@@ -71,8 +78,7 @@ function Navbar() {
           <a href="/"><TiShoppingCart /></a>
           <button onClick={toggleProfileVisibility}><PiUserBold /></button>
         </IconContext.Provider>
-
-        {isProfileVisible && (
+        {userToken && isProfileVisible && (
           <div className="profile-content">
             <ul>
               <li>
@@ -99,6 +105,7 @@ function Navbar() {
             </ul>
           </div>
         )}
+      {!userToken && isLoginFormVisible && <LoginAndRegisterForm onCloseForm={() => setIsLoginFormVisible(false)} />}
       </div>
     </div>
   );
