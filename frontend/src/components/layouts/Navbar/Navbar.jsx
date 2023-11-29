@@ -57,7 +57,7 @@ function Navbar() {
   }, [isVisible, isAtTop, userToken, scrolled]);
 
   return (
-    <div className={`navbar ${scrolled ? 'scrolled' : ''} ${isVisible ? 'visible' : 'hidden'} ${isAtTop ? 'at-top' : ''}`}>
+    <div className={`navbar ${isLoginFormVisible ? '' : (scrolled ? 'scrolled' : '')} ${isVisible ? 'visible' : 'hidden'} ${isAtTop ? 'at-top' : ''}`}>
       
       <div className="logo">
         <a href=""><img src={logo} alt="logo" className="orange-logo" /></a>
