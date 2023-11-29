@@ -8,8 +8,19 @@ grid-gap: 2em;
 }
 .fb-logo {
 background-color: #0866FF;
-padding: 1em 2em;
-border-radius: 10px;
+}
+.google-logo {
+background-color: white;
+}
+.apple-logo {
+background-color: black;
+}
+.discord-logo {
+  background-color: #5865F2;
+}
+.single-logo {
+  padding: 1em 2.3em;
+  border-radius: 10px;
 }
 .single-logo>svg {
 color: white;
