@@ -5,7 +5,8 @@ import { Link } from 'react-router-dom';
 import { IconContext } from "react-icons";
 import { URL, URL_LOGIN} from "../../../constants/urls/URLBack";
 import { useAuth } from '../../account/services/tokenService';
-export function LoginForm() {
+import PropTypes from "prop-types";
+export function LoginForm(props) {
   const { login } = useAuth();
   const initialValues= {
     email: '',
@@ -69,9 +70,13 @@ export function LoginForm() {
               </Form> 
             </Formik>
             <div className="switch">
-              <button>Pas encore de compte ?</button>
+              <button onClick={() => props.toggleForm()}>Pas encore de compte ?</button>
               <Link>Mot de passe oublié ?</Link>
             </div>
           </div>
   )
 }
+
+LoginForm.propTypes = {
+  toggleForm: PropTypes.func.isRequired,
+};

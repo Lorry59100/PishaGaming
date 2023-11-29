@@ -7,7 +7,9 @@ import DatePicker from "react-datepicker";
 import { registerLocale } from "react-datepicker";
 import fr from "date-fns/locale/fr";
 registerLocale("fr", fr);
-export function RegisterForm() {
+import PropTypes from "prop-types";
+
+export function RegisterForm(props) {
   const [birthDate, setBirthDate] = useState(null);
     // Logique de controle du formulaire
     const initialValues= {
@@ -68,8 +70,12 @@ export function RegisterForm() {
               )}
             </Formik>
             <div className="back">
-              <button>&lt;&lt; Retour</button>
+              <button onClick={() => props.toggleForm()}>&lt;&lt; Retour</button>
             </div>
           </div>
   )
 }
+
+RegisterForm.propTypes = {
+  toggleForm: PropTypes.func.isRequired,
+};
