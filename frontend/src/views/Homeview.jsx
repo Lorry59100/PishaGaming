@@ -1,4 +1,3 @@
-import { LoginAndRegisterForm } from "../components/account/forms/LoginAndRegisterForm"
 import { Midbar } from "../components/bars/Midbar"
 import { Noticebar } from "../components/bars/Noticebar"
 import GameBanner from "../components/products/GameBanner"
@@ -8,7 +7,6 @@ import { RetroGamingSelection } from "../components/products/RetroGamingSelectio
 function Homeview() {
   return (
     <div>
-      {/* <LoginAndRegisterForm/> */}
        <GameBanner/>
        <GameStaffSelection/>
        <Midbar/>
