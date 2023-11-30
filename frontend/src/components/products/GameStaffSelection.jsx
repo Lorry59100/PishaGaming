@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { URL, URL_PRODUCTS_LIST } from "../../constants/urls/URLBack";
+import { URL, URL_SINGLE_PRODUCT ,URL_PRODUCTS_LIST } from "../../constants/urls/URLBack";
 import "../../assets/styles/components/gamestaffselection.css"
 import { calculateDiscountPercentage, convertToEuros } from "./services/PriceServices";
 export function GameStaffSelection() {
@@ -30,7 +30,7 @@ export function GameStaffSelection() {
     {games.map(game => (
         <div key={game.id} className='game-container'>
             <div className="game-card">
-                <Link to={`/single-game/${game.id}`}><img src={game.img} alt={game.name} /></Link>
+                <Link to={`${URL_SINGLE_PRODUCT}/${game.id}`}><img src={game.img} alt={game.name} /></Link>
                 <div className="discount-label-cards">
                     <h5><strong>-</strong>{calculateDiscountPercentage(game.old_price, game.price)}</h5>
                 </div>
