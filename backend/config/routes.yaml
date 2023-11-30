@@ -23,6 +23,11 @@ products_list:
     controller: App\Controller\ProductsController::productsList
     methods: GET
 
+single_product:
+    path: /single-product/{id}
+    controller: App\Controller\ProductsController::singleProduct
+    methods: GET
+
 add_product:
     path: /add-product
     controller: App\Controller\AdminController::addProduct
