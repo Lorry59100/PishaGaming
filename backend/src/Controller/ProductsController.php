@@ -75,4 +75,61 @@ class ProductsController extends AbstractController
         }
         return new JsonResponse($productsArray, 200);
     }
+
+    /**
+     * @Route("/single-product/{id}", name="single_product", methods={"GET"})
+     */
+    public function singleProduct(ProductRepository $productRepository, $id): JsonResponse | Response
+    {
+      try  {
+        $product = $productRepository->find($id);
+
+            $platforms = [];
+            foreach ($product->getPlatform() as $platform) {
+                $platforms[] = [
+                    'id' => $platform->getId(),
+                    'name' => $platform->getName(),
+                ]; 
+            }
+
+            $tags = [];
+            foreach ($product->getTag() as $tag) {
+                $tags[] = [
+                    'id' => $tag->getId(),
+                    'name' => $tag->getName(),
+                ];
+            }
+
+            $tests = [];
+            foreach ($product->getTests() as $test) {
+                $tests[] = [
+                    'id' => $test->getId(),
+                    'commentaires' => $test->getComment(),
+                    'rate' => $test->getRate(),
+                ];
+            }
+
+            $productsArray = [
+                'name' => $product->getName(),
+                'stock' => $product->getStock(),
+                'price' => $product->getPrice(),
+                'img' => $product->getImg(),
+                'description' => $product->getDescription(),
+                'category' => $product->getCategory()->getName(),
+                'developer' => $product->getDev(),
+                'editor' => $product->getEditor(),
+                'release' => $product->getRelease(),
+                'stock' => $product->getStock(),
+                'plateformes' => $platforms,
+                'tags' => $tags,
+                'tests' => $tests,
+            ];
+
+        return new JsonResponse($productsArray, 200);
+        } 
+        
+        catch(Exception $e) {
+            return new JsonResponse(['error' => 'Internal Server Error'], 500);
+        }
+    }
 }
