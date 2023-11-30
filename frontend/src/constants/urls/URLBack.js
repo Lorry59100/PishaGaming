@@ -3,3 +3,4 @@ export const URL_ADMIN = "/logadmin"
 export const URL_REGISTER = "/register";
 export const URL_LOGIN = "/login";
 export const URL_PRODUCTS_LIST = "/products-list";
+export const URL_SINGLE_PRODUCT = "/single-product"
