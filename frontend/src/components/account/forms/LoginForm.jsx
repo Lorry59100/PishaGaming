@@ -2,15 +2,13 @@ import axios from "axios";
 import { Formik, Form, Field } from 'formik';
 import { FaFacebookF, FaApple, FaDiscord } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { IconContext } from "react-icons";
 import { URL, URL_LOGIN} from "../../../constants/urls/URLBack";
 import { useAuth } from '../../account/services/tokenService';
 import PropTypes from "prop-types";
-import { ToastSuccess, ToastImportantSuccess ,ToastError } from "../../services/toastService";
 
 export function LoginForm(props) {
-  const navigate = useNavigate();
   const { login } = useAuth();
   const initialValues= {
     email: '',
