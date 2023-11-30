@@ -8,7 +8,7 @@ import { registerLocale } from "react-datepicker";
 import fr from "date-fns/locale/fr";
 registerLocale("fr", fr);
 import PropTypes from "prop-types";
-import { ToastSuccess, ToastImportantSuccess ,ToastError } from "../../services/toastService";
+import {  ToastImportantSuccess ,ToastError } from "../../services/toastService";
 
 export function RegisterForm(props) {
   const [birthDate, setBirthDate] = useState(null);
@@ -84,4 +84,5 @@ export function RegisterForm(props) {
 
 RegisterForm.propTypes = {
   toggleForm: PropTypes.func.isRequired,
+  onFormSuccess: PropTypes.func.isRequired,
 };
