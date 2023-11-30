@@ -11,18 +11,17 @@ import { Link } from 'react-router-dom';
 import { LoginAndRegisterForm } from '../../account/forms/LoginAndRegisterForm';
 
 function Navbar() {
-  const { userToken, decodedUserToken, logout } = useAuth();
+  const { userToken, decodedUserToken, logout, login } = useAuth();
   const [isProfileVisible, setIsProfileVisible] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [isAtTop, setIsAtTop] = useState(true);
   const [menuClass, setMenuClass] = useState('');
-  const [isLoginFormVisible, setIsLoginFormVisible] = useState(false);
+  const [showLoginAndRegisterForm, setShowLoginAndRegisterForm] = useState(false);
 
   const toggleProfileVisibility = () => {
     if (!userToken) {
-      // Show the login form only if the user is not logged in
-      setIsLoginFormVisible(!isLoginFormVisible);
+      setShowLoginAndRegisterForm(!showLoginAndRegisterForm); // Renommé ici
     } else {
       setIsProfileVisible(!isProfileVisible);
     }
@@ -57,7 +56,7 @@ function Navbar() {
   }, [isVisible, isAtTop, userToken, scrolled]);
 
   return (
-    <div className={`navbar ${isLoginFormVisible ? '' : (scrolled ? 'scrolled' : '')} ${isVisible ? 'visible' : 'hidden'} ${isAtTop ? 'at-top' : ''}`}>
+    <div className={`navbar ${showLoginAndRegisterForm ? '' : (scrolled ? 'scrolled' : '')} ${isVisible ? 'visible' : 'hidden'} ${isAtTop ? 'at-top' : ''}`}>
       
       <div className="logo">
         <a href=""><img src={logo} alt="logo" className="orange-logo" /></a>
@@ -72,7 +71,8 @@ function Navbar() {
         </div>
         <Searchbar />
       </div>
-
+      
+    <div className='profile-container'>
       <div className="cart-profile">
         <IconContext.Provider value={{ size: '2em' }}>
           <a href="/"><TiShoppingCart /></a>
@@ -105,7 +105,13 @@ function Navbar() {
             </ul>
           </div>
         )}
-      {!userToken && isLoginFormVisible && <LoginAndRegisterForm onCloseForm={() => setIsLoginFormVisible(false)} />}
+      {!userToken && showLoginAndRegisterForm && <LoginAndRegisterForm login={login} onCloseForm={() => setShowLoginAndRegisterForm(false)} />}
+      </div>
+      {decodedUserToken && (
+        <div className='id-container'> 
+          {decodedUserToken.firstname}
+        </div>
+      )}
       </div>
     </div>
   );
