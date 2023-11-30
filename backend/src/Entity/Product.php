@@ -64,11 +64,15 @@ class Product
     #[ORM\ManyToOne(inversedBy: 'products')]
     private ?Category $category = null;
 
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: Test::class)]
+    private Collection $tests;
+
     public function __construct()
     {
         $this->genre = new ArrayCollection();
         $this->tag = new ArrayCollection();
         $this->platform = new ArrayCollection();
+        $this->tests = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -300,6 +304,36 @@ class Product
     public function setCategory(?Category $category): static
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Test>
+     */
+    public function getTests(): Collection
+    {
+        return $this->tests;
+    }
+
+    public function addTest(Test $test): static
+    {
+        if (!$this->tests->contains($test)) {
+            $this->tests->add($test);
+            $test->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTest(Test $test): static
+    {
+        if ($this->tests->removeElement($test)) {
+            // set the owning side to null (unless already changed)
+            if ($test->getProduct() === $this) {
+                $test->setProduct(null);
+            }
+        }
 
         return $this;
     }
