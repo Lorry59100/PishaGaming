@@ -23,7 +23,7 @@ class RegistrationController extends AbstractController
         $email = $data['email'];
         $userInDb = $userRepository->findOneBy(['email' => $email]);
         if($userInDb) {
-            return new JsonResponse(['Cette adresse mail est déjà prise', 201]);
+            return new JsonResponse(['error' => 'Une erreur est survenue.'], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $birthDateStr = $data['birthDate'];
@@ -37,7 +37,7 @@ class RegistrationController extends AbstractController
         $age = $currentDate->diff($dateBirthday)->y;
 
         if ($age < 16) {
-            return new JsonResponse(['message' => 'Vous devez avoir au moins 16 ans pour vous inscrire'], 201);
+            return new JsonResponse(['error' => 'Vous devez avoir au moins 16 ans pour vous inscrire'], JsonResponse::HTTP_BAD_REQUEST);
         }
         $user = new User();
         $user->setEmail($data['email'])
@@ -50,6 +50,6 @@ class RegistrationController extends AbstractController
         $em->flush();
         /* Créer un token et l'envoyer à l'adresse mail */
         
-            return new JsonResponse(['message' => 'Un mail vous a été envoyé pour valider votre adresse mail']);
+            return new JsonResponse(['message' => 'Un mail vous a été envoyé pour valider votre compte. Pensez à vérifier vos spams']);
     }
 }
