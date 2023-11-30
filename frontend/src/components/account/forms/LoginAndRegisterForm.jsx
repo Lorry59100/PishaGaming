@@ -10,15 +10,20 @@ import { LoginForm } from "./LoginForm";
 import { RegisterForm } from "./RegisterForm";
 
 export function LoginAndRegisterForm({onCloseForm}) {
-  const [showLoginForm, setShowLoginForm] = useState(true);
+  const [showLoginAndRegisterForm, setShowLoginAndRegisterForm] = useState(true);
 
   const toggleForm = () => {
-    setShowLoginForm(!showLoginForm);
+    setShowLoginAndRegisterForm(!showLoginAndRegisterForm);
   };
 
   const handleCloseForm = () => {
-    setShowLoginForm(false);
+    setShowLoginAndRegisterForm(false);
     onCloseForm(); // Notify Navbar.jsx about form closure
+  };
+
+  const handleFormSuccess = () => {
+    setShowLoginAndRegisterForm(false);
+    onCloseForm(); // Ferme le composant après le succès de l'enregistrement
   };
   return (
       <div className="add-product-panel">
@@ -29,7 +34,7 @@ export function LoginAndRegisterForm({onCloseForm}) {
             <h3>Pisha Gaming</h3>
             </a>
           </div>
-          {showLoginForm ? <LoginForm toggleForm={toggleForm} /> : <RegisterForm toggleForm={toggleForm} />}
+          {showLoginAndRegisterForm ? <LoginForm toggleForm={toggleForm} onFormSuccess={handleFormSuccess}  /> : <RegisterForm toggleForm={toggleForm} onFormSuccess={handleFormSuccess} />}
         </div>
         <div className="wallpaper-container">
         <IconContext.Provider value={{ size: "1.5em" }}>
