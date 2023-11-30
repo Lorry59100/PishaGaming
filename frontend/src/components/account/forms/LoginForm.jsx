@@ -2,21 +2,20 @@ import axios from "axios";
 import { Formik, Form, Field } from 'formik';
 import { FaFacebookF, FaApple, FaDiscord } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { IconContext } from "react-icons";
 import { URL, URL_LOGIN} from "../../../constants/urls/URLBack";
-import { URL_HOME } from "../../../constants/urls/URLFront";
 import { useAuth } from '../../account/services/tokenService';
-import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
+import { ToastSuccess, ToastImportantSuccess ,ToastError } from "../../services/toastService";
+
 export function LoginForm(props) {
-  const { login } = useAuth();
   const navigate = useNavigate();
+  const { login } = useAuth();
   const initialValues= {
     email: '',
     password: '',
     };
-
   const onSubmit=(values) => {
     console.log(values);
     axios.post(`${URL}${URL_LOGIN}`, {
@@ -25,9 +24,10 @@ export function LoginForm(props) {
     })
     .then((response) => {
       console.log('Response data', response.data);
-      login(response.data.token);
-      navigate(URL_HOME);
-      window.location.reload();
+      if (response.status === 200) {
+        login(response.data.token);
+        window.location.reload(true);
+    }
     })
     .catch((error) => {
       console.error('Erreur lors de la récupération des données :', error);
