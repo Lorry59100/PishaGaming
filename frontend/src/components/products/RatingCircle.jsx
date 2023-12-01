@@ -26,7 +26,7 @@ const RatingCircle = ({ tests }) => {
       <CircularProgressbar
         value={percentageRating}
         text={
-          <tspan dy={needDominantBaselineFix ? 1 : 0}>
+          <tspan dy={needDominantBaselineFix ? 5 : 5}>
           {Math.round(averageRating)}
           </tspan>}
         styles={buildStyles({
