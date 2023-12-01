@@ -11,23 +11,21 @@ import { IoIosAddCircleOutline } from 'react-icons/io';
 import { PiPencilSimpleLineFill } from 'react-icons/pi';
 import "../../assets/styles/components/singleproduct.css"
 import RatingCircle from './RatingCircle';
+import { calculateDiscountPercentage, convertToEuros } from './services/PriceServices';
 
-function truncateDescription(description, maxLength) {
-    if (description.length > maxLength) {
-        return description.substring(0, maxLength) + '...';
+function parseHTML(html, maxLength = null) {
+    // Créer un div temporaire
+    const tempDiv = document.createElement('div');
+    // Injecter le HTML dans le div
+    tempDiv.innerHTML = html;
+    // Récupérer le texte du div
+    let plainText = tempDiv.textContent || tempDiv.innerText;
+    // Tronquer le texte si maxLength est défini
+    if (maxLength !== null && plainText.length > maxLength) {
+      plainText = plainText.substring(0, maxLength) + '...';
     }
-    return description;
-}
-
-function parseAndTruncateHTML(html, maxLength) {
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    const plainText = doc.body.textContent || "";
-    return truncateDescription(plainText, maxLength);
-}
-
-function parseHTML(html) {
-    return new DOMParser().parseFromString(html, 'text/html');
-}
+    return plainText;
+  }
 
 export function SingleProduct() {
     const { id } = useParams();
@@ -48,7 +46,7 @@ export function SingleProduct() {
     if (product === null) {
         return <div>Chargement en cours...</div>;
     }
-    const truncatedDescription = parseAndTruncateHTML(product.description, 500);
+
     return (
         <div className='single-product-container'>
 
@@ -70,7 +68,7 @@ export function SingleProduct() {
                 </div>
                 <div className="stock-container">
                         <div className="in-stock">
-                            <div className="logo-container">
+                            <div className="logo-stock-container">
                                 <img src={logo} alt="logo" className='orange-logo'/>
                                 <h4>Pisha Gaming</h4>
                                 <div className="spacer"></div>
@@ -99,13 +97,13 @@ export function SingleProduct() {
                             <IconContext.Provider value={{ size: "1em", color: "grey"}}>
                                 <ImPriceTag/>
                             </IconContext.Provider>
-                            <h3>{((product.price / 100) * (100 / (100 - product.discount))).toFixed(2)} €</h3>
+                            <h3>{convertToEuros(product.old_price)} €</h3>
                         </div>
                         <div className="discount">
-                        <h3>-{product.discount}%</h3>
+                        <h3>-{calculateDiscountPercentage(product.old_price, product.price)}</h3>
                         </div>
                         <div className="price">
-                           <h1>{product.price} €</h1>
+                           <h1>{convertToEuros(product.price)} €</h1>
                         </div>
                     </div>
 
@@ -157,7 +155,7 @@ export function SingleProduct() {
             )}
                 <div className="about-container">
                     <h1>À propos du jeu</h1>
-                    <p>{truncatedDescription}</p>
+                    <p>{parseHTML(product.description, 500)}</p>
                     <a href="/">Voir plus</a>
                 </div>
                 <div className="rating-container">
@@ -181,7 +179,14 @@ export function SingleProduct() {
                             <h5>{product.developer}</h5>
                             <h5>{product.editor}</h5>
                             <h5>{product.release.date}</h5>
-                            <h5>{product.category}</h5>
+                            <h5 className='genres-list'>
+                                {product.genres.map((genre, index) => (
+                                    <span key={genre.id}>
+                                        {genre.name}
+                                        {index !== product.genres.length - 1 && <span className="comma">, </span>}
+                                    </span>
+                                ))}
+                            </h5>
                         </div>
                     </div>
                 </div>
@@ -202,10 +207,47 @@ export function SingleProduct() {
                     )}
                 </div>
 
+      {product.alternative_editions.length > 0 && (
+        <div className='editions-card-container'>
+          <h1>Editions</h1>
+          <div className='edition-card'>
+            {product.alternative_editions.map((edition) => (
+              <div key={edition.id} className='edition-card-info'>
+                <img src={edition.img} alt="" />
+                <h3>Edition: {edition.edition_name}</h3>
+                <p>{parseHTML(edition.description, 500)}</p>
+                <div className="edition-amount">
+                    <div className="first-price">  
+                        <IconContext.Provider value={{ size: "1em", color: "grey"}}>
+                            <ImPriceTag/>
+                        </IconContext.Provider>
+                        <h3>{convertToEuros(edition.old_price)} €</h3>
+                    </div>
+                    <div className="discount">
+                        <h3>{calculateDiscountPercentage(edition.old_price, edition.price)}</h3>
+                    </div>
+                    <div className="price">
+                        <h1>{convertToEuros(edition.price)} €</h1>
+                    </div>
+                </div>
+                <div className="card-btn-container">
+                    {edition.stock <= 0 && (
+                        <button type="submit" className='submit-button'>Hors stock</button>
+                        )}
+                    {edition.stock >= 0 && (
+                        <button type="submit" className='submit-button'>Acheter maintenant</button>
+                        )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
                 <div className="visuals-container">
                         <h1>Visuels</h1>
                         <div className="video-container">
-                            <iframe width="100%" height="700px" src="https://www.youtube.com/embed/LtuqmZp1Ku0?si=cAGVlndilW05SZUJ" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+                            <iframe width="100%" height="700px" src={product.trailer} title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
                         </div>
                         <div className="screenshots-container">
                             <div className="main-img">
@@ -225,27 +267,16 @@ export function SingleProduct() {
                 </div>
 
                 <div className="big-description">
-    <h1>Description</h1>
-    <p>
-        {showFullDescription ? parseHTML(product.description) : truncatedDescription}
-        {!showFullDescription && product.description.length > 500 && (
-            <>
-                <button className='show' onClick={() => setShowFullDescription(true)}>
-                    <IconContext.Provider value={{ size: "4em", color: "grey"}}>
-                        <IoIosAddCircleOutline/>
-                    </IconContext.Provider>
-                </button>
-            </>
-        )}
-        {showFullDescription && (
-            <button className='show' onClick={() => setShowFullDescription(false)}>
-                <IconContext.Provider value={{ size: "4em", color: "grey"}}>
-                    <AiOutlineMinusCircle/>
-                </IconContext.Provider>
-            </button>
-        )}
-    </p>
-</div>
+                    <h1>Description</h1>
+                    <p>
+                    {parseHTML(product.description, showFullDescription ? null : 500)}
+                    <button className='show' onClick={() => setShowFullDescription(!showFullDescription)}>
+                        <IconContext.Provider value={{ size: "4em", color: "grey"}}>
+                            {showFullDescription ? <AiOutlineMinusCircle/> : <IoIosAddCircleOutline/>}
+                        </IconContext.Provider>
+                    </button>
+                    </p>
+                </div>
 
                 <div className="tests">
                     <h1>Tests des joueurs</h1>
@@ -266,8 +297,7 @@ export function SingleProduct() {
                                 </a>
                             </button>
                     </div>
-                </div>
-                
+                </div> 
         </div>   
     </div>
     )
