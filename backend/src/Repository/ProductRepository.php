@@ -21,6 +21,21 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
+    public function getAlternativeEditions(string $productName, int $editionId): ?array
+{
+    $conn = $this->getEntityManager()->getConnection();
+    $sql = 'SELECT p.id, p.name, p.edition_id, p.img, p.old_price, p.price, p.stock, p.description, e.name AS edition_name
+    FROM product p
+    JOIN edition e ON p.edition_id = e.id
+    WHERE p.name = :productName AND p.edition_id != :editionId';;
+    $stmt = $conn->prepare($sql);
+    $resultSet = $stmt->executeQuery([
+        'productName' => $productName,
+        'editionId' => $editionId,
+    ]);
+
+    return $resultSet->fetchAllAssociative();
+}
 //    /**
 //     * @return Product[] Returns an array of Product objects
 //     */
