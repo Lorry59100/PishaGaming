@@ -76,7 +76,16 @@ function Navbar() {
       <div className="cart-profile">
         <IconContext.Provider value={{ size: '2em' }}>
           <a href="/"><TiShoppingCart /></a>
-          <button onClick={toggleProfileVisibility}><PiUserBold /></button>
+          {!decodedUserToken && (
+            <button onClick={toggleProfileVisibility}><PiUserBold /></button>
+          )}
+          {decodedUserToken && (
+            <button onClick={toggleProfileVisibility}>
+              <IconContext.Provider value={{ size: '2em'}}>
+                <PiUserBold className='user-icon-circled'/>
+              </IconContext.Provider>
+            </button>
+          )}
         </IconContext.Provider>
         {userToken && isProfileVisible && (
           <div className="profile-content">
@@ -107,11 +116,7 @@ function Navbar() {
         )}
       {!userToken && showLoginAndRegisterForm && <LoginAndRegisterForm login={login} onCloseForm={() => setShowLoginAndRegisterForm(false)} />}
       </div>
-      {decodedUserToken && (
-        <div className='id-container'> 
-          {decodedUserToken.firstname}
-        </div>
-      )}
+      
       </div>
     </div>
   );
