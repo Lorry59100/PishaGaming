@@ -2,11 +2,12 @@
 
 namespace App\Controller;
 
+use Exception;
 use App\Repository\ProductRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ProductsController extends AbstractController
 {
@@ -109,9 +110,34 @@ class ProductsController extends AbstractController
                 ];
             }
 
+            $genres = [];
+            foreach($product->getGenre() as $genre) {
+                $genres[] = [
+                    'id' => $genre->getId(),
+                    'name' => $genre->getName(),
+                ];
+            }
+
+            $alternativeEditions = $productRepository->getAlternativeEditions($product->getName(), $product->getEdition()->getId());
+            $alternativeEditionsArray = [];
+            foreach ($alternativeEditions as $alternativeEdition) {
+            $alternativeEditionsArray[] = [
+                'id' => $alternativeEdition['id'],
+                'name' => $alternativeEdition['name'],
+                'img' => $alternativeEdition['img'],
+                'old_price' => $alternativeEdition['old_price'],
+                'price' => $alternativeEdition['price'],
+                'stock' => $alternativeEdition['stock'],
+                'description' => $alternativeEdition['description'],
+                'edition_id' => $alternativeEdition['edition_id'],
+                'edition_name' => $alternativeEdition['edition_name'],
+            ];
+            }
+
             $productsArray = [
                 'name' => $product->getName(),
                 'stock' => $product->getStock(),
+                'old_price' => $product->getOldPrice(),
                 'price' => $product->getPrice(),
                 'img' => $product->getImg(),
                 'description' => $product->getDescription(),
@@ -120,9 +146,13 @@ class ProductsController extends AbstractController
                 'editor' => $product->getEditor(),
                 'release' => $product->getRelease(),
                 'stock' => $product->getStock(),
+                'edition' => $product->getEdition()->getName(),
+                'trailer' => $product->getTrailer(),
+                'genres' => $genres,
                 'plateformes' => $platforms,
                 'tags' => $tags,
                 'tests' => $tests,
+                'alternative_editions' => $alternativeEditionsArray,
             ];
 
         return new JsonResponse($productsArray, 200);
