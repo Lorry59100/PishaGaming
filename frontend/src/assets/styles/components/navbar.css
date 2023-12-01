@@ -44,6 +44,7 @@ margin-left: 0.5em;
 .logo>h3 {
 width: 30px;
 color: white;
+text-shadow: 1px 1px 1px black;
 }
 
 .menu {
@@ -66,6 +67,7 @@ width: 90%;
 .links>a, .cart-profile>a {
 margin: auto 1em;
 color: white;
+text-shadow: 1px 1px 1px black;
 }
 
 .cart-profile {
@@ -73,12 +75,15 @@ margin-right: 1em;
 display: flex;
 color: white;
 }
+.cart-profile>a>svg, .cart-profile>button {
+filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.4));
+}
 
 .cart-profile>button {
 color: white;
 }
 
-.cart-profile button:hover > svg, .cart-profile a:hover > svg {
+.cart-profile button:hover > svg:not(.user-icon-circled), .cart-profile a:hover > svg:not(.user-icon-circled) {
 color: var(--orange)
 }
 
