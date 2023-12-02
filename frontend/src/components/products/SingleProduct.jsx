@@ -12,15 +12,14 @@ import { PiPencilSimpleLineFill } from 'react-icons/pi';
 import "../../assets/styles/components/singleproduct.css"
 import RatingCircle from './RatingCircle';
 import { calculateDiscountPercentage, convertToEuros } from './services/PriceServices';
+import { formatDate } from '../account/services/dateServices';
+import { FaRegHeart } from "react-icons/fa";
+import parse from 'html-react-parser';
 
 function parseHTML(html, maxLength = null) {
-    // Créer un div temporaire
     const tempDiv = document.createElement('div');
-    // Injecter le HTML dans le div
     tempDiv.innerHTML = html;
-    // Récupérer le texte du div
     let plainText = tempDiv.textContent || tempDiv.innerText;
-    // Tronquer le texte si maxLength est défini
     if (maxLength !== null && plainText.length > maxLength) {
       plainText = plainText.substring(0, maxLength) + '...';
     }
@@ -32,6 +31,12 @@ export function SingleProduct() {
     const [product, setProduct] = useState(null);
     const [showAllTags, setShowAllTags] = useState(false);
     const [showFullDescription, setShowFullDescription] = useState(false);
+
+    const toggleDescription = () => {
+        setShowFullDescription(!showFullDescription);
+      };
+    
+      const descriptionClassName = showFullDescription ? 'big-description full' : 'big-description';
 
     useEffect(() => {
         axios.get(`${URL}${URL_SINGLE_PRODUCT}/${id}`)
@@ -63,6 +68,9 @@ export function SingleProduct() {
             {/* EN STOCK */}
             {product.stock > 0 && (
             <div className="buy-info-container">
+                <IconContext.Provider value={{ size: "1.5em" }}>
+                    <FaRegHeart className='heart' />
+                </IconContext.Provider>
                 <div className="title">
                     <h1>{product.name}</h1>
                 </div>
@@ -103,7 +111,7 @@ export function SingleProduct() {
                         <h3>-{calculateDiscountPercentage(product.old_price, product.price)}</h3>
                         </div>
                         <div className="price">
-                           <h1>{convertToEuros(product.price)} €</h1>
+                            <h1>{convertToEuros(product.price)} €</h1>
                         </div>
                     </div>
 
@@ -155,7 +163,7 @@ export function SingleProduct() {
             )}
                 <div className="about-container">
                     <h1>À propos du jeu</h1>
-                    <p>{parseHTML(product.description, 500)}</p>
+                    <p>{parseHTML(product.description, 200)}</p>
                     <a href="/">Voir plus</a>
                 </div>
                 <div className="rating-container">
@@ -178,7 +186,7 @@ export function SingleProduct() {
                             <h5> <button className='invisible-button'> Comment installer le jeu </button></h5>
                             <h5>{product.developer}</h5>
                             <h5>{product.editor}</h5>
-                            <h5>{product.release.date}</h5>
+                            <h5>{formatDate(product.release.date)}</h5>
                             <h5 className='genres-list'>
                                 {product.genres.map((genre, index) => (
                                     <span key={genre.id}>
@@ -266,17 +274,17 @@ export function SingleProduct() {
                         </div>
                 </div>
 
-                <div className="big-description">
+                <div className={descriptionClassName}>
                     <h1>Description</h1>
                     <p>
-                    {parseHTML(product.description, showFullDescription ? null : 500)}
-                    <button className='show' onClick={() => setShowFullDescription(!showFullDescription)}>
-                        <IconContext.Provider value={{ size: "4em", color: "grey"}}>
-                            {showFullDescription ? <AiOutlineMinusCircle/> : <IoIosAddCircleOutline/>}
-                        </IconContext.Provider>
-                    </button>
+                        {parse(product.description, showFullDescription)}
                     </p>
                 </div>
+                <button className='show' onClick={toggleDescription}>
+                    <IconContext.Provider value={{ size: '4em', color: 'grey' }}>
+                        {showFullDescription ? <AiOutlineMinusCircle /> : <IoIosAddCircleOutline />}
+                    </IconContext.Provider>
+                </button>
 
                 <div className="tests">
                     <h1>Tests des joueurs</h1>
