@@ -1,0 +1,107 @@
+<?php
+
+namespace App\Controller;
+
+use App\Entity\Cart;
+use App\Entity\Product;
+use App\Repository\CartRepository;
+use App\Repository\PlatformRepository;
+use App\Repository\ProductRepository;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
+class CartController extends AbstractController
+{
+    /* #[Route('/cart', name: 'app_cart')]
+    public function index(): Response
+    {
+        return $this->render('cart/index.html.twig', [
+            'controller_name' => 'CartController',
+        ]);
+    } */
+
+    /**
+     * @Route("/add-to-cart/{id}", name="add_to_cart", methods={"POST"})
+     */
+    public function addToCart(Request $request, $id, ProductRepository $productRepository, UserRepository $userRepository, EntityManagerInterface $entityManager,
+    CartRepository $cartRepository): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        
+        //Récuperer le produit
+        $product = $productRepository->find($id);
+
+        // Vérifier si le produit existe
+        if (!$product) {
+            return new JsonResponse(['error' => 'Product not found.'], 404);
+        }
+
+        // Récupérer l'utilisateur connecté (vous devrez implémenter votre propre logique d'authentification ici)
+        $userId = $data['userId'];
+        $user = $userRepository->find($userId);
+
+        // Vérifier si l'utilisateur est connecté
+        if (!$user) {
+            return new JsonResponse(['error' => 'User not authenticated.'], 401);
+        }
+
+        $existingCartItem = $cartRepository->findOneBy([
+            'user' => $user,
+            'product' => $product,
+            'platform' => $data['platform'],
+        ]);
+        
+        if ($existingCartItem) {
+            // Si l'élément existe déjà, mettez à jour la quantité par exemple
+            $existingCartItem->setQuantity($existingCartItem->getQuantity() + $data['quantity']);
+            $entityManager->persist($existingCartItem);
+            $entityManager->flush();
+        } else {
+            // Si l'élément n'existe pas, créez une nouvelle entité Cart
+            $cartItem = new Cart();
+            $cartItem->setQuantity($data['quantity']);
+            $cartItem->setPlatform($data['platform']);
+            $cartItem->setProduct($product);
+            $cartItem->setUser($user);
+            $entityManager->persist($cartItem);
+            $entityManager->flush();
+        }
+
+        return new JsonResponse(['success' => true, 'message' => 'Product added to cart.']);
+        }
+
+    /**
+     * @Route("/get-cart/{id}", name="get_cart", methods={"GET"})
+     */
+    public function getcart(Request $request, $id, PlatformRepository $platformRepository, ProductRepository $productRepository, UserRepository $userRepository,
+    CartRepository $cartRepository): JsonResponse
+    {
+    $carts = $cartRepository->findBy(['user' => $id]);
+    $cartsData = [];
+
+    foreach ($carts as $cart) {
+    $idPlatform = $cart->getPlatform();
+    $platform = $platformRepository->findOneBy(['id' => $idPlatform]);
+    $platform = $platform->getName();
+    $cartData = [
+    'id' => $cart->getId(),
+    'quantity' => $cart->getQuantity(),
+    'platform' => $platform,
+    'img' => $cart->getProduct()->getImg(),
+    'productId' => $cart->getProduct()->getId(),
+    'name' => $cart->getProduct()->getName(),
+    'oldPrice' => $cart->getProduct()->getOldPrice(),
+    'price' => $cart->getProduct()->getPrice(),
+    ];
+
+    $cartsData[] = $cartData;
+    }
+    return new JsonResponse($cartsData, 200);
+    }
+}

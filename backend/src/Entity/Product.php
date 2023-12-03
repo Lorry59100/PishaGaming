@@ -67,12 +67,20 @@ class Product
     #[ORM\OneToMany(mappedBy: 'product', targetEntity: Test::class)]
     private Collection $tests;
 
+    #[ORM\OneToMany(mappedBy: 'products', targetEntity: OrderDetails::class)]
+    private Collection $orderDetails;
+
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: Cart::class)]
+    private Collection $carts;
+
     public function __construct()
     {
         $this->genre = new ArrayCollection();
         $this->tag = new ArrayCollection();
         $this->platform = new ArrayCollection();
         $this->tests = new ArrayCollection();
+        $this->orderDetails = new ArrayCollection();
+        $this->carts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -332,6 +340,66 @@ class Product
             // set the owning side to null (unless already changed)
             if ($test->getProduct() === $this) {
                 $test->setProduct(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, OrderDetails>
+     */
+    public function getOrderDetails(): Collection
+    {
+        return $this->orderDetails;
+    }
+
+    public function addOrderDetail(OrderDetails $orderDetail): static
+    {
+        if (!$this->orderDetails->contains($orderDetail)) {
+            $this->orderDetails->add($orderDetail);
+            $orderDetail->setProducts($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrderDetail(OrderDetails $orderDetail): static
+    {
+        if ($this->orderDetails->removeElement($orderDetail)) {
+            // set the owning side to null (unless already changed)
+            if ($orderDetail->getProducts() === $this) {
+                $orderDetail->setProducts(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Cart>
+     */
+    public function getCarts(): Collection
+    {
+        return $this->carts;
+    }
+
+    public function addCart(Cart $cart): static
+    {
+        if (!$this->carts->contains($cart)) {
+            $this->carts->add($cart);
+            $cart->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCart(Cart $cart): static
+    {
+        if ($this->carts->removeElement($cart)) {
+            // set the owning side to null (unless already changed)
+            if ($cart->getProduct() === $this) {
+                $cart->setProduct(null);
             }
         }
 
