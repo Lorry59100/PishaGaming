@@ -5,7 +5,7 @@ import { IconContext } from "react-icons";
 import { AiOutlineCheck, AiOutlineClose, AiOutlineMinusCircle } from 'react-icons/ai';
 import { TiShoppingCart } from 'react-icons/ti';
 import { ImPriceTag } from 'react-icons/im';
-import {URL, URL_SINGLE_PRODUCT } from '../../constants/urls/URLBack';
+import {URL, URL_SINGLE_PRODUCT, URL_ADD_TO_CART } from '../../constants/urls/URLBack';
 import logo from '../../assets/img/Logo.png';
 import { IoIosAddCircleOutline } from 'react-icons/io';
 import { PiPencilSimpleLineFill } from 'react-icons/pi';
@@ -15,6 +15,7 @@ import { calculateDiscountPercentage, convertToEuros } from './services/PriceSer
 import { formatDate } from '../account/services/dateServices';
 import { FaRegHeart } from "react-icons/fa";
 import parse from 'html-react-parser';
+import { useAuth } from '../account/services/tokenService';
 
 function parseHTML(html, maxLength = null) {
     const tempDiv = document.createElement('div');
@@ -31,12 +32,71 @@ export function SingleProduct() {
     const [product, setProduct] = useState(null);
     const [showAllTags, setShowAllTags] = useState(false);
     const [showFullDescription, setShowFullDescription] = useState(false);
+    const [selectedPlatform, setSelectedPlatform] = useState('');
+    const { decodedUserToken } = useAuth();
+    
+    // eslint-disable-next-line no-unused-vars
+    const [cart, setCart] = useState([]);
 
     const toggleDescription = () => {
         setShowFullDescription(!showFullDescription);
       };
     
       const descriptionClassName = showFullDescription ? 'big-description full' : 'big-description';
+
+      // Set an initial platform when the component is loaded
+    useEffect(() => {
+        if (product && product.plateformes.length > 0) {
+            setSelectedPlatform(product.plateformes[0].id);
+        }
+    }, [product]);
+
+      const addToCart = () => {
+        if(!decodedUserToken) {
+            console.log(product.id);
+            // Récupérer le panier depuis le stockage local
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            // Vérifier si le produit est déjà dans le panier
+            const existingProductIndex = cart.findIndex(item => item.id === product.id && item.platform === selectedPlatform);
+                if (existingProductIndex !== -1) {
+                // Si le produit est déjà dans le panier, incrémentez la quantité
+                    cart[existingProductIndex].quantity += 1;
+                } else {
+                // Si le produit n'est pas encore dans le panier, ajoutez-le
+                    cart.push({
+                    id: product.id,
+                    name: product.name,
+                    img: product.img,
+                    platform: selectedPlatform,
+                    quantity: 1,
+                });
+                }
+            // Mettre à jour le panier dans le stockage local
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+        if (decodedUserToken) {
+            console.log(decodedUserToken);
+            console.log('vous êtes connecté');
+            axios.post(`${URL}${URL_ADD_TO_CART}/${id}`, {
+                platform: selectedPlatform,
+                userId: decodedUserToken.id,
+                // Ajoutez d'autres propriétés du produit ici
+                id: product.id,
+                name: product.name,
+                img: product.img,
+                quantity: 1,
+                // Ajoutez toutes les autres propriétés nécessaires
+            })
+            .then(response => {
+                console.log(response.data);
+                // Mise à jour de l'état du panier dans le frontend
+                setCart(response.data.cart);
+            })
+            .catch(error => {
+                console.error('Erreur lors de l\'ajout au panier :', error);
+            });
+        }
+      };
 
     useEffect(() => {
         axios.get(`${URL}${URL_SINGLE_PRODUCT}/${id}`)
@@ -48,9 +108,11 @@ export function SingleProduct() {
             console.error('Erreur lors de la récupération du produit :', error);
         })
     }, [id]);
+    console.log('produit: ', product);
     if (product === null) {
         return <div>Chargement en cours...</div>;
     }
+    
 
     return (
         <div className='single-product-container'>
@@ -91,12 +153,12 @@ export function SingleProduct() {
                 </div>
 
                     <div className="platforms">
-                        <select className="platforms-dropdown">
+                        <select className="platforms-dropdown" value={selectedPlatform} onChange={(e) => setSelectedPlatform(e.target.value)}>
                             {product.plateformes.map(plateforme => (
-                            <option key={plateforme.id} value={plateforme.id} className='dropdown-options'>
-                                {plateforme.name}
-                            </option>
-                        ))}
+                                <option key={plateforme.id} value={plateforme.id} className='dropdown-options'>
+                                    {plateforme.name}
+                                </option>
+                            ))}
                         </select>
                     </div>
 
@@ -122,7 +184,7 @@ export function SingleProduct() {
                             </IconContext.Provider>
                         </div>
                         <div className="buy-btn">
-                                <button type="submit" className='submit-button'>Acheter maintenant</button>
+                        <button type="submit" className='submit-button' onClick={addToCart}>Acheter maintenant</button>
                         </div>
                     </div>
             </div>
