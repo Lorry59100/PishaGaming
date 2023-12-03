@@ -135,6 +135,7 @@ class ProductsController extends AbstractController
             }
 
             $productsArray = [
+                'id' => $product->getId(),
                 'name' => $product->getName(),
                 'stock' => $product->getStock(),
                 'old_price' => $product->getOldPrice(),
