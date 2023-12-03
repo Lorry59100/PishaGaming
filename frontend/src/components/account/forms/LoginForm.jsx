@@ -16,15 +16,23 @@ export function LoginForm(props) {
     };
   const onSubmit=(values) => {
     console.log(values);
+    const getCart = localStorage.getItem('cart');
+    let cartItems = [];
+    if (getCart) {
+    cartItems = JSON.parse(getCart);
+    }
+
     axios.post(`${URL}${URL_LOGIN}`, {
       email: values.email,
       password: values.password,
+      cart: cartItems,
     })
     .then((response) => {
       console.log('Response data', response.data);
       if (response.status === 200) {
+        console.log(response.data)
         login(response.data.token);
-        window.location.reload(true);
+        /* window.location.reload(true); */
     }
     })
     .catch((error) => {
