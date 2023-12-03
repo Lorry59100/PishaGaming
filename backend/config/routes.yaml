@@ -33,6 +33,16 @@ add_product:
     controller: App\Controller\AdminController::addProduct
     methods: POST
 
+add_to_cart:
+    path: /add-to-cart/{id}
+    controller: App\Controller\CartController::addToCart
+    methods: POST
+
+get_cart:
+    path: /get-cart/{id}
+    controller: App\Controller\CartController::getCart
+    methods: GET
+
 app_logout:
     path: /logout
     methods: GET
