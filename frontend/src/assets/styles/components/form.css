@@ -126,7 +126,7 @@ margin: 0.5em 0;
 .cutline-form {
 height: 1px;
 background: linear-gradient(to right, rgba(204, 204, 204, 0), rgba(204, 204, 204, 1), rgba(204, 204, 204, 0));
-margin: 20px 0;
+margin: 2em 0;
 width: 100%;
 position: relative;
 }
