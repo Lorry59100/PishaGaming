@@ -77,22 +77,52 @@ class CartController extends AbstractController
         }
 
     /**
+     * @Route("/get-storage", name="get_storage", methods={"GET"})
+     */
+    public function getStorage(Request $request, PlatformRepository $platformRepository, ProductRepository $productRepository, UserRepository $userRepository,
+    CartRepository $cartRepository): JsonResponse
+    {
+        $ids = $request->query->get('ids');
+
+        if (!$ids) {
+            return new JsonResponse(['error' => 'IDs manquants.'], 400);
+        }
+    
+        $ids = is_array($ids) ? $ids : explode(',', $ids);
+    
+        $products = $productRepository->findBy(['id' => $ids]);
+    
+        $productsArray = [];
+    
+        foreach ($products as $product) {
+            $productArray = [
+                'id' => $product->getId(),
+                'name' => $product->getName(),
+                'oldPrice' => $product->getOldPrice(),
+                'price' => $product->getPrice(),
+                // Ajoutez d'autres propriétés du produit selon vos besoins
+            ];
+    
+            $productsArray[] = $productArray;
+        }
+    
+        return new JsonResponse($productsArray, 200);
+    }
+
+    /**
      * @Route("/get-cart/{id}", name="get_cart", methods={"GET"})
      */
-    public function getcart(Request $request, $id, PlatformRepository $platformRepository, ProductRepository $productRepository, UserRepository $userRepository,
+    public function getCart(Request $request, $id, PlatformRepository $platformRepository, ProductRepository $productRepository, UserRepository $userRepository,
     CartRepository $cartRepository): JsonResponse
     {
     $carts = $cartRepository->findBy(['user' => $id]);
     $cartsData = [];
 
     foreach ($carts as $cart) {
-    $idPlatform = $cart->getPlatform();
-    $platform = $platformRepository->findOneBy(['id' => $idPlatform]);
-    $platform = $platform->getName();
     $cartData = [
     'id' => $cart->getId(),
     'quantity' => $cart->getQuantity(),
-    'platform' => $platform,
+    'platform' => $cart->getPlatform(),
     'img' => $cart->getProduct()->getImg(),
     'productId' => $cart->getProduct()->getId(),
     'name' => $cart->getProduct()->getName(),
