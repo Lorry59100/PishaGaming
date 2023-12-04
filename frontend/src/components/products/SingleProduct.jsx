@@ -47,11 +47,12 @@ export function SingleProduct() {
       // Set an initial platform when the component is loaded
     useEffect(() => {
         if (product && product.plateformes.length > 0) {
-            setSelectedPlatform(product.plateformes[0].id);
+            setSelectedPlatform(product.plateformes[0].name);
         }
     }, [product]);
 
       const addToCart = () => {
+        console.log(selectedPlatform);
         if(!decodedUserToken) {
             console.log(product.id);
             // Récupérer le panier depuis le stockage local
@@ -68,6 +69,7 @@ export function SingleProduct() {
                     name: product.name,
                     img: product.img,
                     platform: selectedPlatform,
+                    price: product.price,
                     quantity: 1,
                 });
                 }
@@ -155,7 +157,7 @@ export function SingleProduct() {
                     <div className="platforms">
                         <select className="platforms-dropdown" value={selectedPlatform} onChange={(e) => setSelectedPlatform(e.target.value)}>
                             {product.plateformes.map(plateforme => (
-                                <option key={plateforme.id} value={plateforme.id} className='dropdown-options'>
+                                <option key={plateforme.id} value={plateforme.name} className='dropdown-options'>
                                     {plateforme.name}
                                 </option>
                             ))}
