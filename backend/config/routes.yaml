@@ -43,6 +43,11 @@ get_cart:
     controller: App\Controller\CartController::getCart
     methods: GET
 
+get_storage:
+    path: /get-storage
+    controller: App\Controller\CartController::getStorage
+    methods: GET
+
 app_logout:
     path: /logout
     methods: GET
