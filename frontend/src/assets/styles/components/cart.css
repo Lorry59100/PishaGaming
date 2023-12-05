@@ -1,7 +1,6 @@
 .cart-view-container {
 display: flex;
 justify-content: center;
-margin-top: 2em;
 }
 .cart-component-container {
 display: grid;
@@ -9,13 +8,18 @@ grid-template-columns: repeat(6, 1fr);
 gap: 2em;
 max-width: 1200px;
 width: 100%;
+margin-top: 10em;
 }
 
-.buying-tunnel-container {
-grid-column: span 6;
+.buying-tunnel-layout-container {
 height: 100px;
 background-color: black;
 display: flex;
+justify-content: space-between;
+margin-bottom: 2em;
+position: fixed;
+width: 100%;
+z-index: 2;
 }
 
 .cart-container {
@@ -155,4 +159,21 @@ margin-left: 0.5em;
 h2 {
 color: white;
 margin-bottom: 1em;
+}
+
+body {
+    padding-top: unset;
+}
+
+.tunnel-cart-container {
+    width: 100%;
+}
+
+.cart-component-layout-container {
+    display: flex;
+    justify-content: center;
+}
+
+.cart-tunnel>span {
+    border:  solid var(--orange)
 }
