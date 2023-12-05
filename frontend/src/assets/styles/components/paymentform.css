@@ -1,0 +1,125 @@
+.payment-container {
+display: grid;
+grid-template-columns: repeat(6, 1fr);
+gap: 2em;
+max-width: 1200px;
+width: 100%;
+margin-top: 10em;
+}
+
+.address-and-payform-container {
+grid-column: span 4;
+}
+
+.summary-and-total-container {
+grid-column: span 2;
+}
+
+.payment-layout-container {
+display: flex;
+justify-content: center;
+}
+
+.info-change-container {
+display: flex;
+align-items: center;
+justify-content: space-between;
+border: 2px solid var(--grey);
+border-radius: 10px;
+padding: 2em;
+}
+
+.address-info :not(h4), .change-address {
+color: var(--grey)
+}
+.address-info>h4, .change-address>svg:hover {
+color: white;
+}
+.change-address>svg:hover {
+cursor: pointer;
+}
+
+.payment-tunnel>.tunnel-line {
+    background: var(--orange);
+}
+
+.payment-tunnel>.index-tunnel {
+    border: 4px solid var(--orange);
+}
+
+.single-item-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.summary-container {
+    background: var(--medium-dark);
+  width: 100%;
+  padding: 2em;
+  border-radius: 10px;
+}
+
+.product-info-quantity {
+    max-width: 300px;
+}
+
+.cutline-summary-form {
+height: 1px;
+background: linear-gradient(to right, rgba(204, 204, 204, 0), rgba(204, 204, 204, 1), rgba(204, 204, 204, 0));
+margin: 1em 0;
+width: 100%;
+position: relative;
+}
+
+.white-line {
+    height: 2px;
+    background: white;
+    width: 100%;
+    margin: 1em 0;
+}
+
+.product-info-quantity>h3 {
+ color: white;
+}
+
+.product-info-quantity>h4 {
+ color: var(--grey);
+}
+
+.product-price {
+    color: var(--grey);
+}
+
+.summary-total-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+}
+
+.summary-total-container>h2 {
+    margin-bottom: unset;
+}
+
+.btn-summary-container {
+width: 100%;
+margin-top: 0.5em;
+margin-bottom: 0.5em;
+}
+
+.btn-summary-container>button {
+width: 100%;
+}
+
+.summary-container>span {
+color: var(--grey);
+}
+
+.summary-container>span>div>a {
+text-decoration: underline;
+color: #6d6d6d;
+}
+.summary-container>span {
+text-align: center;
+}
