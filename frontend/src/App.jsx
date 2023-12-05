@@ -3,21 +3,24 @@ import { BrowserRouter } from "react-router-dom";
 import Routes from "./routes/Routes"
 import Navbar from './components/layouts/Navbar/Navbar';
 import Footer from './components/layouts/Footer';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import { NavbarVisibilityProvider } from './contexts/NavbarVisibilityContext';
 
 function App() {
 
   return (
-    <BrowserRouter>
-      <div>
-        <Navbar/>
-        <main>
-          <ToastContainer/>
-          <Routes />
-        </main>
-        <Footer/>
-      </div>
-    </BrowserRouter>
+    <NavbarVisibilityProvider>
+      <BrowserRouter>
+        <div>
+          <Navbar/>
+          <main>
+            <ToastContainer/>
+            <Routes />
+          </main>
+          <Footer/>
+        </div>
+      </BrowserRouter>
+    </NavbarVisibilityProvider>
   )
 }
 
