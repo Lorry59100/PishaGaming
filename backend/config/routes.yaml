@@ -53,6 +53,11 @@ pay:
     controller: App\Controller\PaymentController::pay
     methods: POST
 
+order:
+    path: /order
+    controller: App\Controller\OrderController::order
+    methods: POST
+
 app_logout:
     path: /logout
     methods: GET
