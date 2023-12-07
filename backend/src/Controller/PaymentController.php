@@ -26,24 +26,38 @@ class PaymentController extends AbstractController
      * @Route("/pay", name="pay", methods={"POST"})
      */
     public function pay(Request $request): JsonResponse
-{
-    // définir un montant
-    $amountToPay = 5000;
+    {
+        // Récupérez le montant total depuis le corps de la requête POST
+        $data = json_decode($request->getContent(), true);
+        
+        // Récupérez cartData du corps de la requête POST
+        $cartData = $data['cartData'];
 
-    // Configurez votre clé secrète Stripe
-    $stripeSecretKey = $_ENV['STRIPE_SK'];
-    Stripe::setApiKey($stripeSecretKey);
+        // Initialisez le montant total
+        $totalPrice = 0;
 
-    // Créez une intention de paiement (PaymentIntent)
-    $paymentIntent = PaymentIntent::create([
-        'amount' => $amountToPay, // Montant en centimes
-        'currency' => 'eur', // Devise
-    ]);
+        // Parcourez chaque élément du panier et calculez le montant total
+        foreach ($cartData as $item) {
+            // Assurez-vous que chaque article a une propriété "quantity" et "price"
+            if (isset($item['quantity']) && isset($item['price'])) {
+                $totalPrice += $item['quantity'] * $item['price'];
+            }
+        }
 
-    // Récupérez le clientSecret de l'intention de paiement
-    $clientSecret = $paymentIntent->client_secret;
+        // Configurez votre clé secrète Stripe
+        $stripeSecretKey = $_ENV['STRIPE_SK'];
+        Stripe::setApiKey($stripeSecretKey);
 
-    // Envoyez le clientSecret au client (par exemple, en tant que réponse JSON)
-    return new JsonResponse(['clientSecret' => $clientSecret, 'amountToPay' => $amountToPay]);
-}
+        // Créez une intention de paiement (PaymentIntent)
+        $paymentIntent = PaymentIntent::create([
+            'amount' => $totalPrice, // Montant en centimes
+            'currency' => 'eur', // Devise
+        ]);
+
+        // Récupérez le clientSecret de l'intention de paiement
+        $clientSecret = $paymentIntent->client_secret;
+
+        // Envoyez le clientSecret au client (par exemple, en tant que réponse JSON)
+        return new JsonResponse(['clientSecret' => $clientSecret, 'totalPrice' => $totalPrice]);
+    }
 }
