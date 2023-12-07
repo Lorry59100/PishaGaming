@@ -27,6 +27,7 @@ justify-content: space-between;
 border: 2px solid var(--grey);
 border-radius: 10px;
 padding: 2em;
+margin-bottom: 3em;
 }
 
 .address-info :not(h4), .change-address {
@@ -53,7 +54,7 @@ cursor: pointer;
     align-items: center;
 }
 
-.summary-container {
+.summary-payment-container {
     background: var(--medium-dark);
   width: 100%;
   padding: 2em;
@@ -123,3 +124,9 @@ color: #6d6d6d;
 .summary-container>span {
 text-align: center;
 }
+
+.pay-form {
+    background: var(--grey);
+    border-radius: 10px;
+}
+

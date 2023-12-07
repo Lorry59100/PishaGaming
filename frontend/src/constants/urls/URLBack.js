@@ -7,3 +7,4 @@ export const URL_SINGLE_PRODUCT = "/single-product"
 export const URL_ADD_TO_CART = "/add-to-cart"
 export const URL_USER_CART = '/get-cart'
 export const URL_STORAGE_CART = '/get-storage'
+export const URL_PAY = '/pay'

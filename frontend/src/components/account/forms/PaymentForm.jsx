@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import axios from 'axios'
 import { NavbarVisibilityContext } from "../../../contexts/NavbarVisibilityContext";
 import { Paybar } from "../../layouts/Navbar/Paybar";
@@ -8,6 +8,9 @@ import { IconContext } from "react-icons";
 import { useAuth } from "../services/tokenService";
 import { URL, URL_USER_CART } from "../../../constants/urls/URLBack";
 import { calculateTotal, convertToEuros } from "../../products/services/PriceServices";
+import {Elements} from '@stripe/react-stripe-js';
+import CheckoutForm from "./CheckoutForm";
+import { stripePromise } from "../services/Stripe";
 
 
 export function PaymentForm() {
@@ -15,6 +18,23 @@ export function PaymentForm() {
     const { decodedUserToken } = useAuth();
     const [cartData, setCartData] = useState(null);
     const totalPrice = calculateTotal(cartData);
+    const [stripe, setStripe] = useState(null);
+    const checkoutFormRef = useRef();
+
+    const handlePayClick = (event) => {
+        // Appeler la fonction de soumission du formulaire Stripe depuis le composant enfant
+        checkoutFormRef.current.handleSubmit(event);
+      };
+
+      useEffect(() => {
+        const fetchStripe = async () => {
+          const instanceStripe = await stripePromise;
+          setStripe(instanceStripe);
+        };
+    
+        fetchStripe();
+      }, []);
+
     useEffect(() => {
         hideNavbar();
     
@@ -42,10 +62,10 @@ export function PaymentForm() {
         }
     }, [decodedUserToken]);
     console.log('cartData : ',cartData);
+
   return (
     <div>
         <Paybar/>
-
         <div className="payment-layout-container">
             <div className="payment-container">
                 <div className="address-and-payform-container">
@@ -63,10 +83,16 @@ export function PaymentForm() {
                             </div>
                         </div>
                     </div>
+                    <div className="payform-container">
+                        <h2>Méthode de paiement</h2>
+                    <Elements stripe={stripe}>
+                        <CheckoutForm ref={checkoutFormRef}/>
+                    </Elements>
+                    </div>
                 </div>
                 <div className="summary-and-total-container">
                     <h2>Résumé</h2>
-                    <div className="summary-container">
+                    <div className="summary-payment-container">
                         {cartData && cartData.map((item, index) => (
                             <div key={item.id} className="items-container">
                                 <div className="single-item-container">
@@ -87,7 +113,7 @@ export function PaymentForm() {
                             <h2>{convertToEuros(totalPrice)}€</h2>
                         </div>
                         <div className="btn-summary-container">
-                            <button type="submit" className='submit-button'>Payer</button>
+                            <button type="submit" className='submit-button' onClick={handlePayClick}>Payer</button>
                         </div>
                         <span>
                             <div>
