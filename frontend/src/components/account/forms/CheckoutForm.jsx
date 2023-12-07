@@ -4,17 +4,22 @@ import { useStripe, useElements, CardNumberElement, CardExpiryElement, CardCvcEl
 import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
 import '../../../assets/styles/components/checkoutform.css';
-import { URL, URL_PAY } from '../../../constants/urls/URLBack';
+import { URL, URL_PAY, URL_ORDER } from '../../../constants/urls/URLBack';
+import PropTypes from "prop-types";
+import { useAuth } from '../services/tokenService';
 
-const CheckoutForm = forwardRef((props, ref) => {
+const CheckoutForm = forwardRef(({ cartData }, ref) => {
   const [isFormValid, setIsFormValid] = useState(false);
   const stripe = useStripe();
   const elements = useElements();
   const [customerName, setCustomerName] = useState('');
+  const { decodedUserToken } = useAuth();
+  
+  console.log(cartData);
 
   const getClientSecret = async () => {
     try {
-      const response = await axios.post(`${URL}${URL_PAY}`, {});
+      const response = await axios.post(`${URL}${URL_PAY}`, {cartData});
       return response.data.clientSecret;
     } catch (error) {
       console.error('Erreur lors de la récupération du clientSecret :', error);
@@ -96,7 +101,7 @@ const CheckoutForm = forwardRef((props, ref) => {
       },
     };
 
-    const clientSecret = await getClientSecret(); // Obtenir le clientSecret ici
+    const clientSecret = await getClientSecret(cartData); // Obtenir le clientSecret ici
 
     if (clientSecret) {
       try {
@@ -106,7 +111,15 @@ const CheckoutForm = forwardRef((props, ref) => {
           console.error(result.error.message);
         } else {
           console.log('Paiement confirmé avec succès !');
+          const userId = decodedUserToken.id;
           // Redirigez l'utilisateur vers votre URL de réussite ou effectuez d'autres actions nécessaires
+          axios.post(`${URL}${URL_ORDER}`, {cartData, userId})
+                .then(response => {
+                    console.log(response.data)
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la récupération du panier :', error);
+                });
         }
       } catch (error) {
         console.error('Erreur lors du paiement :', error);
@@ -154,6 +167,10 @@ const CheckoutForm = forwardRef((props, ref) => {
     </form>
   );
 });
+
+CheckoutForm.propTypes = {
+  cartData: PropTypes.array, // Adjust the prop type based on the actual type of cartData
+};
 
 CheckoutForm.displayName = 'CheckoutForm';
 
