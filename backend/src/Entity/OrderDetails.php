@@ -24,6 +24,9 @@ class OrderDetails
     #[ORM\Column(length: 255)]
     private ?string $platform = null;
 
+    #[ORM\Column]
+    private ?int $price = null;
+
     public function getQuantity(): ?int
     {
         return $this->quantity;
@@ -68,6 +71,18 @@ class OrderDetails
     public function setPlatform(string $platform): static
     {
         $this->platform = $platform;
+
+        return $this;
+    }
+
+    public function getPrice(): ?int
+    {
+        return $this->price;
+    }
+
+    public function setPrice(int $price): static
+    {
+        $this->price = $price;
 
         return $this;
     }
