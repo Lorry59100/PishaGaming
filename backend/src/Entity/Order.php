@@ -26,7 +26,7 @@ class Order
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\OneToMany(mappedBy: 'orders', targetEntity: OrderDetails::class)]
+    #[ORM\OneToMany(mappedBy: 'orders', targetEntity: OrderDetails::class, cascade: ['persist'])]
     private Collection $orderDetails;
 
     public function __construct()
