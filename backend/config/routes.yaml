@@ -48,6 +48,11 @@ get_storage:
     controller: App\Controller\CartController::getStorage
     methods: GET
 
+pay:
+    path: /pay
+    controller: App\Controller\PaymentController::pay
+    methods: POST
+
 app_logout:
     path: /logout
     methods: GET
