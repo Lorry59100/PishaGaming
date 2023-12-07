@@ -86,7 +86,7 @@ export function PaymentForm() {
                     <div className="payform-container">
                         <h2>Méthode de paiement</h2>
                     <Elements stripe={stripe}>
-                        <CheckoutForm ref={checkoutFormRef}/>
+                        <CheckoutForm cartData={cartData} ref={checkoutFormRef}/>
                     </Elements>
                     </div>
                 </div>
