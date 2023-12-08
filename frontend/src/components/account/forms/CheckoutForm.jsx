@@ -5,8 +5,10 @@ import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
 import '../../../assets/styles/components/checkoutform.css';
 import { URL, URL_PAY, URL_ORDER } from '../../../constants/urls/URLBack';
+import { URL_ACTIVATION } from '../../../constants/urls/URLFront';
 import PropTypes from "prop-types";
 import { useAuth } from '../services/tokenService';
+import { useNavigate } from "react-router-dom";
 
 const CheckoutForm = forwardRef(({ cartData }, ref) => {
   const [isFormValid, setIsFormValid] = useState(false);
@@ -14,6 +16,7 @@ const CheckoutForm = forwardRef(({ cartData }, ref) => {
   const elements = useElements();
   const [customerName, setCustomerName] = useState('');
   const { decodedUserToken } = useAuth();
+  const navigate = useNavigate();
   
   console.log(cartData);
 
@@ -116,6 +119,9 @@ const CheckoutForm = forwardRef(({ cartData }, ref) => {
           axios.post(`${URL}${URL_ORDER}`, {cartData, userId})
                 .then(response => {
                     console.log(response.data)
+                    if (response.status === 200) {
+                      navigate(URL_ACTIVATION);
+                    }
                 })
                 .catch(error => {
                     console.error('Erreur lors de la récupération du panier :', error);
