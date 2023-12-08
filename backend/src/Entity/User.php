@@ -48,11 +48,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Cart::class)]
     private Collection $carts;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ActivationKey::class)]
+    private Collection $activation_keys;
+
     public function __construct()
     {
         $this->tests = new ArrayCollection();
         $this->orders = new ArrayCollection();
         $this->carts = new ArrayCollection();
+        $this->activation_keys = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -245,6 +249,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($cart->getUser() === $this) {
                 $cart->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ActivationKey>
+     */
+    public function getActivationKeys(): Collection
+    {
+        return $this->activation_keys;
+    }
+
+    public function addActivationKey(ActivationKey $activationKey): static
+    {
+        if (!$this->activation_keys->contains($activationKey)) {
+            $this->activation_keys->add($activationKey);
+            $activationKey->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeActivationKey(ActivationKey $activationKey): static
+    {
+        if ($this->activation_keys->removeElement($activationKey)) {
+            // set the owning side to null (unless already changed)
+            if ($activationKey->getUser() === $this) {
+                $activationKey->setUser(null);
             }
         }
 
