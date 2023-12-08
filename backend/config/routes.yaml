@@ -58,6 +58,11 @@ order:
     controller: App\Controller\OrderController::order
     methods: POST
 
+get_order:
+    path: /get-order/{id}
+    controller: App\Controller\OrderController::getOrder
+    methods: GET
+
 app_logout:
     path: /logout
     methods: GET
