@@ -2,12 +2,16 @@
 
 namespace App\Controller;
 
-use App\Entity\Order;
-use App\Entity\OrderDetails;
-use App\Repository\ProductRepository;
-use App\Repository\UserRepository;
 use DateTime;
+use App\Entity\Order;
 use DateTimeImmutable;
+use App\Entity\OrderDetails;
+use App\Entity\ActivationKey;
+use App\Repository\ActivationKeyRepository;
+use App\Repository\OrderDetailsRepository;
+use App\Repository\OrderRepository;
+use App\Repository\UserRepository;
+use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,20 +54,114 @@ class OrderController extends AbstractController
             $platform = $item['platform'];
             $price = $item['price'];
             $quantity = $item['quantity'];
+            $totalPrice = $price*$quantity;
 
             // On bind les données à OrderDetails
             $orderDetails->setProducts($product);
-            $orderDetails->setPrice($price);
+            $orderDetails->setPrice($totalPrice);
             $orderDetails->setQuantity($quantity);
             $orderDetails->setPlatform($platform);
 
             /* On ajoute les details à la commande */
             $order->addOrderDetail($orderDetails);
-        }
 
+            /* Génerer les clefs d'activation */
+            for ($i = 0; $i < $quantity; $i++) {
+                $activationKey = new ActivationKey();
+                $activationKey->setActivationKey(uniqid()); // Ajoutez votre logique de génération de clé ici
+                $activationKey->setUser($user);
+                $activationKey->setOrderDetails($orderDetails);
+                $entityManager->persist($activationKey);
+            }
+        }
         // On persiste et flush les données
         $entityManager->persist($order);
         $entityManager->flush();
-        
+
+        // Construire un tableau associatif avec les informations sur la commande et les détails de commande
+        $orderData = [
+            'order' => [
+                'id' => $order->getId(),
+                'reference' => $order->getReference(),
+                // ... autres champs
+            ],
+            'orderDetails' => [],
+        ];
+
+        // Ajouter les informations sur les détails de commande au tableau
+        foreach ($order->getOrderDetails() as $orderDetail) {
+            $orderData['orderDetails'][] = [
+                'id' => $orderDetail->getId(),
+                'quantity' => $orderDetail->getQuantity(),
+                // ... autres champs
+            ];
+        }
+
+        return new JsonResponse($orderData, 200);
     }
+
+/**
+ * @Route("/get-order/{id}", name="get_order", methods={"GET"})
+ */
+public function getOrder(Request $request, $id, UserRepository $userRepository, 
+OrderRepository $orderRepository, OrderDetailsRepository $orderDetailsRepository, 
+ActivationKeyRepository $activationKeyRepository): JsonResponse 
+{
+    // Récupérer l'utilisateur
+    $user = $userRepository->find($id);
+
+    // Vérifier si l'utilisateur existe
+    if (!$user) {
+        return new JsonResponse(['error' => 'Utilisateur non trouvé.'], 404);
+    }
+
+    // Récupérer la commande associée à l'utilisateur
+    $order = $orderRepository->findOneBy(['user' => $user]);
+
+    // Vérifier si une commande a été trouvée
+    if (!$order) {
+        return new JsonResponse(['error' => 'Aucune commande trouvée pour cet utilisateur.'], 404);
+    }
+
+    // Récupérer les détails de la commande associée à la commande
+    $orderDetails = $orderDetailsRepository->findAll(['order' => $order]);
+
+    // Vérifier si des détails de commande on été trouvés.
+    if (!$orderDetails) {
+        return new JsonResponse(['error' => 'Aucune commande trouvée pour cet utilisateur.'], 404);
+    }
+
+    //RECUPERER LES CHAMPS ASSOCIES, SINON CELA RENVOIE UN OBJET VIDE
+    $userArray = [
+       'firstname' => $user->getFirstname(),
+       'lastname' => $user->getLastname(),
+    ];
+
+    foreach($orderDetails as $orderDetail) {
+        $orderDetailArray[] = [
+            'platform' => $orderDetail->getPlatform(),
+            'price'=> $orderDetail->getPrice(),
+            'quantity'=> $orderDetail->getQuantity(),
+            'id' => $orderDetail->getId(),
+            'img'=> $orderDetail->getProducts()->getImg(),
+            'name'=> $orderDetail->getProducts()->getName(),
+        ];
+    }
+
+    $orderArray = [
+        'reference' => $order->getReference(),
+        'date' => $order->getCreatedAt(),
+    ];
+
+    $keys = $activationKeyRepository->findAll(['orderDetails' => $orderDetails]);
+
+    foreach($keys as $key) {
+        $keyArray[] = [
+            'activation_key' => $key->getActivationKey(),
+            'orderId' => $key->getOrderDetails()->getId(),
+        ];
+    }
+
+    return new JsonResponse([$userArray, $orderArray, $orderDetailArray, $keyArray], 200);
+}
 }
