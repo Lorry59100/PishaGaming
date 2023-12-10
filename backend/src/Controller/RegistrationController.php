@@ -3,6 +3,7 @@
 namespace App\Controller;
 use DateTimeZone;
 use App\Entity\User;
+use App\Service\CartService;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,6 +13,12 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class RegistrationController extends AbstractController
 {
+    private $cartService;
+
+    public function __construct(CartService $cartService)
+    {
+        $this->cartService = $cartService;
+    }
     
     /**
      * @Route("/register", name="register", methods={"POST"})
@@ -25,6 +32,8 @@ class RegistrationController extends AbstractController
         if($userInDb) {
             return new JsonResponse(['error' => 'Une erreur est survenue.'], JsonResponse::HTTP_BAD_REQUEST);
         }
+
+        $cart = $data['cart'] ?? []; // Retrieve the cart information
 
         $birthDateStr = $data['birthDate'];
         // Créer un objet DateTime à partir de la chaîne (en supposant le fuseau horaire UTC)
@@ -49,6 +58,10 @@ class RegistrationController extends AbstractController
         $em->persist($user);
         $em->flush();
         /* Créer un token et l'envoyer à l'adresse mail */
+
+        if ($cart) {
+        $this->cartService->createCartEntities($user, $cart, $em);
+        }
         
             return new JsonResponse(['message' => 'Un mail vous a été envoyé pour valider votre compte. Pensez à vérifier vos spams']);
     }
