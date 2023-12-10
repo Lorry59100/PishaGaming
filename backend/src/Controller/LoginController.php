@@ -13,9 +13,17 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use App\Service\CartService;
 
 class LoginController extends AbstractController
 {
+    private $cartService;
+
+    public function __construct(CartService $cartService)
+    {
+        $this->cartService = $cartService;
+    }
+
     /**
      * @Route("/login", name="login", methods={"POST"})
      */
@@ -39,7 +47,7 @@ class LoginController extends AbstractController
             $token = $jwtManager->createFromPayload($user, $payload);
             // Check if the user has a cart
             if ($cart) {
-            $this->createCartEntities($user, $productRepository ,$cart, $entityManager);
+            $this->cartService->createCartEntities($user, $cart, $entityManager);
             }
  
             return new JsonResponse([
