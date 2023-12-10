@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 import { LoginAndRegisterForm } from '../../account/forms/LoginAndRegisterForm';
 import { NavbarVisibilityContext } from '../../../contexts/NavbarVisibilityContext';
 import { useContext } from 'react';
+import { URL_CART, URL_HOME } from '../../../constants/urls/URLFront';
 
 function Navbar() {
   const { userToken, decodedUserToken, logout, login } = useAuth();
@@ -64,8 +65,8 @@ function Navbar() {
       <div className={`navbar ${showLoginAndRegisterForm ? '' : (scrolled ? 'scrolled' : '')} ${isVisible ? 'visible' : 'hidden'} ${isAtTop ? 'at-top' : ''}`}>
         
         <div className="logo">
-          <a href=""><img src={logo} alt="logo" className="orange-logo" /></a>
-          <h3>Pisha Gaming</h3>
+        <Link to={`${URL_HOME}`}><img src={logo} alt="logo" className="orange-logo" />
+          <h3>Pisha Gaming</h3></Link>
         </div>
         <div className={`menu ${menuClass}`}>
           <div className="links">
@@ -80,7 +81,7 @@ function Navbar() {
         <div className='profile-container'>
           <div className="cart-profile">
             <IconContext.Provider value={{ size: '2em' }}>
-              <a href="/"><TiShoppingCart /></a>
+            <Link to={`${URL_CART}`}><TiShoppingCart /></Link>
               {!decodedUserToken && (
                 <button onClick={toggleProfileVisibility}><PiUserBold /></button>
               )}

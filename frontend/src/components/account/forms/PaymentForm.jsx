@@ -65,7 +65,7 @@ export function PaymentForm() {
 
   return (
     <div>
-        <Paybar/>
+        <Paybar isPaymentFormContext={true} />
         <div className="payment-layout-container">
             <div className="payment-container">
                 <div className="address-and-payform-container">

@@ -14,6 +14,8 @@ import { calculateDifference, calculateTotal, calculateTotalOldPrice, convertToE
 import { Paybar } from '../layouts/Navbar/Paybar';
 import { NavbarVisibilityContext } from '../../contexts/NavbarVisibilityContext';
 import { useContext } from 'react';
+import { URL_PAYMENT } from '../../constants/urls/URLFront';
+import { Link } from 'react-router-dom';
 
 export function Cart() {
     const { decodedUserToken } = useAuth();
@@ -58,7 +60,7 @@ export function Cart() {
     }, [decodedUserToken]);
   return (
 <div className='tunnel-cart-container'>
-    <Paybar/>
+    <Paybar isPaymentFormContext={false} isActivationContext={false}/>
     <div className="cart-component-layout-container">
         <div className="cart-component-container">
             <div className="cart-container">
@@ -218,7 +220,7 @@ export function Cart() {
                         <h2>{convertToEuros(totalPrice)} €</h2>
                     </div>
                     <div className="btn-container">
-                        <button type="submit" className='submit-button'>Aller au paiement &gt;</button>
+                    <Link to={`${URL_PAYMENT}`}><button type="submit" className='submit-button submit-payment'>Aller au paiement &gt;</button></Link>
                     </div>
                     <div className="cutline-form first-cutline">
                         <span className="cutline-text-cart">ou</span>

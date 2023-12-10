@@ -10,7 +10,7 @@ import { HiMiniComputerDesktop } from 'react-icons/hi2';
 import { IconContext } from "react-icons";
 import { FaPlaystation } from "react-icons/fa";
 import { BsXbox } from "react-icons/bs";
-import { SiNintendo } from "react-icons/si";
+/* import { SiNintendo } from "react-icons/si"; */
 
 export function Activation() {
 const { hideNavbar, showNavbar } = useContext(NavbarVisibilityContext);
@@ -65,7 +65,7 @@ useEffect(() => {
 
     return (
         <div className="activation-layout-container">
-            <Paybar/>
+            <Paybar isPaymentFormContext={false} isActivationContext={true} />
             <div className="activation-component-layout-container">
               <div className="activation-component-container">
                 <div className="activation-title-container">

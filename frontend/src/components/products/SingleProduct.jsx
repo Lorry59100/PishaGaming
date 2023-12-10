@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { IconContext } from "react-icons";
 import { AiOutlineCheck, AiOutlineClose, AiOutlineMinusCircle } from 'react-icons/ai';
 import { TiShoppingCart } from 'react-icons/ti';
@@ -34,6 +34,7 @@ export function SingleProduct() {
     const [showFullDescription, setShowFullDescription] = useState(false);
     const [selectedPlatform, setSelectedPlatform] = useState('');
     const { decodedUserToken } = useAuth();
+    const navigate = useNavigate();
     
     // eslint-disable-next-line no-unused-vars
     const [cart, setCart] = useState([]);
@@ -51,7 +52,7 @@ export function SingleProduct() {
         }
     }, [product]);
 
-      const addToCart = () => {
+      const addToCart = (redirect) => {
         console.log(selectedPlatform);
         if(!decodedUserToken) {
             console.log(product.id);
@@ -93,6 +94,9 @@ export function SingleProduct() {
                 console.log(response.data);
                 // Mise à jour de l'état du panier dans le frontend
                 setCart(response.data.cart);
+                if (redirect) {
+                    navigate('/cart');
+                }
             })
             .catch(error => {
                 console.error('Erreur lors de l\'ajout au panier :', error);
@@ -110,6 +114,7 @@ export function SingleProduct() {
             console.error('Erreur lors de la récupération du produit :', error);
         })
     }, [id]);
+    
     console.log('produit: ', product);
     if (product === null) {
         return <div>Chargement en cours...</div>;
@@ -182,11 +187,11 @@ export function SingleProduct() {
                     <div className="cart-and-buy">
                         <div className="cart-btn">
                             <IconContext.Provider value={{ size: "2em" }}>
-                                <button type="submit" className='submit-button'> <TiShoppingCart /></button>
+                                <button type="submit" className='submit-button' onClick={() => addToCart(false)}> <TiShoppingCart /></button>
                             </IconContext.Provider>
                         </div>
                         <div className="buy-btn">
-                        <button type="submit" className='submit-button' onClick={addToCart}>Acheter maintenant</button>
+                        <button type="submit" className='submit-button' onClick={() => addToCart(true)}>Acheter maintenant</button>
                         </div>
                     </div>
             </div>

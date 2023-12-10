@@ -1,11 +1,3 @@
-.activation-tunnel>.tunnel-line {
-background: var(--orange);
-}
-
-.activation-tunnel>.index-tunnel {
-border: 4px solid var(--orange);
-}
-
 .activation-component-layout-container{
 display: flex;
 justify-content: center;

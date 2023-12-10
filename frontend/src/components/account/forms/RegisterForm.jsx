@@ -9,6 +9,7 @@ import fr from "date-fns/locale/fr";
 registerLocale("fr", fr);
 import PropTypes from "prop-types";
 import {  ToastImportantSuccess ,ToastError } from "../../services/toastService";
+import { cartService } from "../services/cartServices";
 
 export function RegisterForm(props) {
   const [birthDate, setBirthDate] = useState(null);
@@ -23,17 +24,20 @@ export function RegisterForm(props) {
 
     const onSubmit=(values) => {
       console.log(values);
+      const cartItems = cartService.getCartItems();
       axios.post(`${URL}${URL_REGISTER}`, {
         firstname: values.firstname,
         lastname: values.lastname,
         email: values.email,
         password: values.password,
         birthDate: birthDate.toISOString(),
+        cart: cartItems,
       })
       .then((response) => {
         console.log('Response data', response.data);
         if (response.status === 200) {
             props.onFormSuccess();
+            cartService.clearCart();
             ToastImportantSuccess(response.data.message);
         }
       })
@@ -55,7 +59,7 @@ export function RegisterForm(props) {
                   <Field type="password" name="confirmPassword" placeholder="Confirmez votre mot de passe"/>
                   <Field type="email" name="email" placeholder="Email"/>
                   <div className="datepicker-container">
-                  <DatePicker dateFormat="dd/MM/yyyy" placeholderText="Date de naissance" locale={fr} selected={birthDate} onChange={(date) => {
+                  <DatePicker className="birthdate" dateFormat="dd/MM/yyyy" placeholderText="Date de naissance" locale={fr} selected={birthDate} onChange={(date) => {
                     setFieldValue('birthDate', date); // Met à jour la valeur du champ
                     setBirthDate(date); // Met à jour l'état local
                   }}/>

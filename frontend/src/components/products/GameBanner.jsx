@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from 'axios';
-import { URL, URL_PRODUCTS_LIST } from "../../constants/urls/URLBack";
+import { URL, URL_PRODUCTS_LIST, URL_SINGLE_PRODUCT } from "../../constants/urls/URLBack";
 import "../../assets/styles/components/gamebanner.css"
 import { convertToEuros, calculateDiscountPercentage } from "./services/PriceServices";
+import { Link } from 'react-router-dom';
 
 function GameBanner() {
     const [randomProduct, setRandomProduct] = useState(null);
@@ -27,6 +28,7 @@ function GameBanner() {
 
     return (
         <div className="game-banner-container">
+            <Link to={`${URL_SINGLE_PRODUCT}/${randomProduct?.id}`}>
             <div className="background-header-container">
                 {randomProduct && (
                     <div className='random-game-container'>
@@ -45,6 +47,7 @@ function GameBanner() {
                     </div>
                 )}
             </div>
+            </Link>
         </div>
     );
     

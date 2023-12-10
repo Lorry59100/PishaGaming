@@ -7,6 +7,7 @@ import { IconContext } from "react-icons";
 import { URL, URL_LOGIN} from "../../../constants/urls/URLBack";
 import { useAuth } from '../../account/services/tokenService';
 import PropTypes from "prop-types";
+import { cartService } from "../services/cartServices";
 
 export function LoginForm(props) {
   const { login } = useAuth();
@@ -16,11 +17,7 @@ export function LoginForm(props) {
     };
   const onSubmit=(values) => {
     console.log(values);
-    const getCart = localStorage.getItem('cart');
-    let cartItems = [];
-    if (getCart) {
-    cartItems = JSON.parse(getCart);
-    }
+    const cartItems = cartService.getCartItems();
 
     axios.post(`${URL}${URL_LOGIN}`, {
       email: values.email,
@@ -32,7 +29,8 @@ export function LoginForm(props) {
       if (response.status === 200) {
         console.log(response.data)
         login(response.data.token);
-        /* window.location.reload(true); */
+        cartService.clearCart();
+        window.location.reload(true);
     }
     })
     .catch((error) => {

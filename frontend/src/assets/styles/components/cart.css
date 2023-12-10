@@ -156,7 +156,7 @@ color: var(--grey);
 margin-left: 0.5em;
 }
 
-h2 {
+.cart-container>h2,.summary-container>h2, .total>h2 {
 color: white;
 margin-bottom: 1em;
 }
@@ -176,4 +176,8 @@ body {
 
 .cart-tunnel>span {
     border:  solid var(--orange)
+}
+
+.submit-payment {
+    width: 100%;
 }

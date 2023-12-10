@@ -2,28 +2,33 @@ import "../../../assets/styles/components/paybar.css"
 import logo from "../../../assets/img/Logo.png"
 import { GiPadlock } from "react-icons/gi";
 import { IconContext } from 'react-icons';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+import { URL_HOME } from "../../../constants/urls/URLFront";
 
-export function Paybar() {
+export function Paybar({ isPaymentFormContext, isActivationContext }) {
     return (
         <div className="buying-tunnel-layout-container">
             <div className="logo-paybar-container">
-                <a href=""><img src={logo} alt="logo" className="orange-logo" /></a>
-                <h3>Pisha Gaming</h3>
+                <Link to={`${URL_HOME}`}>
+                    <img src={logo} alt="logo" className="orange-logo" />
+                    <h3>Pisha Gaming</h3>
+                </Link>
             </div>
 
             <div className="buying-tunnel-container">
-                <div className="cart-tunnel">
-                    <span className='index-tunnel'>1</span>
+                <div className={`cart-tunnel ${isPaymentFormContext || isActivationContext ? 'payment-form-context' : ''}`}>
+                    <span className={`index-tunnel is-valid ${isPaymentFormContext || isActivationContext ? 'payment-form-style' : ''}`}>1</span>
                     <h3>Panier</h3>
                 </div>
-                <div className="payment-tunnel">
-                    <div className="tunnel-line"></div>
-                    <span className='index-tunnel'>2</span>
+                <div className={`payment-tunnel ${isPaymentFormContext || isActivationContext ? 'payment-form-context' : ''}`}>
+                    <div className={`tunnel-line ${isPaymentFormContext || isActivationContext ? 'payment-form-style' : ''}`}></div>
+                    <span className={`index-tunnel ${isPaymentFormContext || isActivationContext ? 'payment-form-style' : ''} ${isActivationContext ? 'is-valid' : ''}`}>2</span>
                     <h3>Paiement</h3>
                 </div>
-                <div className="activation-tunnel">
-                    <div className="tunnel-line"></div>
-                    <span className='index-tunnel'>3</span>
+                <div className={`activation-tunnel ${isActivationContext ? 'payment-form-context' : ''}`}>
+                    <div className={`tunnel-line ${isActivationContext ? 'payment-form-style' : ''}`}></div>
+                    <span className={`index-tunnel ${isActivationContext ? 'payment-form-style' : ''}`}>3</span>
                     <h3>Activation</h3>
                 </div>
             </div>
@@ -42,3 +47,8 @@ export function Paybar() {
         </div>
     )
 }
+
+Paybar.propTypes = {
+    isPaymentFormContext: PropTypes.bool.isRequired,
+    isActivationContext: PropTypes.bool.isRequired,
+  };

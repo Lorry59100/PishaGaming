@@ -228,6 +228,12 @@ transition: .2s;
 box-shadow: inset 0 0 0 2px var(--grey-tr);
 background-color: rgba(16,16,16,.4);
 }
+.react-datepicker-wrapper {
+  width: 100%;
+}
+.birthdate {
+  width: -moz-available;
+}
 .btn-container, .btn-container>button {
 width: 100%;
 margin-top: 0.5em;
