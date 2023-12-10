@@ -7,12 +7,13 @@ use App\Entity\Order;
 use DateTimeImmutable;
 use App\Entity\OrderDetails;
 use App\Entity\ActivationKey;
-use App\Repository\ActivationKeyRepository;
-use App\Repository\OrderDetailsRepository;
-use App\Repository\OrderRepository;
 use App\Repository\UserRepository;
+use App\Repository\OrderRepository;
+use App\Service\KeyGeneratorService;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\OrderDetailsRepository;
+use App\Repository\ActivationKeyRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,6 +22,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class OrderController extends AbstractController
 {
+    private $keyGeneratorService;
+
+    public function __construct(KeyGeneratorService $keyGeneratorService)
+    {
+        $this->keyGeneratorService = $keyGeneratorService;
+    }
+
     /**
      * @Route("/order", name="order", methods={"POST"})
      */
@@ -39,8 +47,10 @@ class OrderController extends AbstractController
         $order->setUser($user);
         $order->setCreatedAt(new DateTimeImmutable());
 
-        /* Changer le hash */
-        $order->setReference(uniqid());
+        /* Générer un numéro de commande unique*/
+        $timestamp = time();
+        $uniqueReference = $timestamp . uniqid();
+        $order->setReference($uniqueReference);
 
         // Boucler sur le panier
         foreach($cartData as $item) {
@@ -65,13 +75,18 @@ class OrderController extends AbstractController
             /* On ajoute les details à la commande */
             $order->addOrderDetail($orderDetails);
 
+            
+
             /* Génerer les clefs d'activation */
             for ($i = 0; $i < $quantity; $i++) {
-                $activationKey = new ActivationKey();
-                $activationKey->setActivationKey(uniqid()); // Ajoutez votre logique de génération de clé ici
-                $activationKey->setUser($user);
-                $activationKey->setOrderDetails($orderDetails);
-                $entityManager->persist($activationKey);
+                //Vérifier si le produit est dématerialisié avant de génerer une clé.
+                if($product->isIsPhysical() == false) {
+                    $activationKey = new ActivationKey();
+                    $activationKey->setActivationKey($this->keyGeneratorService->generateActivationKey($platform)); // Ajoutez votre logique de génération de clé ici
+                    $activationKey->setUser($user);
+                    $activationKey->setOrderDetails($orderDetails);
+                    $entityManager->persist($activationKey);
+                }
             }
         }
         // On persiste et flush les données
