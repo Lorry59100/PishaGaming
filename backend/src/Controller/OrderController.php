@@ -36,16 +36,27 @@ class OrderController extends AbstractController
     {
         // Récupérez le montant total depuis le corps de la requête POST
         $data = json_decode($request->getContent(), true);
-        /* dd($data); */
         // Récupérez cartData du corps de la requête POST
         $cartData = $data['cartData'];
         $userId = $data['userId'];
         $user = $userRepository->find($userId);
 
+        /* $date = isset($data['selectedDate']) ? new \DateTime($data['selectedDate']) : null; */
+
         //Créer la commande
         $order = new Order();
         $order->setUser($user);
         $order->setCreatedAt(new DateTimeImmutable());
+
+        /* Si date existe c'est qu'on en a séléctionée une et on la persiste en BDD */
+        if(isset($data['selectedDate'])) {
+            $order->setDeliveryDate(new \DateTime($data['selectedDate']));
+            $order->setStatus(0);
+        /* Sinon on persiste la date actuelle */
+        } else {
+            $order->setDeliveryDate(new DateTimeImmutable());
+            $order->setStatus(1);
+        }
 
         /* Générer un numéro de commande unique*/
         $timestamp = time();
