@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\OrderRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
@@ -28,6 +29,12 @@ class Order
 
     #[ORM\OneToMany(mappedBy: 'orders', targetEntity: OrderDetails::class, cascade: ['persist'])]
     private Collection $orderDetails;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $delivery_date = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $status = null;
 
     public function __construct()
     {
@@ -101,6 +108,30 @@ class Order
                 $orderDetail->setOrders(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDeliveryDate(): ?\DateTimeInterface
+    {
+        return $this->delivery_date;
+    }
+
+    public function setDeliveryDate(?\DateTimeInterface $delivery_date): static
+    {
+        $this->delivery_date = $delivery_date;
+
+        return $this;
+    }
+
+    public function getStatus(): ?int
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?int $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }
