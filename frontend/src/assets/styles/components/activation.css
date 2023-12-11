@@ -47,6 +47,10 @@ border-radius: 10px;
 
 .order-infos-container {
 grid-column: span 4;
+display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .order-info-title {
