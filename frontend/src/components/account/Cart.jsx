@@ -15,7 +15,8 @@ import { Paybar } from '../layouts/Navbar/Paybar';
 import { NavbarVisibilityContext } from '../../contexts/NavbarVisibilityContext';
 import { useContext } from 'react';
 import { URL_PAYMENT } from '../../constants/urls/URLFront';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { LoginAndRegisterForm } from './forms/LoginAndRegisterForm';
 
 export function Cart() {
     const { decodedUserToken } = useAuth();
@@ -24,6 +25,8 @@ export function Cart() {
     const totalPrice = calculateTotal(cartData);
     const difference = calculateDifference(cartData);
     const { hideNavbar, showNavbar } = useContext(NavbarVisibilityContext);
+    const [showLoginAndRegisterForm, setShowLoginAndRegisterForm] = useState(false);
+    const navigate = useNavigate();
 
     console.log(totalPrice);
 
@@ -58,6 +61,17 @@ export function Cart() {
         }
         }
     }, [decodedUserToken]);
+
+    const handlePaymentClick = () => {
+        if (decodedUserToken) {
+            // Redirige vers la page de paiement si l'utilisateur est connecté
+            navigate(URL_PAYMENT);
+        } else {
+            // Affiche le formulaire de connexion si l'utilisateur n'est pas connecté
+            setShowLoginAndRegisterForm(true);
+        }
+    };
+
   return (
 <div className='tunnel-cart-container'>
     <Paybar isPaymentFormContext={false} isActivationContext={false}/>
@@ -220,7 +234,8 @@ export function Cart() {
                         <h2>{convertToEuros(totalPrice)} €</h2>
                     </div>
                     <div className="btn-container">
-                    <Link to={`${URL_PAYMENT}`}><button type="submit" className='submit-button submit-payment'>Aller au paiement &gt;</button></Link>
+                        <button type="submit" className='submit-button submit-payment' onClick={handlePaymentClick}>Aller au paiement &gt;</button>
+                        {showLoginAndRegisterForm && <LoginAndRegisterForm onCloseForm={() => setShowLoginAndRegisterForm(false)} />}
                     </div>
                     <div className="cutline-form first-cutline">
                         <span className="cutline-text-cart">ou</span>
