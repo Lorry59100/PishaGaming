@@ -11,6 +11,8 @@ import { calculateTotal, convertToEuros } from "../../products/services/PriceSer
 import {Elements} from '@stripe/react-stripe-js';
 import CheckoutForm from "./CheckoutForm";
 import { stripePromise } from "../services/Stripe";
+import DatePicker from "react-datepicker";
+import { addDays } from 'date-fns';
 
 
 export function PaymentForm() {
@@ -20,6 +22,8 @@ export function PaymentForm() {
     const totalPrice = calculateTotal(cartData);
     const [stripe, setStripe] = useState(null);
     const checkoutFormRef = useRef();
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(null);
 
     const handlePayClick = (event) => {
         // Appeler la fonction de soumission du formulaire Stripe depuis le composant enfant
@@ -52,6 +56,8 @@ export function PaymentForm() {
                 .then(response => {
                     console.log(response.data)
                     setCartData(response.data);
+                    const hasPhysicalProduct = response.data.some(item => item.isPhysical);
+                    setShowDatePicker(hasPhysicalProduct);
                 })
                 .catch(error => {
                     console.error('Erreur lors de la récupération du panier :', error);
@@ -82,11 +88,41 @@ export function PaymentForm() {
                                 </IconContext.Provider>
                             </div>
                         </div>
+                        {cartData && cartData.some(item => item.isPhysical) && (
+                            <div className="date-picker-container">
+                                <h2>Vous devez choisir une date de livraison pour les produits suivants</h2>
+                                    <div className="physical-products-container">
+                                        {cartData.map((item, index) => {
+                                        // Afficher uniquement les produits avec isPhysical à true
+                                            if (item.isPhysical) {
+                                                return (
+                                                    <div key={index} className="physical-product">
+                                                        <img src={item.img} alt={item.name} />
+                                                        <div className="single-physical-product">
+                                                            <h4>{item.name}</h4>
+                                                            <span className={item.quantity > 1 ? 'multiple-items' : ''}>
+                                                            {item.quantity > 1 ? `x${item.quantity} ` : ''}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            }
+                                        return null; // Ignorer les produits avec isPhysical à false
+                                        })}
+                                        <div className="datepicker-container">
+                                            <h5>Date de livraison</h5>
+                                            <DatePicker className="deliveryDate" dateFormat="dd/MM/yyyy" placeholderText="Date de livraison"
+                                            selected={showDatePicker ? selectedDate : null} minDate={addDays(new Date(), 2)} onChange={date => setSelectedDate(date)}
+                                            disabled={!showDatePicker}/>
+                                        </div>
+                                    </div>
+                            </div>
+                        )}
                     </div>
                     <div className="payform-container">
                         <h2>Méthode de paiement</h2>
                     <Elements stripe={stripe}>
-                        <CheckoutForm cartData={cartData} ref={checkoutFormRef}/>
+                        <CheckoutForm cartData={cartData} selectedDate={selectedDate} ref={checkoutFormRef}/>
                     </Elements>
                     </div>
                 </div>
@@ -97,7 +133,12 @@ export function PaymentForm() {
                             <div key={item.id} className="items-container">
                                 <div className="single-item-container">
                                     <div className="product-info-quantity">
-                                        <h3>{item.name} x{item.quantity}</h3>
+                                        <h3>
+                                            {item.name}
+                                            <span className={item.quantity > 1 ? 'multiple-items' : ''}>
+                                                {item.quantity > 1 ? `x${item.quantity} ` : ''}
+                                            </span>
+                                        </h3>
                                         <h4>{item.platform}</h4>
                                     </div>
                                     <div className="product-price">
