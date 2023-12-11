@@ -162,22 +162,62 @@ margin-bottom: 1em;
 }
 
 body {
-    padding-top: unset;
+padding-top: unset;
 }
 
 .tunnel-cart-container {
-    width: 100%;
+width: 100%;
 }
 
 .cart-component-layout-container {
-    display: flex;
-    justify-content: center;
+display: flex;
+justify-content: center;
 }
 
 .cart-tunnel>span {
-    border:  solid var(--orange)
+border:  solid var(--orange)
 }
 
 .submit-payment {
-    width: 100%;
+width: 100%;
+}
+
+.physical-product {
+justify-content: center;
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+
+.physical-product>img {
+width: 100px;
+height: 100px;
+border-radius: 10px;
+margin: 0.2em 0.5em;
+}
+
+.physical-product>h4 {
+color: white;
+}
+.physical-products-container {
+display: flex;
+border: 2px solid var(--grey);
+border-radius: 10px;
+padding: 1em;
+margin-bottom: 3em;
+justify-content: space-around;
+}
+.react-datepicker-wrapper {
+display: flex !important;
+align-items: center;
+justify-content: center;
+width: 90%;
+}
+
+.react-datepicker__input-container {
+width: unset !important;
+}
+.address-container>h2, .payform-container>h2, .date-picker-container>h2, .summary-and-total-container>h2 {
+color: white;
+margin-bottom: 1em;
 }

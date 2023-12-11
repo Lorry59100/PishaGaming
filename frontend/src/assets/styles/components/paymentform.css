@@ -105,21 +105,50 @@ margin-bottom: 0.5em;
 width: 100%;
 }
 
-.summary-container>span {
+.summary-payment-container>span {
 color: var(--grey);
+font-size: 13px;
 }
 
-.summary-container>span>div>a {
+.summary-payment-container>span>div {
+margin-top: 1em;
+}
+
+.summary-payment-container>span>div>a {
 text-decoration: underline;
 color: #6d6d6d;
 }
-.summary-container>span {
+.summary-payment-container>span {
 text-align: center;
+margin-top: 0.5em;
 }
 
 .pay-form {
 background: var(--grey);
 border-radius: 10px;
 padding-bottom: 0.5em;
+}
+
+.multiple-items {
+color: var(--grey);
+margin-left: 0.5em;
+}
+
+.datepicker-container {
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+}
+
+.datepicker-container>h5 {
+color: white;
+margin-bottom: 0.2em;
+}
+
+.single-physical-product {
+display: flex;
+align-items: center;
+color: white;
 }
 

@@ -24,50 +24,53 @@ box-shadow: inset 0 0 0 2px var(--orange);
 }
 
 .customer-name {
-    width: 100%;
+width: 100%;
 }
 
 .input-customer-name-container {
-    display: flex;
+display: flex;
 }
 
 .card-info {
-    display: block;
-    text-align: left;
-    margin: 1em 1em 0.2em 1em;
-  }
+display: block;
+text-align: left;
+margin: 1em 1em 0.2em 1em;
+}
 
 .ElementsApp input {
-    height: 60px;
+height: 60px;
 }
 
 .card-element-container {
-    padding-top: 0.2em;
-    width: 100%;
-    margin-bottom: 1em;
+padding-top: 0.2em;
+width: 100%;
+margin-bottom: 1em;
 }
 
 .mid-fields {
-    display: flex;
+display: flex;
 }
 
 .customer-name::placeholder {
-    color: #2A2A2A;
+color: #2A2A2A;
 }
 
 
 .CardNumberElement--invalid, .CardExpiryElement--invalid, .CardCvcElement--invalid {
-    color: #9e2146;
-  }
-
-  #card-errors-number, #card-errors-expiry, #card-errors-cvc {
-    position: absolute;
-    margin-left: 1em;
-  }
-
-#card-errors-name {
-    position: absolute;
-    margin-left: 1em;
+color: #9e2146;
 }
 
+#card-errors-number, #card-errors-expiry, #card-errors-cvc {
+position: absolute;
+margin-left: 1em;
+}
+
+#card-errors-name {
+position: absolute;
+margin-left: 1em;
+}
+
+.error {
+    color: #E41E28;
+}
 
