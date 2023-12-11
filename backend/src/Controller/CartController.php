@@ -100,6 +100,7 @@ class CartController extends AbstractController
                 'name' => $product->getName(),
                 'oldPrice' => $product->getOldPrice(),
                 'price' => $product->getPrice(),
+                'isPhysical' => $product->isIsPhysical(),
                 // Ajoutez d'autres propriétés du produit selon vos besoins
             ];
     
@@ -128,6 +129,7 @@ class CartController extends AbstractController
     'name' => $cart->getProduct()->getName(),
     'oldPrice' => $cart->getProduct()->getOldPrice(),
     'price' => $cart->getProduct()->getPrice(),
+    'isPhysical' => $cart->getProduct()->isIsPhysical(),
     ];
 
     $cartsData[] = $cartData;
