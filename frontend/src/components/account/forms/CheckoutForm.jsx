@@ -10,7 +10,7 @@ import PropTypes from "prop-types";
 import { useAuth } from '../services/tokenService';
 import { useNavigate } from "react-router-dom";
 
-const CheckoutForm = forwardRef(({ cartData }, ref) => {
+const CheckoutForm = forwardRef(({ cartData, selectedDate }, ref) => {
   const [isFormValid, setIsFormValid] = useState(false);
   const stripe = useStripe();
   const elements = useElements();
@@ -19,6 +19,7 @@ const CheckoutForm = forwardRef(({ cartData }, ref) => {
   const navigate = useNavigate();
   
   console.log(cartData);
+  console.log(selectedDate);
 
   const getClientSecret = async () => {
     try {
@@ -116,7 +117,7 @@ const CheckoutForm = forwardRef(({ cartData }, ref) => {
           console.log('Paiement confirmé avec succès !');
           const userId = decodedUserToken.id;
           // Redirigez l'utilisateur vers votre URL de réussite ou effectuez d'autres actions nécessaires
-          axios.post(`${URL}${URL_ORDER}`, {cartData, userId})
+          axios.post(`${URL}${URL_ORDER}`, {cartData, userId, selectedDate})
                 .then(response => {
                     console.log(response.data)
                     if (response.status === 200) {
@@ -147,18 +148,21 @@ const CheckoutForm = forwardRef(({ cartData }, ref) => {
     <form className='pay-form' onSubmit={handleSubmit}>
       <div className="card-element-container">
         <span className='card-info'>Numéro de carte</span>
-        <CardNumberElement className="CardNumberElement" onChange={(e) => handleFormValidation(e.complete)} />
+        <CardNumberElement className="CardNumberElement" onChange={(e) => handleFormValidation(e.complete)} 
+        options={{style: {base: {color: '#FFFFFF'}}}}/>
         <div id="card-errors-number" className='error'></div>
       </div>
       <div className="mid-fields">
         <div className="card-element-container">
           <span className='card-info'>Date d'expiration</span>
-          <CardExpiryElement className="CardExpiryElement" onChange={(e) => handleFormValidation(e.complete)} />
+          <CardExpiryElement className="CardExpiryElement" onChange={(e) => handleFormValidation(e.complete)} 
+          options={{style: {base: {color: '#FFFFFF'}}}}/>
           <div id="card-errors-expiry" className='error'></div>
         </div>
         <div className="card-element-container">
           <span className='card-info'>CVC</span>
-          <CardCvcElement className="CardCvcElement" onChange={(e) => handleFormValidation(e.complete)} />
+          <CardCvcElement className="CardCvcElement" onChange={(e) => handleFormValidation(e.complete)} 
+          options={{style: {base: {color: '#FFFFFF'}}}}/>
           <div id="card-errors-cvc" className='error'></div>
         </div>
       </div>
