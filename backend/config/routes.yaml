@@ -63,6 +63,16 @@ get_order:
     controller: App\Controller\OrderController::getOrder
     methods: GET
 
+add_address:
+    path: /add-address
+    controller: App\Controller\AddressController::addAddress
+    methods: POST
+
+get_address:
+    path: /get-address
+    controller: App\Controller\AddressController::getAddress
+    methods: GET
+
 app_logout:
     path: /logout
     methods: GET
