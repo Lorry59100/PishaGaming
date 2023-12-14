@@ -5,6 +5,7 @@ import { SingleProductview } from "../views/SingleProductview";
 import { Cartview } from "../views/Cartview";
 import { Paymentview } from "../views/Paymentview";
 import { Activationview } from "../views/Activationview";
+import { Parameterview } from "../views/Parameterview";
 
 function Routes() {
   return (
@@ -14,6 +15,7 @@ function Routes() {
         <Route path={URL.URL_CART} element={<Cartview />} />
         <Route path={URL.URL_PAYMENT} element={<Paymentview />} />
         <Route path={URL.URL_ACTIVATION} element={<Activationview />} />
+        <Route path={URL.URL_PARAMETERS} element={<Parameterview />} />
     </RoutesContainer>
   )
 }
