@@ -161,7 +161,7 @@ color: white;
 margin-bottom: 1em;
 }
 
-body {
+.unset-padding {
 padding-top: unset;
 }
 
