@@ -51,12 +51,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: ActivationKey::class)]
     private Collection $activation_keys;
 
+    #[ORM\ManyToMany(targetEntity: Address::class, inversedBy: 'users', cascade: ['persist'])]
+    private Collection $address;
+
     public function __construct()
     {
         $this->tests = new ArrayCollection();
         $this->orders = new ArrayCollection();
         $this->carts = new ArrayCollection();
         $this->activation_keys = new ArrayCollection();
+        $this->address = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -281,6 +285,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $activationKey->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Address>
+     */
+    public function getAddress(): Collection
+    {
+        return $this->address;
+    }
+
+    public function addAddress(Address $address): static
+    {
+        if (!$this->address->contains($address)) {
+            $this->address->add($address);
+        }
+
+        return $this;
+    }
+
+    public function removeAddress(Address $address): static
+    {
+        $this->address->removeElement($address);
 
         return $this;
     }
