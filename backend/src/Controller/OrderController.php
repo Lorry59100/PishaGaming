@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use DateTime;
+use DateTimeZone;
 use App\Entity\Order;
 use DateTimeImmutable;
 use App\Entity\OrderDetails;
@@ -50,7 +51,10 @@ class OrderController extends AbstractController
 
         /* Si date existe c'est qu'on en a séléctionée une et on la persiste en BDD */
         if(isset($data['selectedDate'])) {
-            $order->setDeliveryDate(new \DateTime($data['selectedDate']));
+            $deliveryDateStr = $data['selectedDate'];
+            $deliveryDate = new \DateTime($deliveryDateStr, new \DateTimeZone('UTC'));
+            $deliveryDate->setTimezone(new DateTimeZone('Europe/Paris'));
+            $order->setDeliveryDate($deliveryDate);
             $order->setStatus(0);
         /* Sinon on persiste la date actuelle */
         } else {
@@ -171,12 +175,14 @@ ActivationKeyRepository $activationKeyRepository): JsonResponse
             'id' => $orderDetail->getId(),
             'img'=> $orderDetail->getProducts()->getImg(),
             'name'=> $orderDetail->getProducts()->getName(),
+            'isPhysical' => $orderDetail->getProducts()->isIsPhysical(),
         ];
     }
 
     $orderArray = [
         'reference' => $order->getReference(),
         'date' => $order->getCreatedAt(),
+        'deliveryDate'=> $order->getDeliveryDate(),
     ];
 
     $keys = $activationKeyRepository->findAll(['orderDetails' => $orderDetails]);
