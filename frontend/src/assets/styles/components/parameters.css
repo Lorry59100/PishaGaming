@@ -1,0 +1,74 @@
+.parameter-view-container {
+display: flex;
+justify-content: center;
+}
+.parameters-container {
+display: flex;
+justify-content: center;
+flex-direction: column;
+align-items: center;
+margin-top: 150px;
+width: 100%;
+max-width: 1200px;
+}
+.parameters-container>h1 {
+margin-bottom: 0.2em;
+}
+.parameters-container>h4 {
+color: var(--grey);
+}
+.user-icon-circled-big {
+padding: 1.5em;
+}
+.tab-and-content-container {
+display: grid;
+grid-template-columns: repeat(6, 1fr);
+gap: 2em;
+width: 100%;
+}
+.tab-container {
+grid-column: span 2;
+display: flex;
+justify-content: space-around;
+}
+.content-container {
+grid-column: span 4;
+background-color: blue;
+}
+.tabs {
+width: 100%;
+}
+.tabs>* {
+margin: 2em 0 2em 0;
+}
+.tab {
+display: flex;
+align-items: center;
+justify-content: space-between;
+width: 100%;
+}
+.tab:hover>.mid-tab>h3 {
+    color: var(--orange);
+    cursor: pointer;
+}
+.user-parameter-icon-circled {
+padding: 0.2em;
+border: 2px solid var(--orange);
+border-radius: 50%;
+color: var(--orange);
+}
+.parameter-icon {
+color: var(--orange);
+}
+.mid-tab {
+margin: 0 1em 0 1em;
+}
+.mid-tab>h3 {
+color: white;
+}
+.active>.mid-tab>h3 {
+    color: var(--orange);
+}
+.mid-tab>h4 {
+color: var(--grey);
+}
