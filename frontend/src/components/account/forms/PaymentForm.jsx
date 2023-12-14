@@ -25,6 +25,16 @@ export function PaymentForm() {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
 
+    useEffect(() => {
+        // Add a class to the body element when the component mounts
+        document.body.classList.add('unset-padding');
+    
+        // Remove the class when the component is unmounted
+        return () => {
+          document.body.classList.remove('unset-padding');
+        };
+      }, []);
+
     const handlePayClick = (event) => {
         // Appeler la fonction de soumission du formulaire Stripe depuis le composant enfant
         checkoutFormRef.current.handleSubmit(event);
