@@ -48,14 +48,25 @@ border-radius: 10px;
 .order-infos-container {
 grid-column: span 4;
 display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+flex-direction: column;
+justify-content: center;
+align-items: center;
 }
 
 .order-info-title {
 display: flex;
 justify-content: space-around;
+width: 100%;
+}
+
+.order-info-title>:first-child {
+margin-right: 0.5em;
+display: flex;
+align-items: center;
+}
+
+.order-info-title>h2 {
+color: white;
 }
 
 .order-info-keys {
@@ -94,4 +105,79 @@ margin-bottom: 1em;
 background-color: black;
 padding: 1em;
 border-radius: 50%;
+}
+
+.activation-quantity {
+margin-left: 0.5em;
+color: var(--grey);
+font-size: 24px;
+}
+
+.empty-order-container {
+min-height: 500px;
+padding-top: 10em;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+.empty-order {
+display: grid;
+grid-template-columns: repeat(6, 1fr);
+gap: 2em;
+background: var(--medium-dark);
+border-radius: 10px;
+max-width: 800px;
+width: 100%;
+}
+
+.empty {
+grid-column: span 6;
+display: flex;
+align-items: center;
+justify-content: center;
+height: 250px;
+padding: 1em;
+}
+
+.empty>svg {
+  color: var(--orange);
+}
+
+.empty>div>h3 {
+  text-align: center;
+  color: white;
+  margin-bottom: 0.5em;
+}
+
+.btn-got-buy-container {
+  display: flex;
+  justify-content: center;
+}
+
+.buy-button {
+  color: white;
+  font-weight: 700;
+  font-size: 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  box-sizing: border-box;
+  padding: 0 25px;
+  cursor: pointer;
+  text-align: center;
+  white-space: normal;
+  -webkit-appearance: none;
+  appearance: none; /* Standard property for compatibility */
+  transition: background-color .2s;
+  background-color: var(--medium-dark);
+  border-radius: 5px;
+  padding: 15px 20px;
+  font-size: 18px;
+  border: 1px solid white;
+}
+
+.buy-button:hover {
+  background-color: #3d3d3d;
 }
