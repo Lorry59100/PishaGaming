@@ -10,3 +10,6 @@ export const URL_STORAGE_CART = '/get-storage'
 export const URL_PAY = '/pay'
 export const URL_ORDER = '/order'
 export const URL_GET_ORDER = '/get-order'
+export const URL_ADD_ADDRESS = '/add-address'
+export const URL_GET_ADDRESS = '/get-address'
+export const URL_API_GOUV = "/search/?q=";
