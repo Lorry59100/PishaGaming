@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import { LoginAndRegisterForm } from '../../account/forms/LoginAndRegisterForm';
 import { NavbarVisibilityContext } from '../../../contexts/NavbarVisibilityContext';
 import { useContext } from 'react';
-import { URL_CART, URL_HOME } from '../../../constants/urls/URLFront';
+import { URL_CART, URL_HOME, URL_PARAMETERS } from '../../../constants/urls/URLFront';
 
 function Navbar() {
   const { userToken, decodedUserToken, logout, login } = useAuth();
@@ -97,7 +97,7 @@ function Navbar() {
               <div className="profile-content">
                 <ul>
                   <li>
-                    <a href="/">Paramètres</a>
+                  <Link to={`${URL_PARAMETERS}`}>Paramètres</Link>
                   </li>
                   <li>
                     <a href="/">Achats</a>
