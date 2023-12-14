@@ -31,6 +31,16 @@ export function Cart() {
     console.log(totalPrice);
 
     useEffect(() => {
+        // Add a class to the body element when the component mounts
+        document.body.classList.add('unset-padding');
+    
+        // Remove the class when the component is unmounted
+        return () => {
+          document.body.classList.remove('unset-padding');
+        };
+      }, []);
+
+    useEffect(() => {
         hideNavbar();
     
         return () => {
