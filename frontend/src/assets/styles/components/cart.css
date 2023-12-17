@@ -213,10 +213,6 @@ align-items: center;
 justify-content: center;
 width: 90%;
 }
-
-.react-datepicker__input-container {
-width: unset !important;
-}
 .address-container>h2, .payform-container>h2, .date-picker-container>h2, .summary-and-total-container>h2 {
 color: white;
 margin-bottom: 1em;

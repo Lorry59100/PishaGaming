@@ -95,8 +95,12 @@ width: 100%;
 .logo-form>a {
 display: flex;
 align-items: center;
-margin: 1em;
+margin-left: 2.5em;
+margin-top: 1.8em;
 color: white;
+}
+.logo-form>a>h3 {
+width: 30px;
 }
 .switch {
 color: white;

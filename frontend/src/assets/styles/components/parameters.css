@@ -33,7 +33,7 @@ justify-content: space-around;
 }
 .content-container {
 grid-column: span 4;
-background-color: blue;
+/* background-color: blue; */
 }
 .tabs {
 width: 100%;
@@ -71,4 +71,33 @@ color: white;
 }
 .mid-tab>h4 {
 color: var(--grey);
+}
+
+.single-address-container {
+    display: flex;
+    align-items: center;
+    padding: 2em;
+    margin: 1em;
+    background: var(--medium-dark);
+    justify-content: space-between;
+    border-radius: 10px;
+    color: white;
+}
+.single-address-container>:first-child {
+    display: flex;
+    align-items: center;
+}
+.single-address-container>:first-child>h4 {
+    color: var(--grey);
+}
+.single-address-container>:first-child>* {
+    margin: 0 0.5em;
+}
+.active-tab-title {
+    color: white;
+    margin-left: 1em;
+}
+.address-btn-container {
+    display: flex;
+    justify-content: center;
 }
