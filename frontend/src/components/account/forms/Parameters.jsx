@@ -9,10 +9,14 @@ import { AddressForm } from "./AddressForm";
 import { useAuth } from "../services/tokenService";
 import axios from "axios";
 import { URL, URL_GET_ADDRESS } from "../../../constants/urls/URLBack";
+import { PiPencilSimpleLineFill } from 'react-icons/pi';
+import { BsTrash3 } from "react-icons/bs";
+
 export function Parameters() {
     const [activeTab, setActiveTab] = useState(0);
     const [isAddressFormVisible, setAddressFormVisible] = useState(false);
     const { decodedUserToken } = useAuth();
+    const [addresses, setAddresses] = useState([]);
 
     const handleTabClick = (index) => {
         setActiveTab(index);
@@ -26,7 +30,8 @@ export function Parameters() {
         setAddressFormVisible(false);
       };
 
-      console.log(decodedUserToken)
+      /* console.log(decodedUserToken); */
+      /* console.log(decodedUserToken.username); */
       useEffect(() => {
         if (decodedUserToken) {
           const headers = {
@@ -36,7 +41,8 @@ export function Parameters() {
       
           axios.get(`${URL}${URL_GET_ADDRESS}`, {headers})
             .then(response => {
-                // Traiter la réponse...
+                console.log(response.data);
+                setAddresses(response.data);
             })
             .catch(error => {
                 console.error('Erreur lors de la récupération des adresses :', error);
@@ -108,10 +114,30 @@ export function Parameters() {
         )}
         {activeTab === 2 && (
           <div>
-          <h2>Mes adresses</h2>
-          <button className="submit-button" onClick={handleOpenAddressForm}>
-            Ajouter une adresse
-          </button>
+          <h2 className="active-tab-title">Mes adresses</h2>
+          {addresses.map(address => (
+            <div key={address.id} className='single-address-container'>
+              <div>
+                <h3>{decodedUserToken.lastname} {decodedUserToken.firstname}</h3>
+                <button>
+                <IconContext.Provider value={{ size: "1.5em", color: "white"}}>
+                  <PiPencilSimpleLineFill/>
+                </IconContext.Provider>
+                </button>
+                <h4>{address.housenumber} {address.street} {address.postcode} {address.city}</h4>
+              </div>
+              <button>
+                <IconContext.Provider value={{ size: "1.5em", color: "white"}}>
+                  <BsTrash3 />
+                </IconContext.Provider>
+              </button>
+            </div>
+          ))}
+          <div className="address-btn-container">
+            <button className="submit-button" onClick={handleOpenAddressForm}>
+              Ajouter une adresse
+            </button>
+          </div>
           {isAddressFormVisible && (<AddressForm onClose={handleCloseAddressForm} />)}
         </div>
         )}
