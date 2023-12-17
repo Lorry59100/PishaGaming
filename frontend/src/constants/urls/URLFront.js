@@ -4,4 +4,4 @@ export const URL_CART = '/cart';
 export const URL_PAYMENT = '/payment';
 export const URL_ACTIVATION = '/activation';
 export const URL_PARAMETERS = '/parameters';
-export const UTL_VERIFY_EMAIL = '/verifyEmail/:token'
+export const URL_VERIFY_EMAIL = '/verifyEmail/:token'

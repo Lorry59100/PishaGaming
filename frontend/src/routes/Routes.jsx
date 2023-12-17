@@ -17,7 +17,7 @@ function Routes() {
         <Route path={URL.URL_PAYMENT} element={<Paymentview />} />
         <Route path={URL.URL_ACTIVATION} element={<Activationview />} />
         <Route path={URL.URL_PARAMETERS} element={<Parameterview />} />
-        <Route path={URL.UTL_VERIFY_EMAIL} element={<VerifyEmailview />} />
+        <Route path={URL.URL_VERIFY_EMAIL} element={<VerifyEmailview />} />
     </RoutesContainer>
   )
 }
