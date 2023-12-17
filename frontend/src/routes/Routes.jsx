@@ -6,6 +6,7 @@ import { Cartview } from "../views/Cartview";
 import { Paymentview } from "../views/Paymentview";
 import { Activationview } from "../views/Activationview";
 import { Parameterview } from "../views/Parameterview";
+import { VerifyEmailview } from "../views/VerifyEmailview";
 
 function Routes() {
   return (
@@ -16,6 +17,7 @@ function Routes() {
         <Route path={URL.URL_PAYMENT} element={<Paymentview />} />
         <Route path={URL.URL_ACTIVATION} element={<Activationview />} />
         <Route path={URL.URL_PARAMETERS} element={<Parameterview />} />
+        <Route path={URL.UTL_VERIFY_EMAIL} element={<VerifyEmailview />} />
     </RoutesContainer>
   )
 }
