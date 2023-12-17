@@ -54,6 +54,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Address::class, inversedBy: 'users', cascade: ['persist'])]
     private Collection $address;
 
+    #[ORM\Column]
+    private ?bool $isVerified = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $token = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $pseudo = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $tokenexpiration = null;
+
     public function __construct()
     {
         $this->tests = new ArrayCollection();
@@ -309,6 +321,54 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeAddress(Address $address): static
     {
         $this->address->removeElement($address);
+
+        return $this;
+    }
+
+    public function isIsVerified(): ?bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): static
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(?string $token): static
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    public function getPseudo(): ?string
+    {
+        return $this->pseudo;
+    }
+
+    public function setPseudo(string $pseudo): static
+    {
+        $this->pseudo = $pseudo;
+
+        return $this;
+    }
+
+    public function getTokenexpiration(): ?\DateTimeInterface
+    {
+        return $this->tokenexpiration;
+    }
+
+    public function setTokenexpiration(?\DateTimeInterface $tokenexpiration): static
+    {
+        $this->tokenexpiration = $tokenexpiration;
 
         return $this;
     }
