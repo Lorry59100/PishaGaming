@@ -9,6 +9,11 @@ register:
     controller: App\Controller\RegistrationController::register
     methods: POST
 
+account_activation:
+    path: /account-activation
+    controller: App\Controller\RegistrationController::accountActivation
+    methods: POST
+
 login:
     path: /login
     controller: App\Controller\LoginController::login
