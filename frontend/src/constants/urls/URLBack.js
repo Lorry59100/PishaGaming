@@ -13,3 +13,4 @@ export const URL_GET_ORDER = '/get-order'
 export const URL_ADD_ADDRESS = '/add-address'
 export const URL_GET_ADDRESS = '/get-address'
 export const URL_API_GOUV = "/search/?q=";
+export const URL_ACCOUNT_ACTIVATION = "/account-activation"
