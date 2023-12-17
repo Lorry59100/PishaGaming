@@ -3,16 +3,24 @@
 namespace App\Controller;
 
 use App\Entity\Address;
+use App\Service\TokenService;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AddressController extends AbstractController
 {
+    private $tokenService;
+
+    public function __construct(TokenService $tokenService)
+    {
+        $this->tokenService = $tokenService;
+    }
+
     /**
      * @Route("/add-address", name="add_address", methods={"POST"})
      */
@@ -42,13 +50,25 @@ class AddressController extends AbstractController
     /**
      * @Route("/get-address", name="get_address", methods={"GET"})
      */
-    public function getAddress(Request $request, UserRepository $userRepository) : JsonResponse
+    public function getAddress(Request $request) : JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        // Récupérez les en-têtes de la requête
-        $headers = $request->headers;
-        dd($headers);
-        return new JsonResponse(['success' => true, 'data' => $data], 200);
-        
+        $user = $this->tokenService->getUserFromRequest($request);
+        if ($user instanceof JsonResponse) {
+            // If $userOrResponse is a JsonResponse, there's an error
+            return $user;
+        }
+    $user = $user;
+    $addressArray = [];
+    foreach($user->getAddress() as $address) {
+        $addressArray[] = [
+            'id' => $address->getId(),
+            'housenumber' => $address->getHouseNumber(),
+            'street' => $address->getStreet(),
+            'city' => $address->getCity(),
+            'postcode' => $address->getPostcode(),
+        ];
+    }
+        return new JsonResponse($addressArray, 200);
     }
 }
