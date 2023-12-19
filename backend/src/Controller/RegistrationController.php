@@ -102,10 +102,11 @@ class RegistrationController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $token = $data['token'];
         $user = $userRepository->findOneBy(['token' => $token]);
-        $now = new \DateTime();
-        $expirationDate = $user->getTokenExpiration();
+        
+        $now = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
+        $expirationDate = new \DateTime($user->getTokenexpiration()->format('Y-m-d H:i:s'), new \DateTimeZone('Europe/Paris'));
 
-        if ($expirationDate < $now) {
+        if ($expirationDate > $now) {
             // Le token est valide
             $user->setIsVerified(true);
             $user->setToken(null);
