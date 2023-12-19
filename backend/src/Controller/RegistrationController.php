@@ -55,7 +55,7 @@ class RegistrationController extends AbstractController
         /* Créer un token */
         $randomString = bin2hex(random_bytes(16));
         $timestamp = time();
-        $expirationTimestamp = $timestamp + 24 * 60 * 60;
+        $expirationTimestamp = $timestamp + 86400;
         $dateTime = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
         $dateTime->setTimestamp($expirationTimestamp);
         $token = $randomString . $timestamp;
@@ -105,7 +105,7 @@ class RegistrationController extends AbstractController
         $now = new \DateTime();
         $expirationDate = $user->getTokenExpiration();
 
-        if ($expirationDate > $now) {
+        if ($expirationDate < $now) {
             // Le token est valide
             $user->setIsVerified(true);
             $user->setToken(null);
@@ -114,10 +114,46 @@ class RegistrationController extends AbstractController
             $em->flush();
         } else {
             // Le token n'est pas valide
-            return new JsonResponse(['error' => 'Votre lien a expiré vous pouvez effectuer une nouvelle demande en cliquant ici']);
+            return new JsonResponse(['error' => 'Votre lien a expiré.', JsonResponse::HTTP_BAD_REQUEST]);
         }
         
         
         return new JsonResponse(['message' => 'Votre compte a été validé félicitations !']);
+    }
+
+    /**
+     * @Route("/token-activation-again", name="token_activation_again", methods={"POST"})
+     */
+    public function resendTokenActivation(Request $request, UserRepository $userRepository,EntityManagerInterface $em): JsonResponse
+    {   
+        $data = json_decode($request->getContent(), true);
+        $email = $data['email'];
+        $user = $userRepository->findOneBy(['email' => $email]);
+        if(!$user) {
+            return new JsonResponse(['error' => 'une erreur est survenue']);
+        };
+        if($user) {
+            $now = new \DateTime();
+            $expirationDate = $user->getTokenExpiration();
+                if($user->isIsVerified() == true) {
+                    return new JsonResponse(['error' => 'une erreur est survenue']);
+                }
+                if ($expirationDate > $now) {
+                    return new JsonResponse(['error' => 'une erreur est survenue']);
+                } else {
+                    /* Créer un token */
+                    $randomString = bin2hex(random_bytes(16));
+                    $timestamp = time();
+                    $expirationTimestamp = $timestamp + 86400;
+                    $dateTime = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
+                    $dateTime->setTimestamp($expirationTimestamp);
+                    $token = $randomString . $timestamp;
+                    $user->setToken($token);
+                    $user->setTokenexpiration($dateTime);
+                    $em->persist($user);
+                    $em->flush();
+                }
+        }
+        return new JsonResponse(['message' => $user->getFirstname()]);
     }
 }
