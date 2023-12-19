@@ -49,13 +49,17 @@ class LoginController extends AbstractController
             if ($cart) {
             $this->cartService->createCartEntities($user, $cart, $entityManager);
             }
+
+            if($user->isIsVerified() == null) {
+                return new JsonResponse(['error' => 'Vous devez valider votre compte avant de vous connecter'], 401);
+            }
  
             return new JsonResponse([
                 'user'  => $user->getUserIdentifier(),
                 'token' => $token,
             ]);
         }
-        return new JsonResponse(['message' => 'Identifiants invalides'], 401);
+        return new JsonResponse(['error' => 'Identifiants invalides'], 401);
        
     }
 
