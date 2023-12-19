@@ -349,3 +349,14 @@ cursor: pointer;
 .btn-address-container {
 margin-top: 9em;
 }
+
+.token-again-form-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.token-again-form-container>* {
+    margin: 0.5em 0;
+}
