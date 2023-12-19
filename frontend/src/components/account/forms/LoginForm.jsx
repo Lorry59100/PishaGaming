@@ -8,6 +8,7 @@ import { URL, URL_LOGIN} from "../../../constants/urls/URLBack";
 import { useAuth } from '../../account/services/tokenService';
 import PropTypes from "prop-types";
 import { cartService } from "../services/cartServices";
+import {  ToastError } from "../../services/toastService";
 
 export function LoginForm(props) {
   const { login } = useAuth();
@@ -35,6 +36,7 @@ export function LoginForm(props) {
     })
     .catch((error) => {
       console.error('Erreur lors de la récupération des données :', error);
+      ToastError(error.response.data.error);
     });
   };
 
