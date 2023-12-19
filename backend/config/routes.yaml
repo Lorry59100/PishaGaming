@@ -14,6 +14,11 @@ account_activation:
     controller: App\Controller\RegistrationController::accountActivation
     methods: POST
 
+token_activation_again:
+    path: /token-activation-again
+    controller: App\Controller\RegistrationController::resendTokenActivation
+    methods: POST
+
 login:
     path: /login
     controller: App\Controller\LoginController::login
