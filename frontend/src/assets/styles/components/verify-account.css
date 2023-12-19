@@ -1,0 +1,14 @@
+.verify-account-container {
+display: flex;
+justify-content: center;
+height: 600px;
+align-items: center;
+flex-direction: column;
+}
+.verify-account-container>h2 {
+color: white;
+margin-bottom: 0.5em;
+}
+.verify-account-container>img {
+height: 100px;
+}
