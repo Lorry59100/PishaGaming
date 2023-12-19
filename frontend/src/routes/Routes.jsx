@@ -7,6 +7,7 @@ import { Paymentview } from "../views/Paymentview";
 import { Activationview } from "../views/Activationview";
 import { Parameterview } from "../views/Parameterview";
 import { VerifyEmailview } from "../views/VerifyEmailview";
+import { ResendActivationTokenview } from "../views/ResendActivationTokenview";
 
 function Routes() {
   return (
@@ -18,6 +19,7 @@ function Routes() {
         <Route path={URL.URL_ACTIVATION} element={<Activationview />} />
         <Route path={URL.URL_PARAMETERS} element={<Parameterview />} />
         <Route path={URL.URL_VERIFY_EMAIL} element={<VerifyEmailview />} />
+        <Route path={URL.URL_RESEND_ACTIVATION_TOKEN} element={<ResendActivationTokenview />} />
     </RoutesContainer>
   )
 }
