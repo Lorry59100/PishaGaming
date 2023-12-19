@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import axios from "axios";
 import { URL, URL_ACCOUNT_ACTIVATION } from "../constants/urls/URLBack";
 import { useNavigate, useParams } from "react-router-dom";
@@ -9,7 +9,6 @@ import loader from "../assets/img/loader.gif"
 import { URL_HOME } from "../constants/urls/URLFront";
 
 export function VerifyEmailview() {
-    const flag = useRef(false);
     const { token } = useParams();
     const isToastDisplayed = useRef(false);
     const navigate = useNavigate();
@@ -35,14 +34,12 @@ export function VerifyEmailview() {
             }
           }
         } catch (error) {
-          // Erreur réseau ou autre
-          ToastError('Une erreur s\'est produite lors de la récupération des données');
           console.error('Erreur lors de la récupération des données :', error);
         }
       };
   
       handleCheckEmail();
-    }, [token]);
+    }, [token, navigate]);
 
   return (
     <div className="verify-account-container">
