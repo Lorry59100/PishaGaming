@@ -108,8 +108,20 @@ export function Parameters() {
           </div>
         )}
         {activeTab === 1 && (
-          <div>
-            <h1>2</h1>
+          <div className="parameter-forms-container">
+            <div className="title-security-container">
+              <h1>Sécurité du compte</h1>
+              <h3>Mail</h3>
+            </div>
+            <div className="email-form-container">
+
+            </div>
+
+
+
+            <div className="password-form-container">
+
+            </div>
           </div>
         )}
         {activeTab === 2 && (
