@@ -11,6 +11,7 @@ import axios from "axios";
 import { URL, URL_GET_ADDRESS } from "../../../constants/urls/URLBack";
 import { PiPencilSimpleLineFill } from 'react-icons/pi';
 import { BsTrash3 } from "react-icons/bs";
+import { Field, Form, Formik } from "formik";
 
 export function Parameters() {
     const [activeTab, setActiveTab] = useState(0);
@@ -50,12 +51,14 @@ export function Parameters() {
         }
       }, [decodedUserToken]);
 
+      /* console.log(decodedUserToken); */
+
     return (
         <div className="parameters-container">
             <IconContext.Provider value={{ size: '4em'}}>
                 <PiUserBold className='user-icon-circled user-icon-circled-big'/>
             </IconContext.Provider>
-            <h1>gamer-c0a8e8</h1>
+            <h1>{/* {decodedUserToken.pseudo} */}</h1>
             <h4>Membre depuis : nov. 28, 2017</h4>
             <div className="cutline-form cutline-form-big"></div>
             <div className="tab-and-content-container">
@@ -111,16 +114,28 @@ export function Parameters() {
           <div className="parameter-forms-container">
             <div className="title-security-container">
               <h1>Sécurité du compte</h1>
-              <h3>Mail</h3>
+              <h4>{decodedUserToken.username}</h4>
             </div>
-            <div className="email-form-container">
-
-            </div>
-
-
-
-            <div className="password-form-container">
-
+            <div className="security-forms-container">
+                <Formik>
+                  <Form className="email-form-container">
+                    <h3>Changer votre adresse mail</h3>
+                    <Field className="security-form-field" type="text" name="mail" placeholder="Nouvelle adresse email"/>
+                    <Field className="security-form-field" type="text" name="mail_confirm" placeholder="Confirmation de votre nouvelle adresse email"/>
+                    <Field className="security-form-field" type="password" name="password" placeholder="Votre mot de passe actuel :"/>
+                    <div className="submit-button-container"><button className="submit-button">Valider</button></div>
+                  </Form>
+                </Formik>
+              <div className="security-forms-vertical-spacer"></div>
+                <Formik>
+                    <Form className="password-form-container">
+                      <h3>Changer votre mot de passe</h3>
+                      <Field className="security-form-field" type="password" name="password" placeholder="Votre mot de passe actuel :"/>
+                      <Field className="security-form-field" type="password" name="password" placeholder="Mot de passe"/>
+                      <Field className="security-form-field" type="password" name="password" placeholder="Confirmation"/>
+                      <div className="submit-button-container"><button className="submit-button">Valider</button></div>
+                    </Form>
+                </Formik>
             </div>
           </div>
         )}

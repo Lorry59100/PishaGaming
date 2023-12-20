@@ -101,20 +101,29 @@ color: var(--grey);
     justify-content: center;
 }
 
-.parameter-forms-container {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 2em;
-    width: 100%;
-}
-
-.title-security-container {
-    grid-column: span 5;
-}
-
 .email-form-container, .password-form-container {
-    grid-column: span 2;
-    background-color: blue;
-    width: 100%;
-    height: 100px;
+    width: 50%;
+}
+
+.email-form-container>*, .password-form-container>* {
+    margin: 0.5em;
+}
+
+.security-forms-container {
+    display: flex;
+}
+
+.security-forms-vertical-spacer {
+border-left: 1px solid var(--grey);
+margin-left: 10px;
+margin-right: 10px;
+}
+
+.security-form-field {
+    width: -moz-available;
+}
+
+.submit-button-container {
+    display: flex;
+    justify-content: center;
 }
