@@ -155,6 +155,6 @@ class RegistrationController extends AbstractController
                     $em->flush();
                 }
         }
-        return new JsonResponse(['message' => $user->getFirstname()]);
+        return new JsonResponse(['message' => 'un mail d\'activation a été envoyé à votre adresse mail. Pensez à vérifier vos spams.']);
     }
 }
