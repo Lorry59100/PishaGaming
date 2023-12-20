@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import axios from "axios";
 import { URL, URL_ACCOUNT_ACTIVATION } from "../constants/urls/URLBack";
 import { useNavigate, useParams } from "react-router-dom";
-import { ToastErrorWithLink } from "../components/services/toastService";
+import { ToastErrorWithLink, ToastSuccess } from "../components/services/toastService";
 import "react-toastify/dist/ReactToastify.css";
 import "../assets/styles/components/verify-account.css"
 import loader from "../assets/img/loader.gif"
@@ -24,6 +24,8 @@ export function VerifyEmailview() {
             if (response.status === 200 && response.data.message) {
               // Traitement réussi
               console.log(response.data.message);
+              ToastSuccess(response.data.message);
+              navigate(URL_HOME)
             } else if (response.data.error) {
               ToastErrorWithLink(response.data.error, "en cliquant ici", "http://localhost:5173/resend-activation-token");
               isToastDisplayed.current = true; // Marquer le toast comme déjà affiché
