@@ -5,4 +5,5 @@ export const URL_PAYMENT = '/payment';
 export const URL_ACTIVATION = '/activation';
 export const URL_PARAMETERS = '/parameters';
 export const URL_VERIFY_EMAIL = '/verifyEmail/:token'
+export const URL_CHANGE_EMAIL = '/changeEmail/:token'
 export const URL_RESEND_ACTIVATION_TOKEN = '/resend-activation-token'
