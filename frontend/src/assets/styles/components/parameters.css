@@ -101,6 +101,18 @@ color: var(--grey);
     justify-content: center;
 }
 
+.title-security-container {
+    margin-left: 0.5em;
+}
+
+.title-security-container>h2 {
+    color: white;
+}
+
+.title-security-container>h4 {
+    color: var(--grey)
+}
+
 .email-form-container, .password-form-container {
     width: 50%;
 }
@@ -113,6 +125,10 @@ color: var(--grey);
     display: flex;
 }
 
+.email-form-container>h3, .password-form-container>h3 {
+    color: white;
+}
+
 .security-forms-vertical-spacer {
 border-left: 1px solid var(--grey);
 margin-left: 10px;
@@ -121,6 +137,7 @@ margin-right: 10px;
 
 .security-form-field {
     width: -moz-available;
+    margin: 1em;
 }
 
 .submit-button-container {
