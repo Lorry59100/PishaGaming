@@ -7,11 +7,13 @@ import "react-toastify/dist/ReactToastify.css";
 import "../assets/styles/components/verify-account.css"
 import loader from "../assets/img/loader.gif"
 import { URL_HOME } from "../constants/urls/URLFront";
+import { useAuth } from "../components/account/services/tokenService";
 
 export function ChangeMailview() {
     const { token } = useParams();
     const isToastDisplayed = useRef(false);
     const navigate = useNavigate();
+    const { logout, login } = useAuth();
     console.log(token);
 
     useEffect(() => {
@@ -24,9 +26,12 @@ export function ChangeMailview() {
             if (response.status === 200 && response.data.message) {
               // Traitement réussi
               console.log(response.data.message);
-              // enlever le token de la session pour en récréer un avec les bonnes infos.
               ToastSuccess(response.data.message);
-              navigate(URL_HOME)
+              //Déconnecter l'user
+              logout();
+              setTimeout(() => {
+                window.location.href = URL_HOME;
+              }, 5000);
             } else if (response.data.error) {
               ToastErrorWithLink(response.data.error, "en cliquant ici", "http://localhost:5173/resend-mail-token");
               isToastDisplayed.current = true; // Marquer le toast comme déjà affiché
@@ -42,7 +47,7 @@ export function ChangeMailview() {
       };
   
       handleCheckEmail();
-    }, [token, navigate]);
+    }, [token, navigate, login, logout]);
     return (
     <div className="verify-account-container">
       <h2>Verification en cours...</h2>
