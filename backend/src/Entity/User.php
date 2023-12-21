@@ -64,7 +64,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $pseudo = null;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $tokenexpiration = null;
+    private ?\DateTimeInterface $tokenExpiration = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $tokenMail = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $mailExpiration = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $mailToUpdate = null;
 
     public function __construct()
     {
@@ -361,14 +370,50 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getTokenexpiration(): ?\DateTimeInterface
+    public function getTokenExpiration(): ?\DateTimeInterface
     {
-        return $this->tokenexpiration;
+        return $this->tokenExpiration;
     }
 
-    public function setTokenexpiration(?\DateTimeInterface $tokenexpiration): static
+    public function setTokenExpiration(?\DateTimeInterface $tokenExpiration): static
     {
-        $this->tokenexpiration = $tokenexpiration;
+        $this->tokenExpiration = $tokenExpiration;
+
+        return $this;
+    }
+
+    public function getTokenMail(): ?string
+    {
+        return $this->tokenMail;
+    }
+
+    public function setTokenMail(?string $tokenMail): static
+    {
+        $this->tokenMail = $tokenMail;
+
+        return $this;
+    }
+
+    public function getMailExpiration(): ?\DateTimeInterface
+    {
+        return $this->mailExpiration;
+    }
+
+    public function setMailExpiration(?\DateTimeInterface $mailExpiration): static
+    {
+        $this->mailExpiration = $mailExpiration;
+
+        return $this;
+    }
+
+    public function getMailToUpdate(): ?string
+    {
+        return $this->mailToUpdate;
+    }
+
+    public function setMailToUpdate(?string $mailToUpdate): static
+    {
+        $this->mailToUpdate = $mailToUpdate;
 
         return $this;
     }
