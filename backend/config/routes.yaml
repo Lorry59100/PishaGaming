@@ -83,6 +83,16 @@ get_address:
     controller: App\Controller\AddressController::getAddress
     methods: GET
 
+change_mail:
+    path: /change-mail
+    controller: App\Controller\ParametersController::changeMail
+    methods: POST
+
+check_mail:
+    path: /check-mail
+    controller: App\Controller\ParametersController::checkMail
+    methods: POST
+
 app_logout:
     path: /logout
     methods: GET
