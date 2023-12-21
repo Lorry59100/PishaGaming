@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { AddressForm } from "./AddressForm";
 import { useAuth } from "../services/tokenService";
 import axios from "axios";
-import { URL, URL_GET_ADDRESS } from "../../../constants/urls/URLBack";
+import { URL, URL_CHANGE_MAIL, URL_GET_ADDRESS } from "../../../constants/urls/URLBack";
 import { PiPencilSimpleLineFill } from 'react-icons/pi';
 import { BsTrash3 } from "react-icons/bs";
 import { Field, Form, Formik } from "formik";
@@ -52,6 +52,27 @@ export function Parameters() {
       }, [decodedUserToken]);
 
       /* console.log(decodedUserToken); */
+
+      const handleEmailFormSubmit = (values, actions) => {
+        const { mail, mail_confirm, password } = values;
+    
+        const headers = {
+          'Authorization': `Bearer ${decodedUserToken.username}`,
+          // autres en-têtes si nécessaire...
+        };
+    
+        axios.post(`${URL}${URL_CHANGE_MAIL}`, { mail, mail_confirm, password }, { headers })
+          .then(response => {
+            console.log('Email form submitted successfully:', response.data);
+            // Mettez à jour l'état ou effectuez d'autres actions si nécessaire
+          })
+          .catch(error => {
+            console.error('Erreur lors de la soumission du formulaire email :', error);
+          })
+          .finally(() => {
+            actions.setSubmitting(false); // Arrêter l'indicateur de soumission du formulaire
+          });
+      };
 
     return (
         <div className="parameters-container">
@@ -113,17 +134,17 @@ export function Parameters() {
         {activeTab === 1 && (
           <div className="parameter-forms-container">
             <div className="title-security-container">
-              <h1>Sécurité du compte</h1>
+              <h2>Sécurité du compte</h2>
               <h4>{decodedUserToken.username}</h4>
             </div>
             <div className="security-forms-container">
-                <Formik>
+                <Formik initialValues={{ mail: '', mail_confirm: '', password: '' }} onSubmit={handleEmailFormSubmit}>
                   <Form className="email-form-container">
                     <h3>Changer votre adresse mail</h3>
                     <Field className="security-form-field" type="text" name="mail" placeholder="Nouvelle adresse email"/>
                     <Field className="security-form-field" type="text" name="mail_confirm" placeholder="Confirmation de votre nouvelle adresse email"/>
                     <Field className="security-form-field" type="password" name="password" placeholder="Votre mot de passe actuel :"/>
-                    <div className="submit-button-container"><button className="submit-button">Valider</button></div>
+                    <div className="submit-button-container"><button className="submit-button" type="submit">Valider</button></div>
                   </Form>
                 </Formik>
               <div className="security-forms-vertical-spacer"></div>
