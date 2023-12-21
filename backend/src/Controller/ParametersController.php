@@ -100,6 +100,6 @@ class ParametersController extends AbstractController
             // Le token n'est pas valide
             return new JsonResponse(['error' => 'Votre lien a expiré.', JsonResponse::HTTP_BAD_REQUEST]);
         }
-        return new JsonResponse(['message' => 'Votre adresse mail a bien été changé !']);
+        return new JsonResponse(['message' => 'Votre adresse mail a bien été changé. Veuillez vous reconnecter avec la nouvelle.']);
     }
 }
