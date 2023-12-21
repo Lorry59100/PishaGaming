@@ -15,3 +15,5 @@ export const URL_GET_ADDRESS = '/get-address'
 export const URL_API_GOUV = "/search/?q=";
 export const URL_ACCOUNT_ACTIVATION = '/account-activation'
 export const URL_ACTIVATION_TOKEN_AGAIN = '/token-activation-again'
+export const URL_CHANGE_MAIL = '/change-mail'
+export const URL_CHECK_MAIL = '/check-mail'
