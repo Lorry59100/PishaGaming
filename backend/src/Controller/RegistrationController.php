@@ -70,7 +70,7 @@ class RegistrationController extends AbstractController
             ->setBirthdate($dateBirthday)
             ->setPassword($passwordHasher->hashPassword($user, $data['password']))
             ->setToken($token)
-            ->setTokenexpiration($dateTime)
+            ->setTokenExpiration($dateTime)
             ->setIsVerified(false)
             ->setPseudo($pseudo)
             ->setRoles(['ROLE_USER']);
@@ -104,13 +104,13 @@ class RegistrationController extends AbstractController
         $user = $userRepository->findOneBy(['token' => $token]);
         
         $now = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
-        $expirationDate = new \DateTime($user->getTokenexpiration()->format('Y-m-d H:i:s'), new \DateTimeZone('Europe/Paris'));
+        $expirationDate = new \DateTime($user->getTokenExpiration()->format('Y-m-d H:i:s'), new \DateTimeZone('Europe/Paris'));
 
         if ($expirationDate > $now) {
             // Le token est valide
             $user->setIsVerified(true);
             $user->setToken(null);
-            $user->setTokenexpiration(null);
+            $user->setTokenExpiration(null);
             $em->persist($user);
             $em->flush();
         } else {
