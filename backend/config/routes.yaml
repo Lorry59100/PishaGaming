@@ -93,6 +93,11 @@ check_mail:
     controller: App\Controller\ParametersController::checkMail
     methods: POST
 
+change_password:
+    path: /change-password
+    controller: App\Controller\ParametersController::changePassword
+    methods: POST
+
 app_logout:
     path: /logout
     methods: GET
