@@ -62,9 +62,11 @@ class ParametersController extends AbstractController
             $em->persist($user);
             $em->flush();
 
+            $mail = $user->getEmail();
+
             $this->emailService->sendWithTemplate(
                 'pishagaming.noreply@gmail.com',
-                $email,
+                $mail,
                 'Changement de votre adresse mail',
                 'emails/changemail.html.twig',
                 [
@@ -73,7 +75,7 @@ class ParametersController extends AbstractController
             );
         }
 
-        return new JsonResponse(['message' => 'un mail d\'activation a été envoyé à votre nouvelle adresse'], 200);
+        return new JsonResponse(['message' => 'un mail d\'activation a été envoyé à votre adresse'], 200);
     }
 
     /**
@@ -98,8 +100,34 @@ class ParametersController extends AbstractController
             $em->flush();
         } else {
             // Le token n'est pas valide
-            return new JsonResponse(['error' => 'Votre lien a expiré.', JsonResponse::HTTP_BAD_REQUEST]);
+            $user->setTokenMail(null);
+            $user->setMailExpiration(null);
+            $user->setMailToUpdate(null);
+            $em->persist($user);
+            $em->flush();
+            return new JsonResponse(['error' => 'Votre lien a expiré. Vous pouvez effectuer une nouvelle demande.', JsonResponse::HTTP_BAD_REQUEST]);
         }
         return new JsonResponse(['message' => 'Votre adresse mail a bien été changé. Veuillez vous reconnecter avec la nouvelle.']);
+    }
+
+    /**
+     * @Route("/change-password", name="change_password", methods={"POST"})
+     */
+    public function changePassword(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em) : JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $password = $data['password'];
+        $newPassword = $data['newPassword'];
+        $user = $this->tokenService->getUserFromRequest($request);
+
+        if ($user && $passwordHasher->isPasswordValid($user, $password)) {
+            $user->setPassword($passwordHasher->hashPassword($user, $newPassword));
+            $em->persist($user);
+            $em->flush();
+            return new JsonResponse(['message' => 'Votre mot de passe a bien été changé.
+            Vous pourrez l\'utiliser lors de votre prochaine connexion.']);
+        } else {
+            return new JsonResponse(['error' => 'une erreur est survenue']);
+        }
     }
 }
