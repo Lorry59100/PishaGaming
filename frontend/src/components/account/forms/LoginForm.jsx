@@ -9,6 +9,7 @@ import { useAuth } from '../../account/services/tokenService';
 import PropTypes from "prop-types";
 import { cartService } from "../services/cartServices";
 import {  ToastError } from "../../services/toastService";
+import { URL_FORGOTTEN_PASSWORD } from "../../../constants/urls/URLFront";
 
 export function LoginForm(props) {
   const { login } = useAuth();
@@ -38,6 +39,11 @@ export function LoginForm(props) {
       console.error('Erreur lors de la récupération des données :', error);
       ToastError(error.response.data.error);
     });
+  };
+
+  // Fonction pour masquer le formulaire
+  const hideLoginForm = () => {
+    setShowLoginForm(false);
   };
 
   return (
@@ -83,7 +89,7 @@ export function LoginForm(props) {
             </Formik>
             <div className="switch">
               <button onClick={() => props.toggleForm()}>Pas encore de compte ?</button>
-              <Link>Mot de passe oublié ?</Link>
+              <Link to={URL_FORGOTTEN_PASSWORD} onClick={hideLoginForm}>Mot de passe oublié ?</Link>
             </div>
           </div>
   )
