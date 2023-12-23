@@ -15,6 +15,20 @@ export const ToastSuccess = (message) => {
   });
 };
 
+export const ToastCenteredSuccess = (message) => {
+  toast.success(message, {
+    position: "top-center",
+    className: "big-toast",
+    autoClose: false,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "dark",
+  });
+};
+
 export const ToastImportantSuccess = (message) => {
   toast.success(message, {
     position: "top-right",
