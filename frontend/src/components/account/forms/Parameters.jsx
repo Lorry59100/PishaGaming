@@ -1,4 +1,5 @@
 import "../../../assets/styles/components/parameters.css"
+import "../../../assets/styles/components/toasts.css"
 import { PiUserBold } from 'react-icons/pi';
 import { IconContext } from 'react-icons';
 import { IoIosArrowForward } from "react-icons/io";
@@ -8,10 +9,11 @@ import { useEffect, useState } from "react";
 import { AddressForm } from "./AddressForm";
 import { useAuth } from "../services/tokenService";
 import axios from "axios";
-import { URL, URL_CHANGE_MAIL, URL_GET_ADDRESS } from "../../../constants/urls/URLBack";
+import { URL, URL_CHANGE_MAIL, URL_CHANGE_PASSWORD, URL_GET_ADDRESS } from "../../../constants/urls/URLBack";
 import { PiPencilSimpleLineFill } from 'react-icons/pi';
 import { BsTrash3 } from "react-icons/bs";
 import { Field, Form, Formik } from "formik";
+import { ToastCenteredSuccess } from "../../services/toastService";
 
 export function Parameters() {
     const [activeTab, setActiveTab] = useState(0);
@@ -54,16 +56,34 @@ export function Parameters() {
       /* console.log(decodedUserToken); */
 
       const handleEmailFormSubmit = (values, actions) => {
-        const { mail, mail_confirm, password } = values;
-    
+        const { mail, mail_confirm, password } = values; 
         const headers = {
           'Authorization': `Bearer ${decodedUserToken.username}`,
           // autres en-têtes si nécessaire...
         };
-    
         axios.post(`${URL}${URL_CHANGE_MAIL}`, { mail, mail_confirm, password }, { headers })
           .then(response => {
             console.log('Email form submitted successfully:', response.data);
+            // Mettez à jour l'état ou effectuez d'autres actions si nécessaire
+          })
+          .catch(error => {
+            console.error('Erreur lors de la soumission du formulaire email :', error);
+          })
+          .finally(() => {
+            actions.setSubmitting(false); // Arrêter l'indicateur de soumission du formulaire
+          });
+      };
+
+      const handlePasswordFormSubmit = (values, actions) => {
+        const { password, newPassword, passwordConfirm } = values; 
+        const headers = {
+          'Authorization': `Bearer ${decodedUserToken.username}`,
+          // autres en-têtes si nécessaire...
+        };
+        axios.post(`${URL}${URL_CHANGE_PASSWORD}`, { password, newPassword, passwordConfirm }, { headers })
+          .then(response => {
+            ToastCenteredSuccess(response.data.message);
+            console.log('Password form submitted successfully:', response.data);
             // Mettez à jour l'état ou effectuez d'autres actions si nécessaire
           })
           .catch(error => {
@@ -148,13 +168,13 @@ export function Parameters() {
                   </Form>
                 </Formik>
               <div className="security-forms-vertical-spacer"></div>
-                <Formik>
+                <Formik initialValues={{ password: '', newPassword: '', passwordConfirm: '' }} onSubmit={handlePasswordFormSubmit}>
                     <Form className="password-form-container">
                       <h3>Changer votre mot de passe</h3>
                       <Field className="security-form-field" type="password" name="password" placeholder="Votre mot de passe actuel :"/>
-                      <Field className="security-form-field" type="password" name="password" placeholder="Mot de passe"/>
-                      <Field className="security-form-field" type="password" name="password" placeholder="Confirmation"/>
-                      <div className="submit-button-container"><button className="submit-button">Valider</button></div>
+                      <Field className="security-form-field" type="password" name="newPassword" placeholder="Mot de passe"/>
+                      <Field className="security-form-field" type="password" name="passwordConfirm" placeholder="Confirmation"/>
+                      <div className="submit-button-container"><button className="submit-button" type="submit">Valider</button></div>
                     </Form>
                 </Formik>
             </div>
