@@ -1,0 +1,40 @@
+.Toastify__toast-container--top-center {
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+width: 590px;
+}
+
+.big-toast {
+height: 330px;
+border-radius: 10px;
+background: var(--medium-dark)
+}
+
+.big-toast>button>svg {
+height: 35px;
+width: 35px;
+position: absolute;
+top: 1em;
+right: 1em;
+color: #ff0a4e;
+}
+
+.big-toast>button>svg:hover {
+color: white;
+}
+
+.big-toast>.Toastify__toast-body {
+display: flex;
+flex-direction: column;
+text-align: center;
+}
+
+.big-toast>.Toastify__toast-body>.Toastify__toast-icon {
+width: 50px;
+}
+
+.big-toast>.Toastify__toast-body>.Toastify__toast-icon>svg {
+fill: var(--orange);
+margin-bottom: 1em;
+}
