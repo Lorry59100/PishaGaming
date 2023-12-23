@@ -31,9 +31,9 @@ export function ChangeMailview() {
               logout();
               setTimeout(() => {
                 window.location.href = URL_HOME;
-              }, 5000);
+              }, 8000);
             } else if (response.data.error) {
-              ToastErrorWithLink(response.data.error, "en cliquant ici", "http://localhost:5173/resend-mail-token");
+              ToastErrorWithLink(response.data.error, "En cliquant ici", "http://localhost:5173/parameters");
               isToastDisplayed.current = true; // Marquer le toast comme déjà affiché
               navigate(URL_HOME)
             } else {
