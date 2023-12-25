@@ -5,21 +5,24 @@ import { FcGoogle } from "react-icons/fc";
 import { Link } from 'react-router-dom';
 import { IconContext } from "react-icons";
 import { URL, URL_LOGIN} from "../../../constants/urls/URLBack";
-import { useAuth } from '../../account/services/tokenService';
+import { useTokenService } from '../../account/services/tokenService';
 import PropTypes from "prop-types";
 import { cartService } from "../services/cartServices";
 import {  ToastError } from "../../services/toastService";
 import { URL_FORGOTTEN_PASSWORD } from "../../../constants/urls/URLFront";
+import { useContext } from "react";
+import { CartContext } from "../../../contexts/CartContext";
 
 export function LoginForm(props) {
-  const { login } = useAuth();
+  const { login } = useTokenService();
+  const { updateCart } = useContext(CartContext);
   const initialValues= {
     email: '',
     password: '',
     };
   const onSubmit=(values) => {
     console.log(values);
-    const cartItems = cartService.getCartItems();
+    const cartItems = cartService.getSessionCartItems();
 
     axios.post(`${URL}${URL_LOGIN}`, {
       email: values.email,
@@ -29,21 +32,17 @@ export function LoginForm(props) {
     .then((response) => {
       console.log('Response data', response.data);
       if (response.status === 200) {
-        console.log(response.data)
+        console.log('response data login : ', response.data.cart)
         login(response.data.token);
-        cartService.clearCart();
-        window.location.reload(true);
+        cartService.clearSessionCart();
+        updateCart(response.data.cart);
+        /* window.location.reload(true); */
     }
     })
     .catch((error) => {
       console.error('Erreur lors de la récupération des données :', error);
       ToastError(error.response.data.error);
     });
-  };
-
-  // Fonction pour masquer le formulaire
-  const hideLoginForm = () => {
-    setShowLoginForm(false);
   };
 
   return (
@@ -89,7 +88,7 @@ export function LoginForm(props) {
             </Formik>
             <div className="switch">
               <button onClick={() => props.toggleForm()}>Pas encore de compte ?</button>
-              <Link to={URL_FORGOTTEN_PASSWORD} onClick={hideLoginForm}>Mot de passe oublié ?</Link>
+              <Link to={URL_FORGOTTEN_PASSWORD}>Mot de passe oublié ?</Link>
             </div>
           </div>
   )
