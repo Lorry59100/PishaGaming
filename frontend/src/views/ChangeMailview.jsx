@@ -7,13 +7,13 @@ import "react-toastify/dist/ReactToastify.css";
 import "../assets/styles/components/verify-account.css"
 import loader from "../assets/img/loader.gif"
 import { URL_HOME } from "../constants/urls/URLFront";
-import { useAuth } from "../components/account/services/tokenService";
+import { useTokenService } from "../components/account/services/tokenService";
 
 export function ChangeMailview() {
     const { token } = useParams();
     const isToastDisplayed = useRef(false);
     const navigate = useNavigate();
-    const { logout, login } = useAuth();
+    const { logout, login } = useTokenService();
     console.log(token);
 
     useEffect(() => {
