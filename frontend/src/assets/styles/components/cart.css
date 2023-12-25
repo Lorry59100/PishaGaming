@@ -1,6 +1,7 @@
 .cart-view-container {
 display: flex;
 justify-content: center;
+min-height: 100vh;
 }
 .cart-component-container {
 display: grid;
