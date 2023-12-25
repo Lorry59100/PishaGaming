@@ -1,36 +1,10 @@
-import { useState, useEffect } from 'react';
-import { decodeToken } from 'react-jwt';
+import { useContext } from "react";
+import { AuthContext } from "../../../contexts/AuthContext";
 
-export const useAuth = () => {
-  const [userToken, setUserToken] = useState(null);
-  const [decodedUserToken, setDecodedUserToken] = useState(null);
+export const useTokenService = () => {
+  const { userToken, decodedUserToken, login, logout } = useContext(AuthContext);
 
-  const login = (token) => {
-    localStorage.setItem('authToken', token);
-    setUserToken(token);
-  };
-
-  const logout = () => {
-    localStorage.removeItem('authToken');
-    setUserToken(null);
-  };
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem('authToken');
-
-    if (storedToken !== userToken) {
-      setUserToken(storedToken);
-
-      if (storedToken) {
-        try {
-          const decodedToken = decodeToken(storedToken);
-          setDecodedUserToken(decodedToken);
-        } catch (error) {
-          console.error('Erreur lors du décodage du token :', error);
-        }
-      }
-    }
-  }, [userToken]);
+  // Vous pouvez ajouter d'autres fonctions spécifiques au service ici si nécessaire
 
   return {
     userToken,
