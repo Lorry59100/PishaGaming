@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import { IconContext } from "react-icons";
 import { AiOutlineCheck, AiOutlineClose, AiOutlineMinusCircle } from 'react-icons/ai';
@@ -15,7 +15,8 @@ import { calculateDiscountPercentage, convertToEuros } from './services/PriceSer
 import { formatDate } from '../account/services/dateServices';
 import { FaRegHeart } from "react-icons/fa";
 import parse from 'html-react-parser';
-import { useAuth } from '../account/services/tokenService';
+import { useTokenService } from '../account/services/tokenService';
+import { CartContext } from '../../contexts/CartContext';
 
 function parseHTML(html, maxLength = null) {
     const tempDiv = document.createElement('div');
@@ -33,11 +34,10 @@ export function SingleProduct() {
     const [showAllTags, setShowAllTags] = useState(false);
     const [showFullDescription, setShowFullDescription] = useState(false);
     const [selectedPlatform, setSelectedPlatform] = useState('');
-    const { decodedUserToken } = useAuth();
+    const { decodedUserToken } = useTokenService();
+    const { updateCart } = useContext(CartContext)
     const navigate = useNavigate();
-    
-    // eslint-disable-next-line no-unused-vars
-    const [cart, setCart] = useState([]);
+    /* const { updateCartItem } = useContext(CartContext); */
 
     const toggleDescription = () => {
         setShowFullDescription(!showFullDescription);
@@ -58,6 +58,7 @@ export function SingleProduct() {
             console.log(product.id);
             // Récupérer le panier depuis le stockage local
             const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            
             // Vérifier si le produit est déjà dans le panier
             const existingProductIndex = cart.findIndex(item => item.id === product.id && item.platform === selectedPlatform);
                 if (existingProductIndex !== -1) {
@@ -76,6 +77,7 @@ export function SingleProduct() {
                 }
             // Mettre à jour le panier dans le stockage local
             localStorage.setItem('cart', JSON.stringify(cart));
+            updateCart(cart);
         }
         if (decodedUserToken) {
             console.log(decodedUserToken);
@@ -93,7 +95,10 @@ export function SingleProduct() {
             .then(response => {
                 console.log(response.data);
                 // Mise à jour de l'état du panier dans le frontend
-                setCart(response.data.cart);
+                updateCart(response.data.cart);
+                /* console.log('updateCart : ', updateCart)
+                updateCartItem(product.id, selectedPlatform, 1);
+                console.log('updateCartItem : ', updateCartItem) */
                 if (redirect) {
                     navigate('/cart');
                 }
