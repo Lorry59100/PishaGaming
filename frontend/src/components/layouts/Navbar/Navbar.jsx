@@ -5,16 +5,18 @@ import { IconContext } from 'react-icons';
 import logo from '../../../assets/img/Logo.png';
 import Searchbar from './Searchbar';
 import '../../../assets/styles/components/navbar.css';
-import { useAuth } from '../../account/services/tokenService';
+import { useTokenService } from '../../account/services/tokenService';
 import { URL, URL_ADMIN } from '../../../constants/urls/URLBack';
 import { Link } from 'react-router-dom';
 import { LoginAndRegisterForm } from '../../account/forms/LoginAndRegisterForm';
 import { NavbarVisibilityContext } from '../../../contexts/NavbarVisibilityContext';
 import { useContext } from 'react';
 import { URL_CART, URL_HOME, URL_PARAMETERS } from '../../../constants/urls/URLFront';
+/* import { cartService } from '../../account/services/cartServices'; */
+import { CartContext } from '../../../contexts/CartContext';
 
 function Navbar() {
-  const { userToken, decodedUserToken, logout, login } = useAuth();
+  const { userToken, decodedUserToken, logout, login } = useTokenService();
   const [isProfileVisible, setIsProfileVisible] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
@@ -22,15 +24,33 @@ function Navbar() {
   const [menuClass, setMenuClass] = useState('');
   const [showLoginAndRegisterForm, setShowLoginAndRegisterForm] = useState(false);
   const { isNavbarVisible } = useContext(NavbarVisibilityContext);
+  
+  /* const itemCount = cartService.countSessionItemsInCart();
+  console.log(itemCount); */
+  
+  const { cart, resetCart } = useContext(CartContext);
+  const itemCount = cart ? cart.reduce((total, item) => total + item.quantity, 0) : 0;
 
   const toggleProfileVisibility = () => {
     if (!userToken) {
-      setShowLoginAndRegisterForm(!showLoginAndRegisterForm); // Renommé ici
+      setShowLoginAndRegisterForm(!showLoginAndRegisterForm);
     } else {
       setIsProfileVisible(!isProfileVisible);
+      setShowLoginAndRegisterForm(false); // Assurez-vous que le formulaire est masqué lorsqu'on ouvre le profil
     }
   };
 
+  const handleLoginButtonClick = () => {
+    setShowLoginAndRegisterForm(!showLoginAndRegisterForm);
+    setIsProfileVisible(false); // Assurez-vous que le profil est masqué lors de la tentative de connexion
+  };
+
+  const handleLogoutButtonClick = () => {
+    setIsProfileVisible(false); // Assurez-vous que le profil est masqué lors de la déconnexion
+    logout();
+    resetCart();
+  };
+  
   useEffect(() => {
     const handleScroll = () => {
       const isScrolled = window.scrollY > 0;
@@ -57,7 +77,7 @@ function Navbar() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [isVisible, isAtTop, userToken, scrolled]);
+  }, [isVisible, isAtTop, userToken, scrolled, decodedUserToken]);
 
   return (
     // Utilisation de la condition isNavbarVisible pour rendre la Navbar visible ou non
@@ -81,9 +101,14 @@ function Navbar() {
         <div className='profile-container'>
           <div className="cart-profile">
             <IconContext.Provider value={{ size: '2em' }}>
-            <Link to={`${URL_CART}`}><TiShoppingCart /></Link>
+              <Link to={`${URL_CART}`}><TiShoppingCart /></Link>
+              { itemCount > 0 && (
+                <div>
+                  Nombre d'articles : {itemCount}
+                </div>
+              )}
               {!decodedUserToken && (
-                <button onClick={toggleProfileVisibility}><PiUserBold /></button>
+                <button onClick={handleLoginButtonClick}><PiUserBold /></button>
               )}
               {decodedUserToken && (
                 <button onClick={toggleProfileVisibility}>
@@ -97,7 +122,7 @@ function Navbar() {
               <div className="profile-content">
                 <ul>
                   <li>
-                  <Link to={`${URL_PARAMETERS}`}>Paramètres</Link>
+                    <Link to={`${URL_PARAMETERS}`}>Paramètres</Link>
                   </li>
                   <li>
                     <a href="/">Achats</a>
@@ -108,7 +133,7 @@ function Navbar() {
                   {decodedUserToken && (
                     <div className='user-panel-connected'>
                       <li>
-                        <a href="/" onClick={logout}>Déconnexion</a>
+                      <Link to={URL_HOME} onClick={handleLogoutButtonClick}>Déconnexion</Link>
                       </li>
                       {decodedUserToken.roles.includes('ROLE_ADMIN') && (
                         <li>
