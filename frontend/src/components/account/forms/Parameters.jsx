@@ -7,7 +7,7 @@ import { GiPadlockOpen } from "react-icons/gi";
 import { BsGeoAlt } from "react-icons/bs";
 import { useEffect, useState } from "react";
 import { AddressForm } from "./AddressForm";
-import { useAuth } from "../services/tokenService";
+import { useTokenService } from "../services/tokenService";
 import axios from "axios";
 import { URL, URL_CHANGE_MAIL, URL_CHANGE_PASSWORD, URL_GET_ADDRESS } from "../../../constants/urls/URLBack";
 import { PiPencilSimpleLineFill } from 'react-icons/pi';
@@ -18,7 +18,7 @@ import { ToastCenteredSuccess } from "../../services/toastService";
 export function Parameters() {
     const [activeTab, setActiveTab] = useState(0);
     const [isAddressFormVisible, setAddressFormVisible] = useState(false);
-    const { decodedUserToken } = useAuth();
+    const { decodedUserToken } = useTokenService();
     const [addresses, setAddresses] = useState([]);
 
     const handleTabClick = (index) => {
