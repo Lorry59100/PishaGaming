@@ -54,10 +54,19 @@ class LoginController extends AbstractController
             if($user->isIsVerified() == null) {
                 return new JsonResponse(['error' => 'Vous devez valider votre compte avant de vous connecter'], 401);
             }
+            $cartArray = [];
+            foreach($user->getCarts() as $cart) {
+                $cartArray[] = [
+                    'id' => $cart->getId(),
+                    'quantity' => $cart->getQuantity(),
+                    'platform' => $cart->getPlatform(),
+                ];
+            };
  
             return new JsonResponse([
                 'user'  => $user->getUserIdentifier(),
                 'token' => $token,
+                'cart' => $cartArray,
             ]);
         }
         return new JsonResponse(['error' => 'Identifiants invalides'], 401);
