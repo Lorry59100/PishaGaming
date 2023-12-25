@@ -5,7 +5,7 @@ import { Paybar } from "../../layouts/Navbar/Paybar";
 import "../../../assets/styles/components/paymentform.css"
 import { PiPencilSimpleLineFill } from 'react-icons/pi';
 import { IconContext } from "react-icons";
-import { useAuth } from "../services/tokenService";
+import { useTokenService } from "../services/tokenService";
 import { URL, URL_USER_CART } from "../../../constants/urls/URLBack";
 import { calculateTotal, convertToEuros } from "../../products/services/PriceServices";
 import {Elements} from '@stripe/react-stripe-js';
@@ -17,7 +17,7 @@ import { addDays } from 'date-fns';
 
 export function PaymentForm() {
     const { hideNavbar, showNavbar } = useContext(NavbarVisibilityContext);
-    const { decodedUserToken } = useAuth();
+    const { decodedUserToken } = useTokenService();
     const [cartData, setCartData] = useState(null);
     const totalPrice = calculateTotal(cartData);
     const [stripe, setStripe] = useState(null);
