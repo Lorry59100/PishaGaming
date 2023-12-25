@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { useAuth } from "./services/tokenService";
+import { useTokenService } from "./services/tokenService";
 import { URL, URL_USER_CART } from '../../constants/urls/URLBack';
 import "../../assets/styles/components/cart.css"
 import { BsTrash3 } from "react-icons/bs";
@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { LoginAndRegisterForm } from './forms/LoginAndRegisterForm';
 
 export function Cart() {
-    const { decodedUserToken } = useAuth();
+    const { decodedUserToken } = useTokenService();
     const [cartData, setCartData] = useState(null);
     const totalOldPrice = calculateTotalOldPrice(cartData);
     const totalPrice = calculateTotal(cartData);
