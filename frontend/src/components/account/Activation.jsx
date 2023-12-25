@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Paybar } from "../layouts/Navbar/Paybar";
 import "../../assets/styles/components/activation.css"
 import { URL, URL_GET_ORDER } from "../../constants/urls/URLBack";
-import { useAuth } from "./services/tokenService";
+import { useTokenService } from "./services/tokenService";
 import axios from 'axios'
 import { convertToEuros } from "../products/services/PriceServices";
 import { HiMiniComputerDesktop } from 'react-icons/hi2';
@@ -16,7 +16,7 @@ import { IoIosWarning } from "react-icons/io";
 
 export function Activation() {
 const { hideNavbar, showNavbar } = useContext(NavbarVisibilityContext);
-const { decodedUserToken } = useAuth();
+const { decodedUserToken } = useTokenService();
 const [order, setOrder] = useState({});
 const [renderActivation, setRenderActivation] = useState(true);
 
