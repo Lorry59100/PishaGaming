@@ -5,14 +5,14 @@ import { getSuggestions, handleAddressChange, handleAddressClick } from "../serv
 import { URL, URL_ADD_ADDRESS } from "../../../constants/urls/URLBack";
 import axios from "axios";
 import { Formik, Form } from "formik";
-import { useAuth } from "../services/tokenService";
+import {  useTokenService } from "../services/tokenService";
 
 export function AddressForm({ onClose }) {
     const [address, setAddress] = useState(null);
     const [suggestions, setSuggestions] = useState([]);
     const [selectedAddress, setSelectedAddress] = useState();
     const [selectedSuggestion, setSelectedSuggestion] = useState(null);
-    const { decodedUserToken } = useAuth();
+    const { decodedUserToken } = useTokenService();
     const handleCloseForm = () => {
         onClose();
     };
