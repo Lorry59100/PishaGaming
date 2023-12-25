@@ -1,10 +1,13 @@
 export const cartService = {
-    getCartItems: () => {
-      const getCart = localStorage.getItem('cart');
-      return getCart ? JSON.parse(getCart) : [];
-    },
-    clearCart: () => {
-      localStorage.removeItem('cart');
-    },
-  };
-  
+  getSessionCartItems: () => {
+    const getCart = localStorage.getItem('cart');
+    return getCart ? JSON.parse(getCart) : [];
+  },
+  clearSessionCart: () => {
+    localStorage.removeItem('cart');
+  },
+  countSessionItemsInCart: () => {
+    const cartItems = cartService.getSessionCartItems();
+    return cartItems.reduce((total, currentItem) => total + currentItem.quantity, 0);
+  },
+};
