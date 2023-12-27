@@ -8,6 +8,7 @@ use App\Entity\Order;
 use DateTimeImmutable;
 use App\Entity\OrderDetails;
 use App\Entity\ActivationKey;
+use App\Service\TokenService;
 use App\Repository\UserRepository;
 use App\Repository\OrderRepository;
 use App\Service\KeyGeneratorService;
@@ -24,10 +25,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class OrderController extends AbstractController
 {
     private $keyGeneratorService;
+    private $tokenService;
 
-    public function __construct(KeyGeneratorService $keyGeneratorService)
+    public function __construct(KeyGeneratorService $keyGeneratorService, TokenService $tokenService)
     {
         $this->keyGeneratorService = $keyGeneratorService;
+        $this->tokenService = $tokenService;
     }
 
     /**
@@ -198,4 +201,39 @@ ActivationKeyRepository $activationKeyRepository): JsonResponse
 
     return new JsonResponse([$userArray, $orderArray, $orderDetailArray, $keyArray], 200);
 }
+
+    /**
+     * @Route("/order-historic", name="order_historic", methods={"GET"})
+     */
+    public function orderHistoric(Request $request): JsonResponse
+    {
+        $user = $this->tokenService->getUserFromRequest($request);
+        $ordersArray = [];
+
+        foreach ($user->getOrders() as $order) {
+            $orderDetailsArray = [];
+            $orderTotal = 0;
+            foreach ($order->getOrderDetails() as $orderDetail) {
+                $orderDetailsArray[] = [
+                    'id' => $orderDetail->getId(),
+                    'product' => $orderDetail->getProducts()->getName(),
+                    'img' => $orderDetail->getProducts()->getImg(),
+                    'quantity' => $orderDetail->getQuantity(),
+                    'platform' => $orderDetail->getPlatform(),
+                    'price' => $orderDetail->getPrice(),
+                ];
+                $orderTotal += $orderDetail->getPrice();
+            }
+                $ordersArray[] = [
+                    'id' => $order->getId(),
+                    'reference' => $order->getReference(),
+                    'created_at' => $order->getCreatedAt(),
+                    'delivery_date' => $order->getDeliveryDate(),
+                    'status' => $order->getStatus(),
+                    'order_details' => $orderDetailsArray,
+                    'total' => $orderTotal,
+                ];
+        }
+        return new JsonResponse($ordersArray, 200);
+    }
 }
