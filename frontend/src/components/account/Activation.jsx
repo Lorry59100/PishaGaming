@@ -42,11 +42,8 @@ useEffect(() => {
     // Vérifiez si decodedUserToken est défini et n'est pas null avant d'accéder à id
     if (decodedUserToken && decodedUserToken.id) {
       const userId = decodedUserToken.id;
-      console.log(userId);
       axios.get(`${URL}${URL_GET_ORDER}/${userId}`)
         .then(response => {
-          console.log(response.data)
-          // Assuming the structure of the data
           const [user, order, orderDetails, activationKeys] = response.data;
           const initializedActivationKeys = activationKeys.map(key => ({
             ...key,
@@ -102,7 +99,32 @@ useEffect(() => {
   
                   // Déterminez quelle icône utiliser en fonction de la plateforme
                   switch (orderDetail.platform) {
-                    // ... (votre code pour déterminer l'icône en fonction de la plateforme)
+                    case 'PC':
+                    platformIcon = 
+                      <IconContext.Provider value={{ size: '2em', color: 'white' }}>
+                          <HiMiniComputerDesktop />
+                      </IconContext.Provider>;
+                  break;
+                    case 'Xbox Series X':
+                    platformIcon = 
+                      <IconContext.Provider value={{ size: '2em', color: 'white' }}>
+                        <BsXbox />
+                      </IconContext.Provider>;
+                  break;
+                    case 'PS5':
+                    platformIcon = 
+                      <IconContext.Provider value={{ size: '2em', color: 'white' }}>
+                        <FaPlaystation />
+                      </IconContext.Provider>;
+                  break;
+                    case 'Nintendo Switch' || 'Super Nintendo':
+                    platformIcon = 
+                      <IconContext.Provider value={{ size: '2em', color: 'white' }}>
+                        <SiNintendo />
+                      </IconContext.Provider>;
+                  break;
+                    default:
+                    platformIcon = null; // Utilisez une icône par défaut ou ne rien afficher 
                   }
   
                   return (
