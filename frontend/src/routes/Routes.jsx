@@ -10,6 +10,7 @@ import { VerifyEmailview } from "../views/VerifyEmailview";
 import { ResendActivationTokenview } from "../views/ResendActivationTokenview";
 import { ChangeMailview } from "../views/ChangeMailview";
 import { ForgottenPasswordview } from "../views/ForgottenPasswordview";
+import OrderHistoricview from "../views/OrderHistoricview";
 
 function Routes() {
   return (
@@ -24,6 +25,7 @@ function Routes() {
         <Route path={URL.URL_CHANGE_EMAIL} element={<ChangeMailview />} />
         <Route path={URL.URL_RESEND_ACTIVATION_TOKEN} element={<ResendActivationTokenview />} />
         <Route path={URL.URL_FORGOTTEN_PASSWORD} element={<ForgottenPasswordview />} />
+        <Route path={URL.URL_ORDER_HISTORIC} element={<OrderHistoricview />} />
     </RoutesContainer>
   )
 }
