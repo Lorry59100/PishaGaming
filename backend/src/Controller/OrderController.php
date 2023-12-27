@@ -47,7 +47,9 @@ class OrderController extends AbstractController
         //Créer la commande
         $order = new Order();
         $order->setUser($user);
-        $order->setCreatedAt(new DateTimeImmutable());
+        $currentDate = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
+        $currentDate = $currentDate->setTimezone(new \DateTimeZone('Europe/Paris'));
+        $order->setCreatedAt($currentDate);
 
         /* Si date existe c'est qu'on en a séléctionée une et on la persiste en BDD */
         if(isset($data['selectedDate'])) {
@@ -58,7 +60,7 @@ class OrderController extends AbstractController
             $order->setStatus(0);
         /* Sinon on persiste la date actuelle */
         } else {
-            $order->setDeliveryDate(new DateTimeImmutable());
+            $order->setDeliveryDate($currentDate);
             $order->setStatus(1);
         }
 
@@ -146,7 +148,7 @@ ActivationKeyRepository $activationKeyRepository): JsonResponse
     }
 
     // Récupérer la commande associée à l'utilisateur
-    $order = $orderRepository->findOneBy(['user' => $user]);
+    $order = $orderRepository->findOneBy(['user' => $user], ['created_at' => 'DESC']);;
 
     // Vérifier si une commande a été trouvée
     if (!$order) {
@@ -154,7 +156,7 @@ ActivationKeyRepository $activationKeyRepository): JsonResponse
     }
 
     // Récupérer les détails de la commande associée à la commande
-    $orderDetails = $orderDetailsRepository->findAll(['order' => $order]);
+    $orderDetails = $order->getOrderDetails();
 
     // Vérifier si des détails de commande on été trouvés.
     if (!$orderDetails) {
