@@ -12,7 +12,6 @@ import { LoginAndRegisterForm } from '../../account/forms/LoginAndRegisterForm';
 import { NavbarVisibilityContext } from '../../../contexts/NavbarVisibilityContext';
 import { useContext } from 'react';
 import { URL_CART, URL_HOME, URL_PARAMETERS } from '../../../constants/urls/URLFront';
-/* import { cartService } from '../../account/services/cartServices'; */
 import { CartContext } from '../../../contexts/CartContext';
 
 function Navbar() {
@@ -24,10 +23,6 @@ function Navbar() {
   const [menuClass, setMenuClass] = useState('');
   const [showLoginAndRegisterForm, setShowLoginAndRegisterForm] = useState(false);
   const { isNavbarVisible } = useContext(NavbarVisibilityContext);
-  
-  /* const itemCount = cartService.countSessionItemsInCart();
-  console.log(itemCount); */
-  
   const { cart, resetCart } = useContext(CartContext);
   const itemCount = cart ? cart.reduce((total, item) => total + item.quantity, 0) : 0;
 
@@ -36,17 +31,17 @@ function Navbar() {
       setShowLoginAndRegisterForm(!showLoginAndRegisterForm);
     } else {
       setIsProfileVisible(!isProfileVisible);
-      setShowLoginAndRegisterForm(false); // Assurez-vous que le formulaire est masqué lorsqu'on ouvre le profil
+      setShowLoginAndRegisterForm(false); // Formulaire masqué lorsqu'on ouvre le profil
     }
   };
 
   const handleLoginButtonClick = () => {
     setShowLoginAndRegisterForm(!showLoginAndRegisterForm);
-    setIsProfileVisible(false); // Assurez-vous que le profil est masqué lors de la tentative de connexion
+    setIsProfileVisible(false); // Profil est masqué lors de la tentative de connexion
   };
 
   const handleLogoutButtonClick = () => {
-    setIsProfileVisible(false); // Assurez-vous que le profil est masqué lors de la déconnexion
+    setIsProfileVisible(false); // Profil est masqué lors de la déconnexion
     logout();
     resetCart();
   };
@@ -103,8 +98,8 @@ function Navbar() {
             <IconContext.Provider value={{ size: '2em' }}>
               <Link to={`${URL_CART}`}><TiShoppingCart /></Link>
               { itemCount > 0 && (
-                <div>
-                  Nombre d'articles : {itemCount}
+                <div className='cart-number-items-container'>
+                  {itemCount}
                 </div>
               )}
               {!decodedUserToken && (
