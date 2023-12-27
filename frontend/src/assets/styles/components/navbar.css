@@ -74,7 +74,9 @@ text-shadow: 1px 1px 1px black;
 .cart-profile {
 margin-right: 1em;
 display: flex;
+align-items: center;
 color: white;
+position: relative;
 }
 .cart-profile>a>svg, .cart-profile>button {
 filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.4));
@@ -155,4 +157,15 @@ color: var(--orange)
   align-items: center;
   font-size: large;
   color: white;
+}
+
+.cart-number-items-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--orange);
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
 }
