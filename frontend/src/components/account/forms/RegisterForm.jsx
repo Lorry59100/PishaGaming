@@ -9,8 +9,6 @@ import fr from "date-fns/locale/fr";
 registerLocale("fr", fr);
 import PropTypes from "prop-types";
 import {  ToastImportantSuccess ,ToastError } from "../../services/toastService";
-import { cartService } from "../services/cartServices";
-
 export function RegisterForm(props) {
   const [birthDate, setBirthDate] = useState(null);
     // Logique de controle du formulaire
@@ -23,8 +21,7 @@ export function RegisterForm(props) {
       };
 
     const onSubmit=(values) => {
-      console.log(values);
-      const cartItems = cartService.getCartItems();
+      const cartItems = JSON.parse(localStorage.getItem('cart'));
       axios.post(`${URL}${URL_REGISTER}`, {
         firstname: values.firstname,
         lastname: values.lastname,
@@ -34,10 +31,9 @@ export function RegisterForm(props) {
         cart: cartItems,
       })
       .then((response) => {
-        console.log('Response data', response.data);
         if (response.status === 200) {
             props.onFormSuccess();
-            cartService.clearCart();
+            localStorage.removeItem('cart');
             ToastImportantSuccess(response.data.message);
         }
       })
