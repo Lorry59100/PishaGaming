@@ -7,7 +7,6 @@ import { IconContext } from "react-icons";
 import { URL, URL_LOGIN} from "../../../constants/urls/URLBack";
 import { useTokenService } from '../../account/services/tokenService';
 import PropTypes from "prop-types";
-import { cartService } from "../services/cartServices";
 import {  ToastError } from "../../services/toastService";
 import { URL_FORGOTTEN_PASSWORD } from "../../../constants/urls/URLFront";
 import { useContext } from "react";
@@ -21,8 +20,7 @@ export function LoginForm(props) {
     password: '',
     };
   const onSubmit=(values) => {
-    console.log(values);
-    const cartItems = cartService.getSessionCartItems();
+    const cartItems = JSON.parse(localStorage.getItem('cart'));
 
     axios.post(`${URL}${URL_LOGIN}`, {
       email: values.email,
@@ -30,13 +28,10 @@ export function LoginForm(props) {
       cart: cartItems,
     })
     .then((response) => {
-      console.log('Response data', response.data);
       if (response.status === 200) {
-        console.log('response data login : ', response.data.cart)
         login(response.data.token);
-        cartService.clearSessionCart();
+        localStorage.removeItem('cart');
         updateCart(response.data.cart);
-        /* window.location.reload(true); */
     }
     })
     .catch((error) => {
