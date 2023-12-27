@@ -60,11 +60,9 @@ export function PaymentForm() {
       useEffect(() => {
         // Vérifier si l'utilisateur est connecté avant de faire la requête
         if (decodedUserToken) {
-            console.log(decodedUserToken);
             const userId = decodedUserToken.id;
             axios.get(`${URL}${URL_USER_CART}/${userId}`)
                 .then(response => {
-                    console.log(response.data)
                     setCartData(response.data);
                     const hasPhysicalProduct = response.data.some(item => item.isPhysical);
                     setShowDatePicker(hasPhysicalProduct);
@@ -77,7 +75,6 @@ export function PaymentForm() {
             //rediriger
         }
     }, [decodedUserToken]);
-    console.log('cartData : ',cartData);
 
   return (
     <div>
