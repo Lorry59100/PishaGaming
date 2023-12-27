@@ -73,6 +73,11 @@ get_order:
     controller: App\Controller\OrderController::getOrder
     methods: GET
 
+order_historic:
+    path: /order-historic
+    controller: App\Controller\OrderController::orderHistoric
+    methods: GET
+
 add_address:
     path: /add-address
     controller: App\Controller\AddressController::addAddress
