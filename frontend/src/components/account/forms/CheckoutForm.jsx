@@ -17,9 +17,6 @@ const CheckoutForm = forwardRef(({ cartData, selectedDate }, ref) => {
   const [customerName, setCustomerName] = useState('');
   const { decodedUserToken } = useTokenService();
   const navigate = useNavigate();
-  
-  console.log(cartData);
-  console.log(selectedDate);
 
   const getClientSecret = async () => {
     try {
@@ -180,6 +177,7 @@ const CheckoutForm = forwardRef(({ cartData, selectedDate }, ref) => {
 
 CheckoutForm.propTypes = {
   cartData: PropTypes.array, // Adjust the prop type based on the actual type of cartData
+  selectedDate: PropTypes.instanceOf(Date),
 };
 
 CheckoutForm.displayName = 'CheckoutForm';
