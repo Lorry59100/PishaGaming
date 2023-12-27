@@ -33,8 +33,6 @@ export function Parameters() {
         setAddressFormVisible(false);
       };
 
-      /* console.log(decodedUserToken); */
-      /* console.log(decodedUserToken.username); */
       useEffect(() => {
         if (decodedUserToken) {
           const headers = {
@@ -44,7 +42,6 @@ export function Parameters() {
       
           axios.get(`${URL}${URL_GET_ADDRESS}`, {headers})
             .then(response => {
-                console.log(response.data);
                 setAddresses(response.data);
             })
             .catch(error => {
@@ -52,8 +49,6 @@ export function Parameters() {
             });
         }
       }, [decodedUserToken]);
-
-      /* console.log(decodedUserToken); */
 
       const handleEmailFormSubmit = (values, actions) => {
         const { mail, mail_confirm, password } = values; 
