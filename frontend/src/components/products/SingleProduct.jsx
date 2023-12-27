@@ -53,9 +53,7 @@ export function SingleProduct() {
     }, [product]);
 
       const addToCart = (redirect) => {
-        console.log(selectedPlatform);
         if(!decodedUserToken) {
-            console.log(product.id);
             // Récupérer le panier depuis le stockage local
             const cart = JSON.parse(localStorage.getItem('cart')) || [];
             
@@ -80,8 +78,6 @@ export function SingleProduct() {
             updateCart(cart);
         }
         if (decodedUserToken) {
-            console.log(decodedUserToken);
-            console.log('vous êtes connecté');
             axios.post(`${URL}${URL_ADD_TO_CART}/${id}`, {
                 platform: selectedPlatform,
                 userId: decodedUserToken.id,
@@ -93,12 +89,8 @@ export function SingleProduct() {
                 // Ajoutez toutes les autres propriétés nécessaires
             })
             .then(response => {
-                console.log(response.data);
                 // Mise à jour de l'état du panier dans le frontend
                 updateCart(response.data.cart);
-                /* console.log('updateCart : ', updateCart)
-                updateCartItem(product.id, selectedPlatform, 1);
-                console.log('updateCartItem : ', updateCartItem) */
                 if (redirect) {
                     navigate('/cart');
                 }
@@ -112,7 +104,6 @@ export function SingleProduct() {
     useEffect(() => {
         axios.get(`${URL}${URL_SINGLE_PRODUCT}/${id}`)
         .then(response => {
-            console.log(response.data)
             setProduct(response.data);
         })
         .catch(error => {
@@ -120,7 +111,6 @@ export function SingleProduct() {
         })
     }, [id]);
     
-    console.log('produit: ', product);
     if (product === null) {
         return <div>Chargement en cours...</div>;
     }
@@ -350,9 +340,9 @@ export function SingleProduct() {
 
                 <div className={descriptionClassName}>
                     <h1>Description</h1>
-                    <p>
+                    <div className='big-desc-container'>
                         {parse(product.description, showFullDescription)}
-                    </p>
+                    </div>
                 </div>
                 <button className='show' onClick={toggleDescription}>
                     <IconContext.Provider value={{ size: '4em', color: 'grey' }}>
