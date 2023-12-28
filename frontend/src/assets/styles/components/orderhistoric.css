@@ -2,14 +2,26 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 5em;
+}
+
+.order-historic-container>h1 {
+    margin-bottom: 1em;
+    text-align: center;
 }
 
 .order-container {
     background: var(--medium-dark);
-    width: 1500px;
+    width: 1200px;
     border-radius: 10px;
     position: relative;
     padding: 1em;
+    border: 2px solid var(--medium-dark);
+}
+
+.order-container:hover {
+    border: 2px solid var(--orange);
+    cursor: pointer;
 }
 
 .sub-order-container {
@@ -66,4 +78,8 @@
     display: flex;
     justify-content: space-between;
     margin: 0 1em;
+}
+
+.order-layout-container {
+    margin: 2em 0;
 }
