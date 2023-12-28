@@ -6,7 +6,7 @@ import logo from '../../../assets/img/Logo.png';
 import Searchbar from './Searchbar';
 import '../../../assets/styles/components/navbar.css';
 import { useTokenService } from '../../account/services/tokenService';
-import { URL, URL_ADMIN } from '../../../constants/urls/URLBack';
+import { URL, URL_ADMIN, URL_USER_ORDER } from '../../../constants/urls/URLBack';
 import { Link } from 'react-router-dom';
 import { LoginAndRegisterForm } from '../../account/forms/LoginAndRegisterForm';
 import { NavbarVisibilityContext } from '../../../contexts/NavbarVisibilityContext';
@@ -120,7 +120,7 @@ function Navbar() {
                     <Link to={`${URL_PARAMETERS}`}>Paramètres</Link>
                   </li>
                   <li>
-                    <a href="/">Achats</a>
+                  <Link to={`${URL_USER_ORDER}`}>Achats</Link>
                   </li>
                   <li>
                     <a href="/">Wishlist</a>
