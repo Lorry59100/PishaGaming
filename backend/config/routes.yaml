@@ -78,6 +78,11 @@ order_historic:
     controller: App\Controller\OrderController::orderHistoric
     methods: GET
 
+single_order_historic:
+    path: /single-order-historic/{reference}
+    controller: App\Controller\OrderController::singleOrderHistoric
+    methods: GET
+
 add_address:
     path: /add-address
     controller: App\Controller\AddressController::addAddress
