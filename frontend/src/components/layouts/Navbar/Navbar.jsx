@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { TiShoppingCart } from 'react-icons/ti';
 import { PiUserBold } from 'react-icons/pi';
 import { IconContext } from 'react-icons';
@@ -25,6 +25,7 @@ function Navbar() {
   const { isNavbarVisible } = useContext(NavbarVisibilityContext);
   const { cart, resetCart } = useContext(CartContext);
   const itemCount = cart ? cart.reduce((total, item) => total + item.quantity, 0) : 0;
+  const profileContentRef = useRef(null);
 
   const toggleProfileVisibility = () => {
     if (!userToken) {
@@ -52,27 +53,45 @@ function Navbar() {
       if (isScrolled !== scrolled) {
         setScrolled(isScrolled);
       }
-
       const shouldShowLinks = window.scrollY === 0;
       if (shouldShowLinks !== isVisible) {
         setIsVisible(shouldShowLinks);
       }
-
       const atTop = window.scrollY === 0;
       if (atTop !== isAtTop) {
         setIsAtTop(atTop);
         setMenuClass(atTop ? '' : 'center-menu');
       }
     };
-
     handleScroll();
-
     window.addEventListener('scroll', handleScroll);
-
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [isVisible, isAtTop, userToken, scrolled, decodedUserToken]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        profileContentRef.current &&
+        !profileContentRef.current.contains(event.target) &&
+        !event.target.classList.contains('user-icon-circled')
+      ) {
+        // Click outside of profile content, close it
+        setIsProfileVisible(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [profileContentRef]);
+  
+
+  const handleLinkClick = () => {
+    // Close the profile content when clicking on a link
+    setIsProfileVisible(false);
+  };
 
   return (
     // Utilisation de la condition isNavbarVisible pour rendre la Navbar visible ou non
@@ -114,16 +133,16 @@ function Navbar() {
               )}
             </IconContext.Provider>
             {userToken && isProfileVisible && (
-              <div className="profile-content">
+              <div className="profile-content" ref={profileContentRef}>
                 <ul>
                   <li>
-                    <Link to={`${URL_PARAMETERS}`}>Paramètres</Link>
+                    <Link to={`${URL_PARAMETERS}`} onClick={handleLinkClick}>Paramètres</Link>
                   </li>
                   <li>
-                  <Link to={`${URL_USER_ORDER}`}>Achats</Link>
+                  <Link to={`${URL_USER_ORDER}`} onClick={handleLinkClick}>Achats</Link>
                   </li>
                   <li>
-                    <a href="/">Wishlist</a>
+                  <Link to={`${URL_USER_ORDER}`} onClick={handleLinkClick}>Wishlist</Link>
                   </li>
                   {decodedUserToken && (
                     <div className='user-panel-connected'>
