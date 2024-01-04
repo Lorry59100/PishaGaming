@@ -236,4 +236,45 @@ ActivationKeyRepository $activationKeyRepository): JsonResponse
         }
         return new JsonResponse($ordersArray, 200);
     }
+
+     /**
+     * @Route("/single-order-historic/{reference}", name="single_order_historic", methods={"GET"})
+     */
+    public function singleOrderHistoric(Request $request, $reference, OrderRepository $orderRepository): JsonResponse
+    {
+        $orders = $orderRepository->findOneBy(['reference' => $reference]);
+
+    $orderArray[] = [
+        'id' => $orders->getId(),
+        'date' => $orders->getCreatedAt(),
+        'status' => $orders->getStatus(),
+        'reference' => $orders->getReference(),
+    ];
+
+    $orderDetailsArray = [];
+
+    foreach ($orders->getOrderDetails() as $order) {
+        $activationKeys = [];
+
+        foreach ($order->getActivationKeys() as $activationKey) {
+            $activationKeys[] = [
+                'activationKeyId' => $activationKey->getId(),
+                'activation' => $activationKey->getActivationKey(),
+            ];
+        }
+
+        $orderDetailsArray[] = [
+            'id' => $order->getId(),
+            'quantity' => $order->getQuantity(),
+            'product' => $order->getProducts()->getName(),
+            'img' => $order->getProducts()->getImg(),
+            'productType' => $order->getProducts()->isIsPhysical(),
+            'platform' => $order->getPlatform(),
+            'price' => $order->getPrice(),
+            'delivery' => $orders->getDeliveryDate(),
+            'activationKeys' => $activationKeys,
+        ];
+    }
+        return new JsonResponse([$orderDetailsArray, $orderArray], 200);
+    }
 }
