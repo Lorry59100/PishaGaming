@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { useContext, useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { IconContext } from "react-icons";
 import { AiOutlineCheck, AiOutlineClose, AiOutlineMinusCircle } from 'react-icons/ai';
 import { TiShoppingCart } from 'react-icons/ti';
@@ -284,6 +284,7 @@ export function SingleProduct() {
           <h1>Editions</h1>
           <div className='edition-card'>
             {product.alternative_editions.map((edition) => (
+                <Link to={`${URL_SINGLE_PRODUCT}/${edition.id}`}>
               <div key={edition.id} className='edition-card-info'>
                 <img src={edition.img} alt="" />
                 <h3>Edition: {edition.edition_name}</h3>
@@ -311,6 +312,7 @@ export function SingleProduct() {
                         )}
                 </div>
               </div>
+              </Link>
             ))}
           </div>
         </div>
