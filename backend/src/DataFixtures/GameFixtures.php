@@ -3,11 +3,14 @@
 namespace App\DataFixtures;
 
 use App\Entity\Product;
-use Doctrine\Bundle\FixturesBundle\Fixture;
+use App\Entity\Platform;
+use App\DataFixtures\PlatformFixtures;
 use Doctrine\Persistence\ObjectManager;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\HttpClient\HttpClient;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-class GameFixtures extends Fixture
+class GameFixtures extends Fixture implements DependentFixtureInterface
 {
     private $apiKey;
 
@@ -48,25 +51,50 @@ class GameFixtures extends Fixture
                 foreach ($developerGames as $developerGame) {
                     if (in_array($developerGame, $publisherGames, true)) {
                         $gameData = $developerGame + [
-                            'description' => $this->getGameDescription($httpClient, $developerGame['id'], $apiKey),
-                            'release_date' => $this->getGameReleaseDate($httpClient, $developerGame['id'], $apiKey),
+                            'description' => $this->getGameDataProperty($httpClient, $developerGame['id'], $apiKey, 'description'),
+                            'release_date' => $this->getGameDataProperty($httpClient, $developerGame['id'], $apiKey, 'released'),
+                            'name' => $this->getGameDataProperty($httpClient, $developerGame['id'], $apiKey, 'name'),
+                            'img' => $this->getGameDataProperty($httpClient, $developerGame['id'], $apiKey, 'background_image'),
+                            'platforms'=> $this->getGameDataProperty($httpClient, $developerGame['id'], $apiKey, 'parent_platforms'),
                         ];
-                        $game = new Product();
-                        $game->setName($developerGame['name']);
-                        $game->setDescription($gameData['description']);
-                        $game->setRelease(new \DateTime($gameData['release_date']));
-                        $game->setIsPhysical(false);
-                        $game->setDev($developerName);
-                        $game->setEditor($publisherName);
-                        // Ajoutez d'autres attributs du jeu en fonction de votre modèle
+                        $existingGame = $manager->getRepository(Product::class)->findOneBy(['name' => $developerGame['name']]);
+                        if($existingGame === null) {
 
-                        $manager->persist($game);
+                            $game = new Product();
+                            $game->setName($developerGame['name']);
+                            $game->setDescription($gameData['description']);
+                            $game->setRelease(new \DateTime($gameData['release_date']));
+                            $game->setIsPhysical(false);
+                            $game->setDev($developerName);
+                            $game->setEditor($publisherName);
+                            $game->setImg($gameData['img']);
+                            $game->setStock(rand(0, 99));
+                            $game->setOldPrice(rand(100, 15000));
+                            
+                            // Calculate the discounted price
+                            $discountPercentage = rand(5, 95);
+                            $discountFactor = $discountPercentage / 100;
+                            $calculatedPrice = $game->getOldPrice() - ($game->getOldPrice() * $discountFactor);
+
+                            // Set the calculated price
+                            $game->setPrice($calculatedPrice);
+
+                            foreach ($gameData['platforms'] as $platformData) {
+                                $platformName = $platformData['platform']['name'];
+                                $existingPlatform = $manager->getRepository(Platform::class)->findOneBy(['name' => $platformName]);
+                            
+                                if ($existingPlatform !== null) {
+                                    $game->addPlatform($existingPlatform);
+                                }
+                            }
+    
+                            $manager->persist($game);
+                            $manager->flush();
+                        }
                     }
                 }
             }
         }
-
-        $manager->flush();
     }
 
     private function getGamesForEntity($httpClient, $entityId, $entityType)
@@ -84,29 +112,23 @@ class GameFixtures extends Fixture
         return $gamesData['results'];
     }
 
-    private function getGameDescription($httpClient, $gameId, $apiKey)
+    private function getGameDataProperty($httpClient, $gameId, $apiKey, $property)
     {
-    $gameResponse = $httpClient->request('GET', "https://api.rawg.io/api/games/{$gameId}", [
-        'query' => [
-            'key' => $apiKey,
-        ],
-    ]);
+        $gameResponse = $httpClient->request('GET', "https://api.rawg.io/api/games/{$gameId}", [
+            'query' => [
+                'key' => $apiKey,
+            ],
+        ]);
 
-    $gameData = $gameResponse->toArray();
+        $gameData = $gameResponse->toArray();
 
-    return $gameData['description'] ?? null;
+        return $gameData[$property] ?? null;
     }
 
-    private function getGameReleaseDate($httpClient, $gameId, $apiKey)
-{
-    $gameResponse = $httpClient->request('GET', "https://api.rawg.io/api/games/{$gameId}", [
-        'query' => [
-            'key' => $apiKey,
-        ],
-    ]);
-
-    $gameData = $gameResponse->toArray();
-
-    return $gameData['released'] ?? null;
-}
+    public function getDependencies(): array
+    {
+        return [
+            PlatformFixtures::class,
+        ];
+    }
 }
