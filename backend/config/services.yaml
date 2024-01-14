@@ -25,6 +25,15 @@ services:
     App\DataFixtures\PlatformFixtures:
         arguments:
             $apiKey: '%env(RAWG_API_KEY)%'
+    App\DataFixtures\TagFixtures:
+        arguments:
+            $apiKey: '%env(RAWG_API_KEY)%'
+    App\DataFixtures\GenreFixtures:
+        arguments:
+            $apiKey: '%env(RAWG_API_KEY)%'
+    App\DataFixtures\TrailerFixtures:
+        arguments:
+            $apiKey: '%env(YTB_API_KEY)%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
