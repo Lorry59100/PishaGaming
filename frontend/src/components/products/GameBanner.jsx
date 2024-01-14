@@ -13,7 +13,7 @@ function GameBanner() {
         .then(response => {
             const productList = response.data;
             const filteredProducts = productList.filter(product => {
-                const hasCategory = product.category && product.category.name === "Jeux vidéo";
+                const hasCategory = product.category && product.category.name === "Jeux Vidéos";
                 const hasEdition = product.edition && product.edition.name === "Standart";
                 return hasCategory && hasEdition;
             });
