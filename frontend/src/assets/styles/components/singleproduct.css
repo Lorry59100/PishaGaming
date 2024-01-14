@@ -23,8 +23,9 @@ height: 100%;
 }
 
 .single-product-img-container>img {
-max-width: 100%;
 border-radius: 10px;
+width: 584px;
+height: 328px;
 }
 
 .buy-info-container {
