@@ -2,9 +2,15 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Tag;
+use App\Entity\Genre;
+use App\Entity\Edition;
 use App\Entity\Product;
 use App\Entity\Platform;
+use App\DataFixtures\EditionFixtures;
+use App\DataFixtures\CategoryFixtures;
 use App\DataFixtures\PlatformFixtures;
+use App\Entity\Category;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\HttpClient\HttpClient;
@@ -56,6 +62,8 @@ class GameFixtures extends Fixture implements DependentFixtureInterface
                             'name' => $this->getGameDataProperty($httpClient, $developerGame['id'], $apiKey, 'name'),
                             'img' => $this->getGameDataProperty($httpClient, $developerGame['id'], $apiKey, 'background_image'),
                             'platforms'=> $this->getGameDataProperty($httpClient, $developerGame['id'], $apiKey, 'parent_platforms'),
+                            'tags' => $developerGame['tags'],
+                            'genres' => $developerGame['genres'],
                         ];
                         $existingGame = $manager->getRepository(Product::class)->findOneBy(['name' => $developerGame['name']]);
                         if($existingGame === null) {
@@ -78,6 +86,14 @@ class GameFixtures extends Fixture implements DependentFixtureInterface
 
                             // Set the calculated price
                             $game->setPrice($calculatedPrice);
+                            $edition = $manager->getRepository(Edition::class)->findOneBy(['name' => 'Standart']);
+                            if ($edition !== null) {
+                            $game->setEdition($edition);
+                            }
+                            $category = $manager->getRepository(Category::class)->findOneBy(['name' => 'Jeux Vidéos']);
+                            if ($category !== null) {
+                            $game->setCategory($category);
+                            }
 
                             foreach ($gameData['platforms'] as $platformData) {
                                 $platformName = $platformData['platform']['name'];
@@ -86,6 +102,20 @@ class GameFixtures extends Fixture implements DependentFixtureInterface
                                 if ($existingPlatform !== null) {
                                     $game->addPlatform($existingPlatform);
                                 }
+                            }
+
+                            foreach ($gameData['tags'] as $tagName) {
+                                $tag = $manager->getRepository(Tag::class)->findOneBy(['name' => $tagName]);
+                                if ($tag !== null) {
+                                    $game->addTag($tag);
+                                }
+                            }
+
+                            foreach ($gameData['genres'] as $genreName) {
+                                $genre = $manager->getRepository(Genre::class)->findOneBy(['name' => $genreName]);
+                                if ($genre !== null) {
+                                    $game->addGenre($genre);
+                                } 
                             }
     
                             $manager->persist($game);
@@ -129,6 +159,10 @@ class GameFixtures extends Fixture implements DependentFixtureInterface
     {
         return [
             PlatformFixtures::class,
+            TagFixtures::class,
+            GenreFixtures::class,
+            EditionFixtures::class,
+            CategoryFixtures::class,
         ];
     }
 }
