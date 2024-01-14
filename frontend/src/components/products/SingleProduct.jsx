@@ -284,8 +284,8 @@ export function SingleProduct() {
           <h1>Editions</h1>
           <div className='edition-card'>
             {product.alternative_editions.map((edition) => (
-                <Link to={`${URL_SINGLE_PRODUCT}/${edition.id}`}>
               <div key={edition.id} className='edition-card-info'>
+                <Link to={`${URL_SINGLE_PRODUCT}/${edition.id}`}>
                 <img src={edition.img} alt="" />
                 <h3>Edition: {edition.edition_name}</h3>
                 <p>{parseHTML(edition.description, 500)}</p>
@@ -311,8 +311,8 @@ export function SingleProduct() {
                         <button type="submit" className='submit-button'>Acheter maintenant</button>
                         )}
                 </div>
-              </div>
               </Link>
+              </div>
             ))}
           </div>
         </div>
@@ -321,7 +321,7 @@ export function SingleProduct() {
                 <div className="visuals-container">
                         <h1>Visuels</h1>
                         <div className="video-container">
-                            <iframe width="100%" height="700px" src={product.trailer} title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+                            <iframe width="100%" height="700px" src={product.trailer.replace("http://www.youtube.com", "https://www.youtube.com")} title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
                         </div>
                         <div className="screenshots-container">
                             <div className="main-img">
