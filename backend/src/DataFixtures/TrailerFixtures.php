@@ -11,19 +11,26 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 class TrailerFixtures extends Fixture implements DependentFixtureInterface
 {
+    private $apiKey;
+
+    public function __construct($apiKey)
+    {
+        $this->apiKey = $apiKey;
+    }
+
     public function load(ObjectManager $manager)
     {
         //Récupérer la liste des jeux en BDD
-        /* $products = $manager->getRepository(Product::class)->findAll();
+        $products = $manager->getRepository(Product::class)->findAll();
         $httpClient = HttpClient::create();
-        $youtubeApiKey = getenv('YTB_API_KEY');
+        $youtubeApiKey = $this->apiKey;
 
         foreach ($products as $product) {
             $trailerUrl = $this->getYoutubeTrailerUrl($httpClient, $product->getName(), $youtubeApiKey);
             $product->setTrailer($trailerUrl);
             $manager->persist($product);
             $manager->flush();
-        } */
+        }
     }
 
     // Méthode pour obtenir le trailer en fonction du jeu
@@ -31,7 +38,7 @@ class TrailerFixtures extends Fixture implements DependentFixtureInterface
 {
     // Utilize logic to get the trailer from your second API (for example)
     // Modify this code based on your second API
-    /* $searchQuery = $gameName . ' trailer fr';
+    $searchQuery = $gameName . ' trailer fr';
     $response = $httpClient->request('GET', 'https://www.googleapis.com/youtube/v3/search', [
         'query' => [
             'part' => 'snippet',
@@ -55,7 +62,7 @@ class TrailerFixtures extends Fixture implements DependentFixtureInterface
         }
     }
 
-    return null; */
+    return null;
 }
 
     public function getDependencies(): array
