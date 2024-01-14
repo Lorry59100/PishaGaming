@@ -3,7 +3,6 @@
 namespace App\DataFixtures;
 
 use App\Entity\Platform;
-use App\Entity\Product;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\HttpClient\HttpClient;
