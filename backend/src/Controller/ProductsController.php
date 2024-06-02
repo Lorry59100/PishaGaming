@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\GenreRepository;
 use Exception;
 use App\Repository\ProductRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -163,4 +164,20 @@ class ProductsController extends AbstractController
             return new JsonResponse(['error' => 'Internal Server Error'], 500);
         }
     }
+    
+    /**
+     * @Route("/genres-list", name="genres_list", methods={"GET"})
+     */
+    public function genresList(GenreRepository $genreRepository): JsonResponse
+    {
+        $genres = $genreRepository->findAll();
+        $genresArray = [];
+        foreach ($genres as $genre) {
+            $genresArray[] = [
+                'name' => $genre->getName(),
+            ];
+        }
+        return new JsonResponse($genresArray, 200);
+    }
+
 }
