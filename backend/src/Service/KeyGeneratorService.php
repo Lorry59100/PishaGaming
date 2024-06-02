@@ -29,9 +29,9 @@ class KeyGeneratorService
     public function generateActivationKey($platform)
     {
         return match ($platform) {
-            'PS5'=> $this->generateKeyWithLength(12),
-            'PC', 'Nintendo Switch'=> $this->generateKeyWithLength(16),
-            'Xbox Series X'=> $this->generateKeyWithLength(25),
+            'PlayStation 5', 'PlayStation 4'=> $this->generateKeyWithLength(12),
+            'PC', 'iOS', 'Android', 'macOS', 'Linux', 'Nintendo Switch', 'Wii U', 'Wii', 'Classic Macintosh', 'Apple II'=> $this->generateKeyWithLength(16),
+            'Xbox Series X', 'Xbox One', 'Xbox Series SX'=> $this->generateKeyWithLength(25),
             default => throw new \InvalidArgumentException('Plateforme non prise en charge'),
         };
     }
