@@ -21,6 +21,9 @@ class Platform
     #[ORM\ManyToMany(targetEntity: Product::class, mappedBy: 'platform')]
     private Collection $products;
 
+    #[ORM\Column]
+    private ?bool $isPhysical = null;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
@@ -73,5 +76,17 @@ class Platform
     public function __toString()
     {
         return $this->name;
+    }
+
+    public function isIsPhysical(): ?bool
+    {
+        return $this->isPhysical;
+    }
+
+    public function setIsPhysical(bool $isPhysical): static
+    {
+        $this->isPhysical = $isPhysical;
+
+        return $this;
     }
 }
