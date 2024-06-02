@@ -102,32 +102,9 @@ export function Cart() {
                             </div>
                             <div className="middle-content">
                                 <div className="middle-head">
-                                {item.platform === 'PC' && (
-                                <IconContext.Provider value={{ size: '1.5em', color: 'white' }}>
-                                    <HiMiniComputerDesktop />
-                                </IconContext.Provider>
-                                )}
-
-                                {item.platform === 'Xbox Series X' && (
-                                <IconContext.Provider value={{ size: '1.5em', color: 'white' }}>
-                                    <BsXbox />
-                                </IconContext.Provider>
-                                )}
-
-                                {(item.platform === 'PS5' || item.platform === 'PS1') && (
-                                <IconContext.Provider value={{ size: '1.5em', color: 'white' }}>
-                                    <FaPlaystation />
-                                </IconContext.Provider>
-                                )}
-
-                                {(item.platform === 'Nintendo Switch' || item.platform === 'Super Nintendo') && (
-                                <div className='nintendo-icon'>
-                                <IconContext.Provider value={{ size: '1.2em', color: 'white' }}>
-                                    <SiNintendo className='nintendo-svg'/>
-                                </IconContext.Provider>
-                                </div>
-                                )}
-
+                                    <div className="logo-img-container">
+                                        <img src={`/src/assets/img/platforms/${item.platform}.png`} alt={item.platform} className='logo-img' />
+                                    </div>
                                     <h4>{item.name}</h4>
                                 </div>
                                 <span>{item.platform}</span>
