@@ -2,10 +2,8 @@
 
 namespace App\Controller;
 
-use DateTime;
 use DateTimeZone;
 use App\Entity\Order;
-use DateTimeImmutable;
 use App\Entity\OrderDetails;
 use App\Entity\ActivationKey;
 use App\Service\TokenService;
@@ -95,12 +93,28 @@ class OrderController extends AbstractController
             /* On ajoute les details à la commande */
             $order->addOrderDetail($orderDetails);
 
-            
+            // Définir les plateformes prises en charge
+            $supportedPlatforms = [
+                "PlayStation 5",
+                "PlayStation 4",
+                "PC",
+                "iOS",
+                "macOS",
+                "Linux",
+                "Nintendo Switch",
+                "Wii U",
+                "Wii",
+                "Classic Macintosh",
+                "Apple II",
+                "Xbox Series X",
+                "Xbox One",
+                "Xbox Series SX",
+            ];
 
             /* Génerer les clefs d'activation */
             for ($i = 0; $i < $quantity; $i++) {
                 //Vérifier si le produit est dématerialisié avant de génerer une clé.
-                if($product->isIsPhysical() == false) {
+                if(in_array($platform, $supportedPlatforms)) {
                     $activationKey = new ActivationKey();
                     $activationKey->setActivationKey($this->keyGeneratorService->generateActivationKey($platform)); // Ajoutez votre logique de génération de clé ici
                     $activationKey->setUser($user);
@@ -180,7 +194,6 @@ ActivationKeyRepository $activationKeyRepository): JsonResponse
             'id' => $orderDetail->getId(),
             'img'=> $orderDetail->getProducts()->getImg(),
             'name'=> $orderDetail->getProducts()->getName(),
-            'isPhysical' => $orderDetail->getProducts()->isIsPhysical(),
         ];
     }
 
@@ -268,7 +281,6 @@ ActivationKeyRepository $activationKeyRepository): JsonResponse
             'quantity' => $order->getQuantity(),
             'product' => $order->getProducts()->getName(),
             'img' => $order->getProducts()->getImg(),
-            'productType' => $order->getProducts()->isIsPhysical(),
             'platform' => $order->getPlatform(),
             'price' => $order->getPrice(),
             'delivery' => $orders->getDeliveryDate(),
