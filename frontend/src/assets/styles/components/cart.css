@@ -89,6 +89,14 @@ border-radius: 50%;
 margin-right: 1em;
 }
 
+.sega-icon {
+background-color: black;
+padding: 0.5em;
+border-radius: 50%;
+margin-right: 1em;
+display: flex;
+}
+
 .nintendo-svg {
 display: flex;
 }
@@ -206,7 +214,13 @@ border: 2px solid var(--grey);
 border-radius: 10px;
 padding: 1em;
 margin-bottom: 3em;
-justify-content: space-around;
+flex-direction: column;
+align-items: center;
+}
+
+.delivery-items-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
 }
 .react-datepicker-wrapper {
 display: flex !important;
@@ -217,4 +231,50 @@ width: 90%;
 .address-container>h2, .payform-container>h2, .date-picker-container>h2, .summary-and-total-container>h2 {
 color: white;
 margin-bottom: 1em;
+}
+
+#snkLogo {
+    font-family: 'Arial', sans-serif; /* Utilisation d'une police générique, vous pouvez ajuster selon vos besoins */
+    color: #fff; /* Couleur du texte blanche */
+    font-size: 12px; /* Taille du texte ajustable selon vos besoins */
+    font-weight: bold; /* Gras pour l'effet de logo */
+    letter-spacing: 2px; /* Espacement entre les lettres pour l'effet stylisé */
+    background-color: black;
+    border-radius: 50%;
+    padding: 0.5em;
+    margin-right: 1em;
+    width: 25px;
+    height: 25px;
+    display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#snkLogoActivation {
+    font-family: 'Arial', sans-serif; /* Utilisation d'une police générique, vous pouvez ajuster selon vos besoins */
+    color: #fff; /* Couleur du texte blanche */
+    font-size: 12px; /* Taille du texte ajustable selon vos besoins */
+    font-weight: bold; /* Gras pour l'effet de logo */
+    letter-spacing: 2px; /* Espacement entre les lettres pour l'effet stylisé */
+    background-color: black;
+    border-radius: 50%;
+    padding: 0.5em;
+    width: 25px;
+    height: 25px;
+    display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-img-container {
+  width: 25px;
+  height: 25px;
+  background-color: black;
+  padding: 0.5em;
+  border-radius: 50%;
+  display: flex;
+}
+
+.middle-head>h4 {
+  margin-left: 0.5em;
 }
