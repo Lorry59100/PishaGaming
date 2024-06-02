@@ -107,6 +107,11 @@ padding: 1em;
 border-radius: 50%;
 }
 
+.platform-order-icon>img {
+width: 50px;
+height: 50px;
+}
+
 .activation-quantity {
 margin-left: 0.5em;
 color: var(--grey);
