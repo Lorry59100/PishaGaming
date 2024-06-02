@@ -58,9 +58,6 @@ class Product
     #[ORM\ManyToOne(inversedBy: 'products')]
     private ?Edition $edition = null;
 
-    #[ORM\Column]
-    private ?bool $isPhysical = null;
-
     #[ORM\ManyToOne(inversedBy: 'products')]
     private ?Category $category = null;
 
@@ -288,18 +285,6 @@ class Product
     public function setEdition(?Edition $edition): static
     {
         $this->edition = $edition;
-
-        return $this;
-    }
-
-    public function isIsPhysical(): ?bool
-    {
-        return $this->isPhysical;
-    }
-
-    public function setIsPhysical(bool $isPhysical): static
-    {
-        $this->isPhysical = $isPhysical;
 
         return $this;
     }
