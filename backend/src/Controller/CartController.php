@@ -100,7 +100,7 @@ class CartController extends AbstractController
                 'name' => $product->getName(),
                 'oldPrice' => $product->getOldPrice(),
                 'price' => $product->getPrice(),
-                'isPhysical' => $product->isIsPhysical(),
+                /* 'isPhysical' => $product->getPlatform(), */
                 // Ajoutez d'autres propriétés du produit selon vos besoins
             ];
     
@@ -120,6 +120,7 @@ class CartController extends AbstractController
     $cartsData = [];
 
     foreach ($carts as $cart) {
+    $platform = $platformRepository->findOneBy(['name' => $cart->getPlatform()]);
     $cartData = [
     'id' => $cart->getId(),
     'quantity' => $cart->getQuantity(),
@@ -129,7 +130,7 @@ class CartController extends AbstractController
     'name' => $cart->getProduct()->getName(),
     'oldPrice' => $cart->getProduct()->getOldPrice(),
     'price' => $cart->getProduct()->getPrice(),
-    'isPhysical' => $cart->getProduct()->isIsPhysical(),
+    'isPhysical' => $platform->isIsPhysical(),
     ];
 
     $cartsData[] = $cartData;
