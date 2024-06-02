@@ -1,0 +1,43 @@
+.genres-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3em;
+    margin: 1em 1em;
+    padding: 5em 20em 5em 20em;
+}
+
+.genre-container {
+    position: relative;
+}
+
+.genre-chara {
+    position: absolute;
+    bottom: 4.2px;
+    right: 0%;
+    will-change: transform;
+    transition: 0.3s;
+}
+
+.genre-name {
+    position: absolute;
+    top: 45%;
+    left: 10px;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.genre-background {
+    height: 200px;
+    width: 100%;
+    border-radius: 10px;
+}
+
+.genre-container:hover {
+    cursor: pointer;
+}
+
+.genre-container:hover .genre-chara {
+    transform: scale(1.1);
+    bottom: 14px;
+    right: 22px;
+  }
