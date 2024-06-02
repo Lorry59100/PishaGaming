@@ -28,131 +28,103 @@ class GameFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager)
     {
         $apiKey = $this->apiKey;
+        $this->fetchGamesFromApi($manager, $apiKey, '1980-01-01,2000-12-31', 25, 2);
+        $this->fetchGamesFromApi($manager, $apiKey, '2000-01-01,2023-12-31', 25, 1);
+        $this->fetchGamesFromApi($manager, $apiKey, '2000-01-01,2023-12-31', 25, 2);
+        $this->fetchGamesFromApi($manager, $apiKey, '2000-01-01,2023-12-31', 25, 3);
+    }
+
+    private function fetchGamesFromApi(ObjectManager $manager, $apiKey, $dates, $pageSize, $page) {
         $httpClient = HttpClient::create();
 
-        $developersResponse = $httpClient->request('GET', 'https://api.rawg.io/api/developers', [
+        $retroGamesResponse = $httpClient->request('GET', 'https://api.rawg.io/api/games', [
             'query' => [
                 'key' => $apiKey,
+                'dates' => $dates,
+                'page_size' => $pageSize,
+                'page' => $page
             ],
         ]);
-
-        $developersData = $developersResponse->toArray();
-
-        $publishersResponse = $httpClient->request('GET', 'https://api.rawg.io/api/publishers', [
-            'query' => [
-                'key' => $apiKey,
-            ],
-        ]);
-
-        $publishersData = $publishersResponse->toArray();
-
-        foreach ($developersData['results'] as $developerData) {
-            $developerName = $developerData['name'];
-            $developerGames = $this->getGamesForEntity($httpClient, $developerData['id'], 'developer');
-
-            foreach ($publishersData['results'] as $publisherData) {
-                $publisherName = $publisherData['name'];
-                $publisherGames = $this->getGamesForEntity($httpClient, $publisherData['id'], 'publisher');
-
-                foreach ($developerGames as $developerGame) {
-                    if (in_array($developerGame, $publisherGames, true)) {
-                        $gameData = $developerGame + [
-                            'description' => $this->getGameDataProperty($httpClient, $developerGame['id'], $apiKey, 'description'),
-                            'release_date' => $this->getGameDataProperty($httpClient, $developerGame['id'], $apiKey, 'released'),
-                            'name' => $this->getGameDataProperty($httpClient, $developerGame['id'], $apiKey, 'name'),
-                            'img' => $this->getGameDataProperty($httpClient, $developerGame['id'], $apiKey, 'background_image'),
-                            'platforms'=> $this->getGameDataProperty($httpClient, $developerGame['id'], $apiKey, 'parent_platforms'),
-                            'tags' => $developerGame['tags'],
-                            'genres' => $developerGame['genres'],
-                        ];
-                        $existingGame = $manager->getRepository(Product::class)->findOneBy(['name' => $developerGame['name']]);
-                        if($existingGame === null) {
-
-                            $game = new Product();
-                            $game->setName($developerGame['name']);
-                            $game->setDescription($gameData['description']);
-                            $game->setRelease(new \DateTime($gameData['release_date']));
-                            $game->setIsPhysical(false);
-                            $game->setDev($developerName);
-                            $game->setEditor($publisherName);
-                            $game->setImg($gameData['img']);
-                            $game->setStock(rand(0, 99));
-                            $game->setOldPrice(rand(100, 15000));
-                            
-                            // Calculate the discounted price
-                            $discountPercentage = rand(5, 95);
-                            $discountFactor = $discountPercentage / 100;
-                            $calculatedPrice = $game->getOldPrice() - ($game->getOldPrice() * $discountFactor);
-
-                            // Set the calculated price
-                            $game->setPrice($calculatedPrice);
-                            $edition = $manager->getRepository(Edition::class)->findOneBy(['name' => 'Standart']);
-                            if ($edition !== null) {
-                            $game->setEdition($edition);
-                            }
-                            $category = $manager->getRepository(Category::class)->findOneBy(['name' => 'Jeux Vidéos']);
-                            if ($category !== null) {
-                            $game->setCategory($category);
-                            }
-
-                            foreach ($gameData['platforms'] as $platformData) {
-                                $platformName = $platformData['platform']['name'];
-                                $existingPlatform = $manager->getRepository(Platform::class)->findOneBy(['name' => $platformName]);
-                            
-                                if ($existingPlatform !== null) {
-                                    $game->addPlatform($existingPlatform);
-                                }
-                            }
-
-                            foreach ($gameData['tags'] as $tagName) {
-                                $tag = $manager->getRepository(Tag::class)->findOneBy(['name' => $tagName]);
-                                if ($tag !== null) {
-                                    $game->addTag($tag);
-                                }
-                            }
-
-                            foreach ($gameData['genres'] as $genreName) {
-                                $genre = $manager->getRepository(Genre::class)->findOneBy(['name' => $genreName]);
-                                if ($genre !== null) {
-                                    $game->addGenre($genre);
-                                } 
-                            }
+        $retroGamesData = $retroGamesResponse->toArray();
     
-                            $manager->persist($game);
-                            $manager->flush();
-                        }
+        /* Boucler sur la liste des jeux */
+        foreach ($retroGamesData['results'] as $retroGameData) {
+            /* Récupérer l'Id du jeu */
+            $gameId = $retroGameData['id'];
+    
+            /* Effectuer une requête pour obtenir l'id du jeu */
+            $singleGameResponse = $httpClient->request('GET', "https://api.rawg.io/api/games/{$gameId}", [
+                'query' => [
+                    'key' => $apiKey,
+                ],
+            ]);
+            $gameData = $singleGameResponse->toArray();
+
+            /* Vérifier si un jeu avec ce nom existe déjà en BDD */
+            $existingGame = $manager->getRepository(Product::class)->findOneBy(['name' => $gameData['name']]);
+
+            /* Si il n'existe pas on persist les données */
+            if ($existingGame === null) {
+                $game = new Product();
+                $game->setName($gameData['name']);
+                $game->setDescription($gameData['description']);
+                $game->setRelease(new \DateTime($gameData['released']));
+                $game->setIsPhysical(false);
+                if (!empty($gameData['publishers'])) {
+                    $game->setEditor($gameData['publishers'][0]['name']);
+                } else {
+                    $game->setEditor('inconnu');
+                }
+                if (!empty($gameData['developers'])) {
+                    $game->setDev($gameData['developers'][0]['name']);
+                } else {
+                    $game->setDev('inconnu');
+                }
+                $game->setImg($gameData['background_image']);
+                $game->setStock(rand(0, 99));
+
+                $game->setOldPrice(rand(100, 15000));
+                // Calculate the discounted price
+                $discountPercentage = rand(5, 95);
+                $discountFactor = $discountPercentage / 100;
+                $calculatedPrice = $game->getOldPrice() - ($game->getOldPrice() * $discountFactor);
+                // Set the calculated price
+                $game->setPrice($calculatedPrice);
+
+                $edition = $manager->getRepository(Edition::class)->findOneBy(['name' => 'Standart']);
+                if ($edition !== null) {
+                    $game->setEdition($edition);
+                }
+                $category = $manager->getRepository(Category::class)->findOneBy(['name' => 'Jeux Vidéos']);
+                    if ($category !== null) {
+                $game->setCategory($category);
+                }
+
+                foreach ($gameData['platforms'] as $platformData) {
+                    $platformName = $platformData['platform']['name'];
+                    $existingPlatform = $manager->getRepository(Platform::class)->findOneBy(['name' => $platformName]);
+                    if ($existingPlatform !== null) {
+                        $game->addPlatform($existingPlatform);
                     }
                 }
+
+                foreach ($gameData['tags'] as $tagName) {
+                    $tag = $manager->getRepository(Tag::class)->findOneBy(['name' => $tagName]);
+                    if ($tag !== null) {
+                        $game->addTag($tag);
+                    }
+                }
+
+                foreach ($gameData['genres'] as $genreName) {
+                    $genre = $manager->getRepository(Genre::class)->findOneBy(['name' => $genreName]);
+                    if ($genre !== null) {
+                        $game->addGenre($genre);
+                    } 
+                }
+                $manager->persist($game);
             }
         }
-    }
-
-    private function getGamesForEntity($httpClient, $entityId, $entityType)
-    {
-        $apiKey = $this->apiKey;
-        $gamesResponse = $httpClient->request('GET', 'https://api.rawg.io/api/games', [
-            'query' => [
-                'key' => $apiKey,
-                $entityType . 's' => $entityId,
-            ],
-        ]);
-
-        $gamesData = $gamesResponse->toArray();
-
-        return $gamesData['results'];
-    }
-
-    private function getGameDataProperty($httpClient, $gameId, $apiKey, $property)
-    {
-        $gameResponse = $httpClient->request('GET', "https://api.rawg.io/api/games/{$gameId}", [
-            'query' => [
-                'key' => $apiKey,
-            ],
-        ]);
-
-        $gameData = $gameResponse->toArray();
-
-        return $gameData[$property] ?? null;
+        $manager->flush();
     }
 
     public function getDependencies(): array
