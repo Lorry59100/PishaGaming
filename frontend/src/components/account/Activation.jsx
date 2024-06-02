@@ -6,12 +6,8 @@ import { URL, URL_GET_ORDER } from "../../constants/urls/URLBack";
 import { useTokenService } from "./services/tokenService";
 import axios from 'axios'
 import { convertToEuros } from "../products/services/PriceServices";
-import { HiMiniComputerDesktop } from 'react-icons/hi2';
 import { IconContext } from "react-icons";
-import { FaPlaystation } from "react-icons/fa";
-import { BsXbox } from "react-icons/bs";
 import { formatDate } from "./services/dateServices";
-import { SiNintendo } from "react-icons/si";
 import { IoIosWarning } from "react-icons/io";
 
 export function Activation() {
@@ -95,42 +91,11 @@ useEffect(() => {
               {order.orderDetails && order.orderDetails.length > 0 ? (
                 order.orderDetails.map((orderDetail, index) => {
                   let keyCounter = 0; // Counter for each product
-                  let platformIcon;
-  
-                  // Déterminez quelle icône utiliser en fonction de la plateforme
-                  switch (orderDetail.platform) {
-                    case 'PC':
-                    platformIcon = 
-                      <IconContext.Provider value={{ size: '2em', color: 'white' }}>
-                          <HiMiniComputerDesktop />
-                      </IconContext.Provider>;
-                  break;
-                    case 'Xbox Series X':
-                    platformIcon = 
-                      <IconContext.Provider value={{ size: '2em', color: 'white' }}>
-                        <BsXbox />
-                      </IconContext.Provider>;
-                  break;
-                    case 'PS5':
-                    platformIcon = 
-                      <IconContext.Provider value={{ size: '2em', color: 'white' }}>
-                        <FaPlaystation />
-                      </IconContext.Provider>;
-                  break;
-                    case 'Nintendo Switch' || 'Super Nintendo':
-                    platformIcon = 
-                      <IconContext.Provider value={{ size: '2em', color: 'white' }}>
-                        <SiNintendo />
-                      </IconContext.Provider>;
-                  break;
-                    default:
-                    platformIcon = null; // Utilisez une icône par défaut ou ne rien afficher 
-                  }
-  
+
                   return (
                     <div key={index} className="order-detail">
                       <div className="order-img-container">
-                        <div className="platform-order-icon">{platformIcon && platformIcon}</div>
+                        <div className="platform-order-icon"><img src={`/src/assets/img/platforms/${orderDetail.platform}.png`} alt={orderDetail.name} /></div>
                         <img src={orderDetail.img} alt={orderDetail.name} />
                       </div>
                       <div className="order-infos-container">
