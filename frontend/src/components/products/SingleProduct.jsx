@@ -70,6 +70,7 @@ export function SingleProduct() {
                     img: product.img,
                     platform: selectedPlatform,
                     price: product.price,
+                    oldPrice: product.old_price,
                     quantity: 1,
                 });
                 }
