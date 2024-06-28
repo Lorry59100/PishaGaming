@@ -29,6 +29,7 @@ class PlatformFixtures extends Fixture
         foreach ($platforms as $platformData) {
             $platform = new Platform();
             $platform->setName($platformData['name']);
+            $platform->setIsPhysical(0);
             $manager->persist($platform);
         }
         $manager->flush();
