@@ -69,7 +69,6 @@ class GameFixtures extends Fixture implements DependentFixtureInterface
                 $game->setName($gameData['name']);
                 $game->setDescription($gameData['description']);
                 $game->setRelease(new \DateTime($gameData['released']));
-                $game->setIsPhysical(false);
                 if (!empty($gameData['publishers'])) {
                     $game->setEditor($gameData['publishers'][0]['name']);
                 } else {
