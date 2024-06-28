@@ -4,7 +4,7 @@ display: grid;
 grid-template-columns: repeat(3, 1fr);
 gap: 2em;
 margin: 1em 1em;
-padding: 5em 20em 5em 20em;
+padding: 5em 10em 5em 10em;
 }
 .game-list-container-first {
 margin-top: 30em;
