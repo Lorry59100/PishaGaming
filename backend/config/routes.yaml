@@ -58,6 +58,16 @@ get_cart:
     controller: App\Controller\CartController::getCart
     methods: GET
 
+update_cart:
+    path: /update-cart
+    controller: App\Controller\CartController::updateCart
+    methods: PUT
+
+delete_item:
+    path: /delete-item
+    controller: App\Controller\CartController::deleteItem
+    methods: DELETE
+
 get_storage:
     path: /get-storage
     controller: App\Controller\CartController::getStorage
