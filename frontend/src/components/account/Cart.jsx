@@ -20,7 +20,7 @@ import { LoginAndRegisterForm } from './forms/LoginAndRegisterForm';
 import { CartContext } from '../../contexts/CartContext';
 
 export function Cart() {
-  const { cart, updateCart, resetCart } = useContext(CartContext);
+  const { cart, updateCart } = useContext(CartContext);
   const { decodedUserToken } = useTokenService();
   const totalOldPrice = calculateTotalOldPrice(cart);
   const totalPrice = calculateTotal(cart);
@@ -29,7 +29,7 @@ export function Cart() {
   const [showLoginAndRegisterForm, setShowLoginAndRegisterForm] = useState(false);
   const navigate = useNavigate();
 
-  console.log(totalPrice);
+  /* console.log(totalPrice); */
 
   useEffect(() => {
     // Add a class to the body element when the component mounts
@@ -48,6 +48,8 @@ export function Cart() {
       showNavbar();
     };
   }, [hideNavbar, showNavbar]);
+
+  
 
   useEffect(() => {
     // Vérifier si l'utilisateur est connecté avant de faire la requête
@@ -71,7 +73,7 @@ export function Cart() {
         updateCart(cartItems);
       }
     }
-  }, [decodedUserToken]);
+  }, [decodedUserToken, updateCart]);
 
   const handlePaymentClick = () => {
     if (decodedUserToken) {
@@ -82,6 +84,50 @@ export function Cart() {
       setShowLoginAndRegisterForm(true);
     }
   };
+  const removeItem = async (userId = null, itemId) => {
+    if (decodedUserToken) {
+      try {
+          await axios.delete('https://127.0.0.1:8000/delete-item', {
+          data: {
+            userId,
+            itemId
+          }
+        });
+        // Mettre à jour l'état local du composant avec le nouveau panier
+        const newCartData = cart.filter((item) => item.id !== itemId);
+        updateCart(newCartData);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      const cartItems = JSON.parse(localStorage.getItem('cart'));
+      const newCartItems = cartItems.filter((item) => item.id !== itemId);
+      localStorage.setItem('cart', JSON.stringify(newCartItems));
+      // Mettre à jour l'état local du composant avec le nouveau panier
+      updateCart(newCartItems);
+    }
+  };
+  
+  
+  
+  
+  const updateQuantity = async (userId, productId, platform, quantity, itemId) => {
+    try {
+      await axios.put('https://127.0.0.1:8000/update-cart', {
+        userId,
+        productId,
+        platform,
+        quantity,
+        itemId
+      });
+      // Mettre à jour l'état du composant avec la nouvelle quantité
+      // Vous pouvez utiliser la fonction updateCart() du CartContext pour mettre à jour le panier
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+  
 
   return (
     <div className='tunnel-cart-container'>
@@ -113,7 +159,8 @@ export function Cart() {
                           </div>
                           <span>{item.platform}</span>
                           <div className="middle-foot">
-                            <BsTrash3 />
+                          <button type='submit' onClick={() => removeItem(decodedUserToken.id, item.id)}><IconContext.Provider value={{ size: '1.2em'}}><BsTrash3 /></IconContext.Provider></button>
+
                             <div className="vertical-spacer"></div>
                             <button>Déplacer en wishlist</button>
                           </div>
@@ -121,18 +168,24 @@ export function Cart() {
                         <div className="quantity-selector">
                           <h3>{convertToEuros(item.price*item.quantity)} €</h3>
                           <select
-                            className="quantity-dropdown"
-                            value={item.quantity}
-                            onChange={(e) => {
-                              const newCartData = cart.map((cartItem) => {
-                                if (cartItem.id === item.id && cartItem.platform === item.platform) {
-                                  return { ...cartItem, quantity: parseInt(e.target.value) };
-                                }
-                                return cartItem;
-                              });
-                              updateCart(newCartData);
-                            }}
-                          >
+  className="quantity-dropdown"
+  value={item.quantity}
+  onChange={(e) => {
+    const newQuantity = parseInt(e.target.value);
+    // Appeler la fonction updateQuantity() pour mettre à jour la quantité du produit dans la base de données
+    updateQuantity(decodedUserToken.id, item.productId, item.platform, newQuantity, item.id); // Ajouter l'ID de l'élément du panier à la fonction updateQuantity()
+    // Mettre à jour l'état local du composant avec la nouvelle quantité
+    const newCartData = cart.map((cartItem) => {
+      if (cartItem.id === item.id && cartItem.platform === item.platform) {
+        return { ...cartItem, quantity: newQuantity };
+      }
+      return cartItem;
+    });
+    updateCart(newCartData);
+  }}
+>
+
+
                             {(() => {
                               const options = [];
                               for (let i = 1; i <= 10; i++) {
@@ -189,7 +242,8 @@ export function Cart() {
                           </div>
                           <span>{item.platform}</span>
                           <div className="middle-foot">
-                            <BsTrash3 />
+                          <button type='submit' onClick={() => removeItem(null, item.id)}><IconContext.Provider value={{ size: '1.2em'}}><BsTrash3 /></IconContext.Provider></button>
+
                             <div className="vertical-spacer"></div>
                             <button>Déplacer en wishlist</button>
                           </div>
