@@ -137,4 +137,32 @@ class CartController extends AbstractController
     }
     return new JsonResponse($cartsData, 200);
     }
+
+    /**
+     * @Route("/update-cart}", name="update_cart", methods={"PUT"})
+     */
+    public function updateCart(Request $request, CartRepository $cartRepository, EntityManagerInterface $entityManager): JsonResponse
+    {
+    $data = json_decode($request->getContent(), true);
+    $itemId = $data['itemId'];
+    $quantity = $data['quantity'];
+    $itemToUpdate = $cartRepository->find($itemId);
+    $itemToUpdate->setQuantity($quantity);
+    $entityManager->persist($itemToUpdate);
+    $entityManager->flush();
+    return new JsonResponse($itemToUpdate, 200);
+    }
+
+    /**
+     * @Route("/delete-item}", name="delete_item", methods={"DELETE"})
+     */
+    public function deleteItem(Request $request, CartRepository $cartRepository, EntityManagerInterface $entityManager): JsonResponse
+    {
+    $data = json_decode($request->getContent(), true);
+    $itemId = $data['itemId'];
+    $itemToUpdate = $cartRepository->find($itemId);
+    $entityManager->remove($itemToUpdate);
+    $entityManager->flush();
+    return new JsonResponse($itemToUpdate, 200);
+    }
 }
