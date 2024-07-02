@@ -49,22 +49,26 @@ export const CartProvider = ({ children }) => {
         }
       }, [decodedUserToken, cart]);
 
-      //Mis à jour du panier après un ajout quand user connecté
       const updateCart = (newCart) => {
         if (decodedUserToken) {
           const userId = decodedUserToken.id;
-            axios.get(`${URL}${URL_USER_CART}/${userId}`, {
+          axios.get(`${URL}${URL_USER_CART}/${userId}`, {
             params: { cart: cart },
-        })
-        .then(response => {
-            setCart(response.data);
-        })
-        .catch(error => {
+          })
+          .then(response => {
+            if (JSON.stringify(response.data) !== JSON.stringify(cart)) {
+              setCart(response.data);
+            }
+          })
+          .catch(error => {
             console.error('Erreur lors de la mise à jour du panier utilisateur :', error);
-        });
+          });
         }
-        setCart(newCart);
+        if (JSON.stringify(newCart) !== JSON.stringify(cart)) {
+          setCart(newCart);
+        }
       };
+      
 
       // Mettre à jour le panier une fois user déconnecté
       useEffect(() => {
@@ -72,7 +76,7 @@ export const CartProvider = ({ children }) => {
           resetCart();
         }
       }, [decodedUserToken]);
- 
+
       return (
         <CartContext.Provider value={{ cart, updateCart, resetCart }}>
           {children}
