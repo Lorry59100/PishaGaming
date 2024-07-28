@@ -69,6 +69,8 @@ export function PaymentForm() {
     }
   }, [decodedUserToken]);
 
+  console.log('dans le panier :', cartData)
+
   return (
     <div>
       <Paybar isPaymentFormContext={true} isActivationContext={true} />
@@ -107,21 +109,19 @@ export function PaymentForm() {
 
       <div className="delivery-items-container">
 
-      {cartData.map((item, index) => (
-  // Ajoutez une condition pour n'afficher que si isPhysical est true
-  item.isPhysical && (
-    <div key={index} className="physical-product">
-      <img src={item.img} alt={item.name} />
-      <div className="single-physical-product">
-        <h4>{item.name}</h4>
-        <span className={item.quantity > 1 ? 'multiple-items' : ''}>
-          {item.quantity > 1 ? `x${item.quantity} ` : ''}
-          {/* {item.platform} */}
-        </span>
-      </div>
+      {cartData && cartData.filter(item => (item.category === 'Hardware' || (item.category === 'Jeux Vidéos' && item.isPhysical))).map((item, index) => (
+  <div key={index} className="physical-product">
+    <img src={item.img} alt={item.name} />
+    <div className="single-physical-product">
+      <h4>{item.name}</h4>
+      <span className={item.quantity > 1 ? 'multiple-items' : ''}>
+        {item.quantity > 1 ? `x${item.quantity} ` : ''}
+        {/* {item.platform} */}
+      </span>
     </div>
-  )
+  </div>
 ))}
+
 
       </div>
     </div>
