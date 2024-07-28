@@ -1,0 +1,50 @@
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    grid-column: span 3; 
+}
+
+.form-search {
+    grid-column: span 3;
+    display: flex;
+    justify-content: center; 
+}
+
+.form-search-select {
+    width: 500px;
+    margin-left: 2em;
+    cursor: pointer;
+}
+
+.form-search-select-container {
+    position: relative;
+}
+
+.pagination>span {
+    margin: 0 1em;
+}
+
+.pagination-btn {
+    padding: 0.5em;
+    border-radius: 50%;
+    border: 2px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.select-arrow {
+    position: absolute;
+    right: 0.5em;
+    top: 0.8em;
+    pointer-events: none;
+}
+
+.icon-white {
+    color: white;
+}
+
+.icon-disabled {
+    color: gray;
+}
