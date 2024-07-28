@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\GenreRepository;
+use App\Repository\PlatformRepository;
 use Exception;
 use App\Repository\ProductRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -166,6 +167,22 @@ class ProductsController extends AbstractController
     }
     
     /**
+     * @Route("/plateformes-list", name="plateformes_list", methods={"GET"})
+     */
+    public function plateformesList(PlatformRepository $plateformeRepository): JsonResponse
+    {
+        $plateformes = $plateformeRepository->findAll();
+        $plateformesArray = [];
+        foreach ($plateformes as $plateforme) {
+            $plateformesArray[] = [
+                'name' => $plateforme->getName(),
+                'id' => $plateforme->getId(),
+            ];
+        }
+        return new JsonResponse($plateformesArray, 200);
+    }
+
+    /**
      * @Route("/genres-list", name="genres_list", methods={"GET"})
      */
     public function genresList(GenreRepository $genreRepository): JsonResponse
@@ -175,9 +192,9 @@ class ProductsController extends AbstractController
         foreach ($genres as $genre) {
             $genresArray[] = [
                 'name' => $genre->getName(),
+                'id' => $genre->getId()
             ];
         }
         return new JsonResponse($genresArray, 200);
     }
-
 }
