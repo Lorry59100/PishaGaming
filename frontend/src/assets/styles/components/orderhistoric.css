@@ -5,9 +5,8 @@
     margin-top: 5em;
 }
 
-.order-historic-container>h1 {
-    margin-bottom: 1em;
-    text-align: center;
+.order-historic-container>h2 {
+    color: white;
 }
 
 .order-container {
@@ -18,6 +17,11 @@
     padding: 1em;
     border: 2px solid var(--medium-dark);
 }
+
+.order-historic-container .order-layout-container:first-of-type {
+    margin-top: 1em;
+}
+
 
 .order-container:hover {
     border: 2px solid var(--orange);

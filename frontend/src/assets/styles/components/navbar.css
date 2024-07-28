@@ -95,7 +95,7 @@ color: var(--orange)
 .profile-content {
   width: 180px;
   height: 200px;
-  transform: translateY(130px);
+  transform: translateY(151px);
   right: 1em;
   border-radius: 10px;
   color: white;

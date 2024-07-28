@@ -144,3 +144,79 @@ margin-right: 10px;
     display: flex;
     justify-content: center;
 }
+
+.links-selector {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    position: relative;
+}
+
+.main-links {
+    width: 100%;
+    display: flex;
+}
+
+.main-links>a {
+    color: white;
+    font-weight: bold;
+    width: 150px;
+    display: flex;
+    justify-content: center;
+}
+
+.main-links>a:hover {
+    color: var(--orange);
+}
+
+.parameters-link {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.parameters-link>a {
+    margin-right: 1em;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.parameters-link>a:hover {
+    color: var(--orange);
+}
+
+.parameters-link>a>svg {
+    margin-right: 0.5em;
+    color: var(--orange);
+}
+
+.cutline-form-margin {
+    margin-top: 1em;
+}
+
+
+.account-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.active span, .main-links a:hover span {
+    color: var(--orange);
+}
+
+.active .active-link-line, .active .active-parameters-line {
+    height: 1px;
+    background: linear-gradient(to right, transparent, #ff8000, #ff5400, #ff8000, transparent);
+    margin-top: 2.5em;
+    width: 150px;
+    position: absolute;
+    z-index: 5;
+}
+
+.active .active-parameters-line {
+    margin-top: 3.5em;
+    width: 130px;
+}
