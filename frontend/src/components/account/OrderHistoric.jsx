@@ -32,7 +32,7 @@ function OrderHistoric() {
 
   return (
     <div className="order-historic-container">
-            <h1>Historique des commandes</h1>
+            <h2>Mes achats</h2>
             {orders !== null && orders.map((order) => (
                 <div key={order.id} className="order-layout-container">
                     <Link to={`${URL_SINGLE_ORDER_HISTORIC}/${order.reference}`}>
