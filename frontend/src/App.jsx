@@ -7,6 +7,7 @@ import { ToastContainer } from 'react-toastify';
 import { NavbarVisibilityProvider } from './contexts/NavbarVisibilityContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
+import AccountPage from './components/account/Account';
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
           <main>
             <ToastContainer/>
             <Routes />
+            <AccountPage />
           </main>
           <Footer/>
         </div>
