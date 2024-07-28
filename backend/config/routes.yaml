@@ -38,6 +38,11 @@ single_product:
     controller: App\Controller\ProductsController::singleProduct
     methods: GET
 
+plateformes_list:
+    path: /plateformes-list
+    controller: App\Controller\ProductsController::plateformesList
+    methods: GET
+
 genres_list:
     path: /genres-list
     controller: App\Controller\ProductsController::genresList
