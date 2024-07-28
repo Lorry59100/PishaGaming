@@ -160,6 +160,10 @@ display: flex;
 justify-content: center;
 color: var(--grey);
 }
+.keep-buying-container:hover {
+cursor: pointer;
+color: white;
+}
 
 .keep-buying-container>a {
 margin-left: 0.5em;
@@ -219,8 +223,8 @@ align-items: center;
 }
 
 .delivery-items-container {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
+display: grid;
+grid-template-columns: repeat(5, 1fr);
 }
 .react-datepicker-wrapper {
 display: flex !important;
@@ -234,47 +238,51 @@ margin-bottom: 1em;
 }
 
 #snkLogo {
-    font-family: 'Arial', sans-serif; /* Utilisation d'une police générique, vous pouvez ajuster selon vos besoins */
-    color: #fff; /* Couleur du texte blanche */
-    font-size: 12px; /* Taille du texte ajustable selon vos besoins */
-    font-weight: bold; /* Gras pour l'effet de logo */
-    letter-spacing: 2px; /* Espacement entre les lettres pour l'effet stylisé */
-    background-color: black;
-    border-radius: 50%;
-    padding: 0.5em;
-    margin-right: 1em;
-    width: 25px;
-    height: 25px;
-    display: flex;
-  align-items: center;
-  justify-content: center;
+font-family: 'Arial', sans-serif; /* Utilisation d'une police générique, vous pouvez ajuster selon vos besoins */
+color: #fff; /* Couleur du texte blanche */
+font-size: 12px; /* Taille du texte ajustable selon vos besoins */
+font-weight: bold; /* Gras pour l'effet de logo */
+letter-spacing: 2px; /* Espacement entre les lettres pour l'effet stylisé */
+background-color: black;
+border-radius: 50%;
+padding: 0.5em;
+margin-right: 1em;
+width: 25px;
+height: 25px;
+display: flex;
+align-items: center;
+justify-content: center;
 }
 
 #snkLogoActivation {
-    font-family: 'Arial', sans-serif; /* Utilisation d'une police générique, vous pouvez ajuster selon vos besoins */
-    color: #fff; /* Couleur du texte blanche */
-    font-size: 12px; /* Taille du texte ajustable selon vos besoins */
-    font-weight: bold; /* Gras pour l'effet de logo */
-    letter-spacing: 2px; /* Espacement entre les lettres pour l'effet stylisé */
-    background-color: black;
-    border-radius: 50%;
-    padding: 0.5em;
-    width: 25px;
-    height: 25px;
-    display: flex;
-  align-items: center;
-  justify-content: center;
+font-family: 'Arial', sans-serif; /* Utilisation d'une police générique, vous pouvez ajuster selon vos besoins */
+color: #fff; /* Couleur du texte blanche */
+font-size: 12px; /* Taille du texte ajustable selon vos besoins */
+font-weight: bold; /* Gras pour l'effet de logo */
+letter-spacing: 2px; /* Espacement entre les lettres pour l'effet stylisé */
+background-color: black;
+border-radius: 50%;
+padding: 0.5em;
+width: 25px;
+height: 25px;
+display: flex;
+align-items: center;
+justify-content: center;
 }
 
 .logo-img-container {
-  width: 25px;
-  height: 25px;
-  background-color: black;
-  padding: 0.5em;
-  border-radius: 50%;
-  display: flex;
+width: 25px;
+height: 25px;
+background-color: black;
+padding: 0.5em;
+border-radius: 50%;
+display: flex;
 }
 
 .middle-head>h4 {
-  margin-left: 0.5em;
+margin-left: 0.5em;
+}
+
+.middle-foot>button:hover {
+color: white;
 }
