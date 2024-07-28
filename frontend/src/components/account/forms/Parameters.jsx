@@ -14,6 +14,7 @@ import { PiPencilSimpleLineFill } from 'react-icons/pi';
 import { BsTrash3 } from "react-icons/bs";
 import { Field, Form, Formik } from "formik";
 import { ToastCenteredSuccess } from "../../services/toastService";
+/* import { MdOutlineSettings } from "react-icons/md"; */
 
 export function Parameters() {
     const [activeTab, setActiveTab] = useState(0);
@@ -90,13 +91,8 @@ export function Parameters() {
       };
 
     return (
-        <div className="parameters-container">
-            <IconContext.Provider value={{ size: '4em'}}>
-                <PiUserBold className='user-icon-circled user-icon-circled-big'/>
-            </IconContext.Provider>
-            <h1>{/* {decodedUserToken.pseudo} */}</h1>
-            <h4>Membre depuis : nov. 28, 2017</h4>
-            <div className="cutline-form cutline-form-big"></div>
+
+          
             <div className="tab-and-content-container">
             <div className="tab-container">
         <div className="tabs">
@@ -206,6 +202,6 @@ export function Parameters() {
         )}
       </div>
             </div>
-        </div>
+
     )
 }
