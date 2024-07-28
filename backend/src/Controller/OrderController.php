@@ -80,6 +80,7 @@ class OrderController extends AbstractController
             $product = $productRepository->find($productId);
 
             $platform = $item['platform'];
+            $category = $item['category'];
             $price = $item['price'];
             $quantity = $item['quantity'];
             $totalPrice = $price*$quantity;
@@ -113,13 +114,16 @@ class OrderController extends AbstractController
 
             /* Génerer les clefs d'activation */
             for ($i = 0; $i < $quantity; $i++) {
-                //Vérifier si le produit est dématerialisié avant de génerer une clé.
-                if(in_array($platform, $supportedPlatforms)) {
-                    $activationKey = new ActivationKey();
-                    $activationKey->setActivationKey($this->keyGeneratorService->generateActivationKey($platform)); // Ajoutez votre logique de génération de clé ici
-                    $activationKey->setUser($user);
-                    $activationKey->setOrderDetails($orderDetails);
-                    $entityManager->persist($activationKey);
+                // Vérifier que le produit est bien un JV
+                if($category === "Jeux Vidéos") {
+                    //Vérifier si le produit est dématerialisié avant de génerer une clé.
+                    if(in_array($platform, $supportedPlatforms)) {
+                        $activationKey = new ActivationKey();
+                        $activationKey->setActivationKey($this->keyGeneratorService->generateActivationKey($platform)); // Ajoutez votre logique de génération de clé ici
+                        $activationKey->setUser($user);
+                        $activationKey->setOrderDetails($orderDetails);
+                        $entityManager->persist($activationKey);
+                    }
                 }
             }
         }
