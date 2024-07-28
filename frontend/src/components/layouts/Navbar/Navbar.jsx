@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import { LoginAndRegisterForm } from '../../account/forms/LoginAndRegisterForm';
 import { NavbarVisibilityContext } from '../../../contexts/NavbarVisibilityContext';
 import { useContext } from 'react';
-import { URL_CART, URL_HOME, URL_PARAMETERS } from '../../../constants/urls/URLFront';
+import { URL_ACCOUNT, URL_CART, URL_HOME, URL_ORDER_HISTORIC, URL_PARAMETERS } from '../../../constants/urls/URLFront';
 import { CartContext } from '../../../contexts/CartContext';
 
 function Navbar() {
@@ -136,10 +136,10 @@ function Navbar() {
               <div className="profile-content" ref={profileContentRef}>
                 <ul>
                   <li>
-                    <Link to={`${URL_PARAMETERS}`} onClick={handleLinkClick}>Paramètres</Link>
+                    <Link to={`${URL_ACCOUNT}${URL_PARAMETERS}`} onClick={handleLinkClick}>Paramètres</Link>
                   </li>
                   <li>
-                  <Link to={`${URL_USER_ORDER}`} onClick={handleLinkClick}>Achats</Link>
+                  <Link to={`${URL_ACCOUNT}${URL_ORDER_HISTORIC}`} onClick={handleLinkClick}>Achats</Link>
                   </li>
                   <li>
                   <Link to={`${URL_USER_ORDER}`} onClick={handleLinkClick}>Wishlist</Link>
