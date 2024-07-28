@@ -7,7 +7,7 @@ import { IoChevronBackOutline } from "react-icons/io5";
 import { IconContext } from "react-icons";
 import { FaShippingFast, FaCheck } from "react-icons/fa";
 import { formatDate } from "./services/dateServices";
-import { URL_ORDER_HISTORIC } from "../../constants/urls/URLFront";
+import { URL_ACCOUNT, URL_ORDER_HISTORIC } from "../../constants/urls/URLFront";
 
 function SingleOrderHistoric() {
   const { reference } = useParams();
@@ -27,7 +27,7 @@ function SingleOrderHistoric() {
   return (
     <div className="single-order-container">
       <div className="single-order-header">
-        <Link to={URL_ORDER_HISTORIC} className="back-button">
+        <Link to={`${URL_ACCOUNT}${URL_ORDER_HISTORIC}`} className="back-button">
           <IconContext.Provider value={{ size: "1.5em", color: "white" }}>
             <IoChevronBackOutline />
           </IconContext.Provider>
