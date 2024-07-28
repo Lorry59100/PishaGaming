@@ -131,6 +131,7 @@ class CartController extends AbstractController
     'oldPrice' => $cart->getProduct()->getOldPrice(),
     'price' => $cart->getProduct()->getPrice(),
     'isPhysical' => $platform->isIsPhysical(),
+    'category' => $cart->getProduct()->getCategory()->getName(),
     ];
 
     $cartsData[] = $cartData;
