@@ -117,3 +117,7 @@ justify-content: space-evenly;
 .console * {
 margin: 0.5em 0.2em;
 }
+
+.search-page {
+    background-color: var(--medium-dark);
+}
