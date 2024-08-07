@@ -4,7 +4,7 @@ import { SlArrowDown } from "react-icons/sl";
 import { BsPlaystation, BsXbox, BsNintendoSwitch } from "react-icons/bs";
 import { IconContext } from "react-icons";
 import "../../../assets/styles/components/searchbar.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function Searchbar() {
   const [areConsolesVisible, setConsolesVisible] = useState(true);
@@ -12,12 +12,16 @@ function Searchbar() {
   const [isSearchExpanded, setSearchExpanded] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
   const searchInputRef = useRef(null);
   const searchbarRef = useRef(null);
 
   const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-    navigate(`/search?q=${event.target.value}`);
+    const newSearchQuery = event.target.value;
+    setSearchQuery(newSearchQuery);
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set('q', newSearchQuery);
+    navigate(`/search/?${searchParams.toString()}`);
   };
 
   const handleSearchClick = () => {
@@ -73,64 +77,78 @@ function Searchbar() {
     };
   }, [handleClickOutside]);
 
+  // Initialiser l'état de la barre de recherche avec la valeur du paramètre de recherche
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const query = searchParams.get('q') || "";
+    setSearchQuery(query);
+    setSearchClicked(query !== "" || isSearchClicked); // Mettre à jour isSearchClicked en fonction de la présence de la requête de recherche ou de l'état actuel
+  }, [location.search, isSearchClicked]);
+
+  // Mettre à jour areConsolesVisible lorsque isSearchClicked change
+  useEffect(() => {
+    if (!isSearchClicked) {
+      setConsolesVisible(true);
+    }
+  }, [isSearchClicked]);
+  
+  // Vérifier si l'URL actuelle est /search
+  const isSearchPage = location.pathname === "/search";
+
   return (
     <div className={`searchbar ${isSearchExpanded ? "expanded" : ""}`} ref={searchbarRef}>
       <div className="searchbar-layout-container">
-        <div className="consoles">
+      <div className={`consoles ${isSearchPage ? "search-page" : ""}`}>
           {areConsolesVisible && (
-            <div className="console first-console">
-              <a href="/">
-                <IconContext.Provider value={{ size: "1.5em", color: "white" }}>
-                  <HiMiniComputerDesktop />
-                </IconContext.Provider>
-                <h5>PC</h5>
-                <IconContext.Provider value={{ size: "0.8em", color: "white" }}>
-                  <SlArrowDown />
-                </IconContext.Provider>
-              </a>
-            </div>
-          )}
+            <>
+              <div className="console first-console">
+                <a href="/">
+                  <IconContext.Provider value={{ size: "1.5em", color: "white" }}>
+                    <HiMiniComputerDesktop />
+                  </IconContext.Provider>
+                  <h5>PC</h5>
+                  <IconContext.Provider value={{ size: "0.8em", color: "white" }}>
+                    <SlArrowDown />
+                  </IconContext.Provider>
+                </a>
+              </div>
 
-          {areConsolesVisible && (
-            <div className="console">
-              <a href="/">
-                <IconContext.Provider value={{ size: "1.5em", color: "white" }}>
-                  <BsPlaystation />
-                </IconContext.Provider>
-                <h5>Playstation</h5>
-                <IconContext.Provider value={{ size: "0.8em", color: "white" }}>
-                  <SlArrowDown />
-                </IconContext.Provider>
-              </a>
-            </div>
-          )}
+              <div className="console">
+                <a href="/">
+                  <IconContext.Provider value={{ size: "1.5em", color: "white" }}>
+                    <BsPlaystation />
+                  </IconContext.Provider>
+                  <h5>Playstation</h5>
+                  <IconContext.Provider value={{ size: "0.8em", color: "white" }}>
+                    <SlArrowDown />
+                  </IconContext.Provider>
+                </a>
+              </div>
 
-          {areConsolesVisible && (
-            <div className="console">
-              <a href="/">
-                <IconContext.Provider value={{ size: "1.5em", color: "white" }}>
-                  <BsXbox />
-                </IconContext.Provider>
-                <h5>Xbox</h5>
-                <IconContext.Provider value={{ size: "0.8em", color: "white" }}>
-                  <SlArrowDown />
-                </IconContext.Provider>
-              </a>
-            </div>
-          )}
+              <div className="console">
+                <a href="/">
+                  <IconContext.Provider value={{ size: "1.5em", color: "white" }}>
+                    <BsXbox />
+                  </IconContext.Provider>
+                  <h5>Xbox</h5>
+                  <IconContext.Provider value={{ size: "0.8em", color: "white" }}>
+                    <SlArrowDown />
+                  </IconContext.Provider>
+                </a>
+              </div>
 
-          {areConsolesVisible && (
-            <div className="console last-console">
-              <a href="/">
-                <IconContext.Provider value={{ size: "1.5em", color: "white" }}>
-                  <BsNintendoSwitch />
-                </IconContext.Provider>
-                <h5>Nintendo</h5>
-                <IconContext.Provider value={{ size: "0.8em", color: "white" }}>
-                  <SlArrowDown />
-                </IconContext.Provider>
-              </a>
-            </div>
+              <div className="console last-console">
+                <a href="/">
+                  <IconContext.Provider value={{ size: "1.5em", color: "white" }}>
+                    <BsNintendoSwitch />
+                  </IconContext.Provider>
+                  <h5>Nintendo</h5>
+                  <IconContext.Provider value={{ size: "0.8em", color: "white" }}>
+                    <SlArrowDown />
+                  </IconContext.Provider>
+                </a>
+              </div>
+            </>
           )}
         </div>
         <div className={`searchbar-container ${isSearchExpanded ? "expanded" : ""}`}>
