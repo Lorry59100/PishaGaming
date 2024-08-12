@@ -1,4 +1,4 @@
-import { createContext, useEffect, useRef, useState } from 'react';
+import { createContext, useEffect, useRef, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { decodeToken } from 'react-jwt';
 import axios from 'axios';
@@ -15,18 +15,17 @@ export const CartProvider = ({ children }) => {
     const fetchDataExecuted = useRef(false);
 
     // Fonction pour vider panier
-    const resetCart = () => {
+    const resetCart = useCallback(() => {
       setCart([]);
-    };
+    }, []);
 
     // Mettre à jour le panier d'un utilisateur déconnecté.
     useEffect(() => {
         if (!decodedUserToken) {
           localStorage.setItem('cart', JSON.stringify(cart));
         }
-        
-      }, [decodedUserToken, cart]);
 
+      }, [decodedUserToken, cart]);
 
       //Mettre à jour le panier si l'utilisateur est connecté et actualise la page.
       useEffect(() => {
@@ -38,7 +37,9 @@ export const CartProvider = ({ children }) => {
               const response = await axios.get(`${URL}${URL_USER_CART}/${userId}`, {
                 params: { cart: cart },
               });
-              setCart(response.data);
+              if (response.data) {
+                setCart(response.data);
+              }
             } catch (error) {
               console.error('Erreur lors de la récupération du panier utilisateur :', error);
             }
@@ -49,14 +50,14 @@ export const CartProvider = ({ children }) => {
         }
       }, [decodedUserToken, cart]);
 
-      const updateCart = (newCart) => {
+      const updateCart = useCallback((newCart) => {
         if (decodedUserToken) {
           const userId = decodedUserToken.id;
           axios.get(`${URL}${URL_USER_CART}/${userId}`, {
             params: { cart: cart },
           })
           .then(response => {
-            if (JSON.stringify(response.data) !== JSON.stringify(cart)) {
+            if (response.data && JSON.stringify(response.data) !== JSON.stringify(cart)) {
               setCart(response.data);
             }
           })
@@ -64,18 +65,17 @@ export const CartProvider = ({ children }) => {
             console.error('Erreur lors de la mise à jour du panier utilisateur :', error);
           });
         }
-        if (JSON.stringify(newCart) !== JSON.stringify(cart)) {
+        if (newCart && JSON.stringify(newCart) !== JSON.stringify(cart)) {
           setCart(newCart);
         }
-      };
-      
+      }, [decodedUserToken, cart]);
 
       // Mettre à jour le panier une fois user déconnecté
       useEffect(() => {
         if (!decodedUserToken && fetchDataExecuted.current) {
           resetCart();
         }
-      }, [decodedUserToken]);
+      }, [decodedUserToken, resetCart]);
 
       return (
         <CartContext.Provider value={{ cart, updateCart, resetCart }}>
