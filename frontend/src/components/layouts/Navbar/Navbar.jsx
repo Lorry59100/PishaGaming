@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { TiShoppingCart } from 'react-icons/ti';
 import { PiUserBold } from 'react-icons/pi';
 import { IconContext } from 'react-icons';
@@ -24,7 +24,14 @@ function Navbar() {
   const [showLoginAndRegisterForm, setShowLoginAndRegisterForm] = useState(false);
   const { isNavbarVisible } = useContext(NavbarVisibilityContext);
   const { cart, resetCart } = useContext(CartContext);
-  const itemCount = cart ? cart.reduce((total, item) => total + item.quantity, 0) : 0;
+
+  // Utilisation de useMemo pour mémoriser le calcul du nombre d'items dans le panier
+  const itemCount = useMemo(() => {
+    const count = cart ? cart.reduce((total, item) => total + item.quantity, 0) : 0;
+    console.log('Item count calculated:', count);
+    return count;
+  }, [cart]);
+
   const profileContentRef = useRef(null);
 
   const toggleProfileVisibility = () => {
@@ -46,12 +53,17 @@ function Navbar() {
     logout();
     resetCart();
   };
-  
+
+  const handleCloseForm = () => {
+    setShowLoginAndRegisterForm(false);
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       const isScrolled = window.scrollY > 0;
       if (isScrolled !== scrolled) {
         setScrolled(isScrolled);
+        console.log(isScrolled)
       }
       const shouldShowLinks = window.scrollY === 0;
       if (shouldShowLinks !== isVisible) {
@@ -86,7 +98,6 @@ function Navbar() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [profileContentRef]);
-  
 
   const handleLinkClick = () => {
     // Close the profile content when clicking on a link
@@ -97,10 +108,12 @@ function Navbar() {
     // Utilisation de la condition isNavbarVisible pour rendre la Navbar visible ou non
     isNavbarVisible && (
       <div className={`navbar ${showLoginAndRegisterForm ? '' : (scrolled ? 'scrolled' : '')} ${isVisible ? 'visible' : 'hidden'} ${isAtTop ? 'at-top' : ''}`}>
-        
+
         <div className="logo">
         <Link to={`${URL_HOME}`}><img src={logo} alt="logo" className="orange-logo" />
-          <h3>Pisha Gaming</h3></Link>
+          <h2>Pisha
+            <br />
+             Gaming</h2></Link>
         </div>
         <div className={`menu ${menuClass}`}>
           <div className="links">
@@ -111,7 +124,7 @@ function Navbar() {
           </div>
           <Searchbar />
         </div>
-        
+
         <div className='profile-container'>
           <div className="cart-profile">
             <IconContext.Provider value={{ size: '2em' }}>
@@ -159,7 +172,7 @@ function Navbar() {
                 </ul>
               </div>
             )}
-            {!userToken && showLoginAndRegisterForm && <LoginAndRegisterForm login={login} onCloseForm={() => setShowLoginAndRegisterForm(false)} />}
+            {!userToken && showLoginAndRegisterForm && <LoginAndRegisterForm login={login} onCloseForm={handleCloseForm} />}
           </div>
         </div>
       </div>
