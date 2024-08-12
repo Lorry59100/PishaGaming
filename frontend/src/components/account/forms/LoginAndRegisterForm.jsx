@@ -9,7 +9,7 @@ import PropTypes from "prop-types";
 import { LoginForm } from "./LoginForm";
 import { RegisterForm } from "./RegisterForm";
 
-export function LoginAndRegisterForm({onCloseForm}) {
+export function LoginAndRegisterForm({ onCloseForm }) {
   const [showLoginAndRegisterForm, setShowLoginAndRegisterForm] = useState(true);
 
   const toggleForm = () => {
@@ -25,24 +25,29 @@ export function LoginAndRegisterForm({onCloseForm}) {
     setShowLoginAndRegisterForm(false);
     onCloseForm(); // Ferme le composant après le succès de l'enregistrement
   };
+
   return (
-      <div className="add-product-panel">
-        <div className="form-container">
-          <div className="logo-form">
-            <a href="/">
+    <div className="add-product-panel">
+      <div className="form-container">
+        <div className="logo-form">
+          <a href="/">
             <img src={logo} alt="logo" className="orange-logo" />
             <h3>Pisha Gaming</h3>
-            </a>
-          </div>
-          {showLoginAndRegisterForm ? <LoginForm toggleForm={toggleForm} onFormSuccess={handleFormSuccess}  /> : <RegisterForm toggleForm={toggleForm} onFormSuccess={handleFormSuccess} />}
+          </a>
         </div>
-        <div className="wallpaper-container">
+        {showLoginAndRegisterForm ? (
+          <LoginForm toggleForm={toggleForm} onFormSuccess={handleFormSuccess} />
+        ) : (
+          <RegisterForm toggleForm={toggleForm} onFormSuccess={handleFormSuccess} />
+        )}
+      </div>
+      <div className="wallpaper-container">
         <IconContext.Provider value={{ size: "1.5em" }}>
           <ImCross onClick={handleCloseForm} />
         </IconContext.Provider>
-        </div>
       </div>
-);
+    </div>
+  );
 }
 
 LoginAndRegisterForm.propTypes = {
