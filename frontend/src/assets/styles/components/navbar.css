@@ -41,7 +41,7 @@ height: 100%;
 margin-left: 2em;
 }
 
-.logo>a>h3 {
+.logo>a>h2 {
 width: 30px;
 color: white;
 text-shadow: 1px 1px 1px black;
@@ -167,5 +167,6 @@ color: var(--orange)
   width: 25px;
   height: 25px;
   border-radius: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-90%, -50%);
 }
+
