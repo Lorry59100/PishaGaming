@@ -181,6 +181,12 @@ function Search() {
     setSelectedSort("default-value");
   };
 
+  // Fonction pour gérer le clic sur "Voir les sorties récentes"
+  const handleRecentReleasesClick = () => {
+    resetFilters();
+    setSelectedSort("date-desc");
+  };
+
   return (
     <div className='game-list-container'>
       <div className="form-search">
@@ -250,20 +256,30 @@ function Search() {
 </div>
 
 
-      {currentProducts.map(game => (
-        <div key={game.id} className='game-container'>
-          <div className="game-card">
-            <Link to={`${URL_SINGLE_PRODUCT}/${game.id}`}><img src={game.img} alt={game.name} /></Link>
-            <div className="discount-label-cards">
-              <h5><strong>-</strong>{calculateDiscountPercentage(game.old_price, game.price)}</h5>
+{filteredGames.length === 0 ? (
+        <div className="no-results">
+          <h3>Désolé, aucun résultat n'a été trouvé.</h3>
+          <h4>Il semble que nous n'ayons aucun jeu correspondant à votre recherche</h4>
+          <button className="submit-button" type="submit" onClick={handleRecentReleasesClick}>
+            Voir les sorties récentes
+          </button>
+        </div>
+      ) : (
+        currentProducts.map(game => (
+          <div key={game.id} className='game-container'>
+            <div className="game-card">
+              <Link to={`${URL_SINGLE_PRODUCT}/${game.id}`}><img src={game.img} alt={game.name} /></Link>
+              <div className="discount-label-cards">
+                <h5><strong>-</strong>{calculateDiscountPercentage(game.old_price, game.price)}</h5>
+              </div>
+            </div>
+            <div className="sub-title">
+              <h4>{game.name}</h4>
+              <h2>{convertToEuros(game.price)} €</h2>
             </div>
           </div>
-          <div className="sub-title">
-            <h4>{game.name}</h4>
-            <h2>{convertToEuros(game.price)} €</h2>
-          </div>
-        </div>
-      ))}
+        ))
+      )}
       {/* Boutons de navigation pour la pagination */}
       {filteredGames.length > productsPerPage && (
         <div className="pagination">
