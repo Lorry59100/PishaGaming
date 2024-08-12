@@ -5,7 +5,7 @@ import { IconContext } from "react-icons";
 import { AiOutlineCheck, AiOutlineClose, AiOutlineMinusCircle } from 'react-icons/ai';
 import { TiShoppingCart } from 'react-icons/ti';
 import { ImPriceTag } from 'react-icons/im';
-import {URL, URL_SINGLE_PRODUCT, URL_ADD_TO_CART } from '../../constants/urls/URLBack';
+import {URL, URL_SINGLE_PRODUCT, URL_ADD_TO_CART, URL_USER_CART } from '../../constants/urls/URLBack';
 import logo from '../../assets/img/Logo.png';
 import { IoIosAddCircleOutline } from 'react-icons/io';
 import { PiPencilSimpleLineFill } from 'react-icons/pi';
@@ -23,10 +23,10 @@ function parseHTML(html, maxLength = null) {
     tempDiv.innerHTML = html;
     let plainText = tempDiv.textContent || tempDiv.innerText;
     if (maxLength !== null && plainText.length > maxLength) {
-      plainText = plainText.substring(0, maxLength) + '...';
+        plainText = plainText.substring(0, maxLength) + '...';
     }
-    return plainText;
-  }
+        return plainText;
+    }
 
 export function SingleProduct() {
     const { id } = useParams();
@@ -37,13 +37,12 @@ export function SingleProduct() {
     const { decodedUserToken } = useTokenService();
     const { updateCart } = useContext(CartContext)
     const navigate = useNavigate();
-    /* const { updateCartItem } = useContext(CartContext); */
 
     const toggleDescription = () => {
         setShowFullDescription(!showFullDescription);
-      };
-    
-      const descriptionClassName = showFullDescription ? 'big-description full' : 'big-description';
+    };
+
+    const descriptionClassName = showFullDescription ? 'big-description full' : 'big-description';
 
       // Set an initial platform when the component is loaded
     useEffect(() => {
@@ -52,19 +51,18 @@ export function SingleProduct() {
         }
     }, [product]);
 
-      const addToCart = (redirect) => {
-        if(!decodedUserToken) {
-            // Récupérer le panier depuis le stockage local
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            
-            // Vérifier si le produit est déjà dans le panier
-            const existingProductIndex = cart.findIndex(item => item.id === product.id && item.platform === selectedPlatform);
-                if (existingProductIndex !== -1) {
+    const addToCart = (redirect) => {
+        if (!decodedUserToken) {
+        // Récupérer le panier depuis le stockage local
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        // Vérifier si le produit est déjà dans le panier
+        const existingProductIndex = cart.findIndex(item => item.id === product.id && item.platform === selectedPlatform);
+            if (existingProductIndex !== -1) {
                 // Si le produit est déjà dans le panier, incrémentez la quantité
-                    cart[existingProductIndex].quantity += 1;
-                } else {
-                // Si le produit n'est pas encore dans le panier, ajoutez-le
-                    cart.push({
+                cart[existingProductIndex].quantity += 1;
+            } else {
+            // Si le produit n'est pas encore dans le panier, ajoutez-le
+            cart.push({
                     id: product.id,
                     name: product.name,
                     img: product.img,
@@ -73,7 +71,7 @@ export function SingleProduct() {
                     oldPrice: product.old_price,
                     quantity: 1,
                 });
-                }
+            }
             // Mettre à jour le panier dans le stockage local
             localStorage.setItem('cart', JSON.stringify(cart));
             updateCart(cart);
@@ -82,25 +80,37 @@ export function SingleProduct() {
             axios.post(`${URL}${URL_ADD_TO_CART}/${id}`, {
                 platform: selectedPlatform,
                 userId: decodedUserToken.id,
-                // Ajoutez d'autres propriétés du produit ici
                 id: product.id,
                 name: product.name,
                 img: product.img,
                 quantity: 1,
-                // Ajoutez toutes les autres propriétés nécessaires
             })
             .then(response => {
-                // Mise à jour de l'état du panier dans le frontend
-                updateCart(response.data.cart);
-                if (redirect) {
-                    navigate('/cart');
+            if (response.data && response.data.success) {
+                // Faire une requête supplémentaire pour obtenir le panier mis à jour
+                axios.get(`${URL}${URL_USER_CART}/${decodedUserToken.id}`)
+                    .then(cartResponse => {
+                    if (cartResponse.data && Array.isArray(cartResponse.data)) {
+                        updateCart(cartResponse.data);
+                    if (redirect) {
+                        navigate('/cart');
+                    }
+                    } else {
+                        console.error('Invalid cart response:', cartResponse);
+                    }
+                })
+                .catch(cartError => {
+                    console.error('Erreur lors de la récupération du panier :', cartError);
+                });
+                } else {
+                    console.error('Invalid server response:', response);
                 }
             })
             .catch(error => {
-                console.error('Erreur lors de l\'ajout au panier :', error);
+            console.error('Erreur lors de l\'ajout au panier :', error);
             });
         }
-      };
+    };
 
     useEffect(() => {
         axios.get(`${URL}${URL_SINGLE_PRODUCT}/${id}`)
@@ -111,11 +121,10 @@ export function SingleProduct() {
             console.error('Erreur lors de la récupération du produit :', error);
         })
     }, [id]);
-    
+
     if (product === null) {
         return <div>Chargement en cours...</div>;
     }
-    
 
     return (
         <div className='single-product-container'>
@@ -129,7 +138,7 @@ export function SingleProduct() {
             <div className="single-product-img-container">
                 <img src={product.img} alt={product.name} />
             </div>
-            
+
             {/* EN STOCK */}
             {product.stock > 0 && (
             <div className="buy-info-container">
@@ -235,7 +244,7 @@ export function SingleProduct() {
                     <div className="test-number-container">
                     <RatingCircle tests={product.tests} />
                     <div className="number">
-                        <h4> Basé sur </h4> 
+                        <h4> Basé sur </h4>
                         <h4> {product.tests.length} tests</h4>
                     </div>
                     </div>
@@ -291,7 +300,7 @@ export function SingleProduct() {
                 <h3>Edition: {edition.edition_name}</h3>
                 <p>{parseHTML(edition.description, 500)}</p>
                 <div className="edition-amount">
-                    <div className="first-price">  
+                    <div className="first-price">
                         <IconContext.Provider value={{ size: "1em", color: "grey"}}>
                             <ImPriceTag/>
                         </IconContext.Provider>
@@ -372,8 +381,8 @@ export function SingleProduct() {
                                 </a>
                             </button>
                     </div>
-                </div> 
-        </div>   
+                </div>
+        </div>
     </div>
     )
 }
