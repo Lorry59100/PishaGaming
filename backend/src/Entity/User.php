@@ -75,6 +75,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $mailToUpdate = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $img = null;
+
     public function __construct()
     {
         $this->tests = new ArrayCollection();
@@ -414,6 +417,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setMailToUpdate(?string $mailToUpdate): static
     {
         $this->mailToUpdate = $mailToUpdate;
+
+        return $this;
+    }
+
+    public function getImg(): ?string
+    {
+        return $this->img;
+    }
+
+    public function setImg(?string $img): static
+    {
+        $this->img = $img;
 
         return $this;
     }
