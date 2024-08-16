@@ -128,6 +128,21 @@ change_password:
     controller: App\Controller\ParametersController::changePassword
     methods: POST
 
+change_pseudo:
+    path: /change-pseudo
+    controller: App\Controller\ParametersController::changePseudo
+    methods: POST
+
+upload_user_image:
+    path: /upload-user-image
+    controller: App\Controller\ParametersController::uploadImage
+    methods: POST
+
+get_user_data:
+    path: /get-user-data
+    controller: App\Controller\ParametersController::getUserData
+    methods: GET
+
 app_logout:
     path: /logout
     methods: GET
