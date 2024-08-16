@@ -13,6 +13,7 @@ import { NavbarVisibilityContext } from '../../../contexts/NavbarVisibilityConte
 import { useContext } from 'react';
 import { URL_ACCOUNT, URL_CART, URL_HOME, URL_ORDER_HISTORIC, URL_PARAMETERS } from '../../../constants/urls/URLFront';
 import { CartContext } from '../../../contexts/CartContext';
+import axios from 'axios';
 
 function Navbar() {
   const { userToken, decodedUserToken, logout, login } = useTokenService();
@@ -24,6 +25,25 @@ function Navbar() {
   const [showLoginAndRegisterForm, setShowLoginAndRegisterForm] = useState(false);
   const { isNavbarVisible } = useContext(NavbarVisibilityContext);
   const { cart, resetCart } = useContext(CartContext);
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    if (decodedUserToken) {
+      const headers = {
+        'Authorization': `Bearer ${decodedUserToken.username}`,
+        // autres en-têtes si nécessaire...
+      };
+  
+      axios.get(`${URL}/get-user-data`, {headers})
+        .then(response => {
+          setUserData(response.data);
+        })
+        .catch(error => {
+            console.error('Erreur lors de la récupération des adresses :', error);
+        });
+    }
+  }, [decodedUserToken]);
+
 
   // Utilisation de useMemo pour mémoriser le calcul du nombre d'items dans le panier
   const itemCount = useMemo(() => {
@@ -87,7 +107,8 @@ function Navbar() {
       if (
         profileContentRef.current &&
         !profileContentRef.current.contains(event.target) &&
-        !event.target.classList.contains('user-icon-circled')
+        !event.target.classList.contains('user-icon-circled') &&
+        !event.target.classList.contains('user-img-circled-navbar')
       ) {
         // Click outside of profile content, close it
         setIsProfileVisible(false);
@@ -113,7 +134,8 @@ function Navbar() {
         <Link to={`${URL_HOME}`}><img src={logo} alt="logo" className="orange-logo" />
           <h2>Pisha
             <br />
-             Gaming</h2></Link>
+          Gaming</h2>
+        </Link>
         </div>
         <div className={`menu ${menuClass}`}>
           <div className="links">
@@ -137,11 +159,16 @@ function Navbar() {
               {!decodedUserToken && (
                 <button onClick={handleLoginButtonClick}><PiUserBold /></button>
               )}
-              {decodedUserToken && (
+              {decodedUserToken && !userData && (
                 <button onClick={toggleProfileVisibility}>
                   <IconContext.Provider value={{ size: '2em'}}>
                     <PiUserBold className='user-icon-circled'/>
                   </IconContext.Provider>
+                </button>
+              )}
+              {decodedUserToken && userData && (
+                <button onClick={toggleProfileVisibility}>
+                  <img src={`${URL}/uploads/images/${userData.img}`} alt="User Image" className="user-img-circled-navbar"/>
                 </button>
               )}
             </IconContext.Provider>
