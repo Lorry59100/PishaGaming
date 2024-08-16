@@ -20,6 +20,9 @@ color: var(--grey);
 .user-icon-circled-big {
 padding: 1.5em;
 }
+.user-img-circled-big {
+padding: 1em;
+}
 .tab-and-content-container {
 display: grid;
 grid-template-columns: repeat(6, 1fr);
@@ -213,10 +216,76 @@ margin-right: 10px;
     margin-top: 2.5em;
     width: 150px;
     position: absolute;
-    z-index: 5;
+    z-index: 1;
 }
 
 .active .active-parameters-line {
     margin-top: 3.5em;
     width: 130px;
+}
+
+.forbidden {
+display: flex;
+flex-direction: column;
+align-items: center;
+background-image: url('../../img/no_results/Sonic.png');
+background-repeat: no-repeat;
+height: 600px;
+background-position: center center;
+background-size: 200px 300px;
+position: relative;
+}
+
+.forbidden>h3 {
+    color: white;
+    margin: 1em;
+}
+
+.profile-picture-upload>h3, .profile-pseudo-update>h3 {
+    margin: 0.5em 0;
+    color: white;
+}
+
+.profile-picture-container {
+    display: flex;
+    align-items: center;
+    color: var(--grey);
+}
+
+.profile-picture-container:hover {
+    cursor: pointer;
+}
+
+.profile-picture-container>svg {
+    color: white;
+}
+
+.profile-picture-container>.user-img-circled-navbar {
+    margin-right: 0.5em;
+}
+
+.profile-update-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.profile-update-container>.profile-picture-upload {
+    margin-right: 2em;
+}
+
+.pseudo-input {
+    width: 450px;
+    margin-right: 1em;
+    height: 26px;
+}
+
+.user-info-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1em;
+}
+
+.user-info-container>h4 {
+    color: var(--grey);
 }

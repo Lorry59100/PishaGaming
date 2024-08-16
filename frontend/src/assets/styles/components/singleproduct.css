@@ -467,6 +467,13 @@ color: #3483FF;
 
 .user-icon-circled:hover {
 border: 2px solid var(--orange);
+cursor: pointer;
+}
+
+.user-img-circled {
+padding: 0.1em;
+border: 2px solid transparent;
+border-radius: 50%;
 }
 
 .visuals-container>h1, .tests>h1, .editions-card-container>h1 {

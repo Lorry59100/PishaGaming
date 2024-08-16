@@ -170,3 +170,14 @@ color: var(--orange)
   transform: translate(-90%, -50%);
 }
 
+.user-img-circled-navbar {
+  padding: 0.1em;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  height: 50px;
+}
+
+.user-img-circled-navbar:hover {
+  border: 2px solid var(--orange);
+  cursor: pointer;
+}
