@@ -48,6 +48,16 @@ genres_list:
     controller: App\Controller\ProductsController::genresList
     methods: GET
 
+vote_test:
+    path: /vote-test/{id}
+    controller: App\Controller\ProductsController::voteTest
+    methods: POST
+
+submit_test:
+    path: /submit-test
+    controller: App\Controller\TestController::submitTest
+    methods: POST
+
 add_product:
     path: /add-product
     controller: App\Controller\AdminController::addProduct
