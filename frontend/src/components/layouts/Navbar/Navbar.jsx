@@ -33,7 +33,7 @@ function Navbar() {
         'Authorization': `Bearer ${decodedUserToken.username}`,
         // autres en-têtes si nécessaire...
       };
-  
+
       axios.get(`${URL}/get-user-data`, {headers})
         .then(response => {
           setUserData(response.data);
@@ -43,7 +43,6 @@ function Navbar() {
         });
     }
   }, [decodedUserToken]);
-
 
   // Utilisation de useMemo pour mémoriser le calcul du nombre d'items dans le panier
   const itemCount = useMemo(() => {
@@ -159,14 +158,14 @@ function Navbar() {
               {!decodedUserToken && (
                 <button onClick={handleLoginButtonClick}><PiUserBold /></button>
               )}
-              {decodedUserToken && !userData && (
+              {decodedUserToken && (!userData || !userData.img) && (
                 <button onClick={toggleProfileVisibility}>
                   <IconContext.Provider value={{ size: '2em'}}>
                     <PiUserBold className='user-icon-circled'/>
                   </IconContext.Provider>
                 </button>
               )}
-              {decodedUserToken && userData && (
+              {decodedUserToken && userData && userData.img && (
                 <button onClick={toggleProfileVisibility}>
                   <img src={`${URL}/uploads/images/${userData.img}`} alt="User Image" className="user-img-circled-navbar"/>
                 </button>
