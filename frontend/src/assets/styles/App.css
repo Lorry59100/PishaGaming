@@ -6,9 +6,12 @@
 --orange-gradient-hover: linear-gradient(190deg, #ff2020, transparent) #ff8000;
 --orange: #ff5400;
 --grey : #919191;
+--grey-txt : #999;
+--grey-txt-light : #6d6d6d;
 --grey-tr : rgba(50, 50, 50, 0.8);
 --medium-dark : #323232;
 --dark: #272727;
+--ultra-dark: #1d1d1d;
 }
 
 /* Eléments */

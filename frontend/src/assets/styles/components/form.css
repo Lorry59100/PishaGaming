@@ -1,11 +1,6 @@
 form {
 width: 100%;
 }
-.logo-container {
-display: grid;
-grid-template-columns: repeat(4, 1fr);
-grid-gap: 2em;
-}
 .fb-logo {
 background-color: #0866FF;
 }
@@ -154,7 +149,7 @@ color: white;
 text-decoration: underline;
 }
 
-input:not(.searchbar-input), select, textarea {
+input:not(.searchbar-input):not(.point-input):not(.user-rate-input), select, textarea:not(.desc-container) {
 border-radius: 7px;
 font-size: 15px;
 color: #fff;

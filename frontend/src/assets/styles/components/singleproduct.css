@@ -48,6 +48,16 @@ align-self: center;
 margin-top: 1em;
 }
 
+.logo-container {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+grid-gap: 2em;
+}
+
+.logo-container-sold-out {
+display: flex;
+}
+
 .stock-container {
 font-size: 13px;
 background-color: rgba(16,16,16,.3);
@@ -507,3 +517,136 @@ margin-top: 1em;
 .big-desc-container>* {
 color: var(--grey);
 }
+
+.tests-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 1em;
+}
+
+.test-most-rated-container {
+    grid-column: span 3; 
+}
+
+.test-most-recent-container {
+    grid-column: span 2; 
+}
+
+.test-most-rated-container>.test-item {
+    background: var(--grey-tr);
+}
+
+.test-most-recent-container>.test-item {
+    background: var(--ultra-dark); 
+}
+
+.test-item {
+    padding: 1em;
+    margin: 1em 0;
+    border-radius: 10px;
+}
+
+.test-item>h5, .test-item-foot>h5, .vote>h5  {
+    font-family: arial,sans-serif;
+    font-weight: 600;
+}
+
+.test-item>h5{
+    color: var(--grey-txt);
+    margin: 1em 0;
+}
+
+.test-item-foot>h5{
+    color: var(--grey-txt-light);
+}
+
+.test-item-head {
+    margin-bottom: 1em;
+}
+
+.test-item-head, .publisher {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.publisher>.user-img-circled, .publisher>.user-icon-circled {
+    margin-right: 0.5em;
+}
+
+.publisher>.user-img-circled{
+    height: 60px;
+}
+
+.test-item-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1em;
+}
+
+.test-item-foot>h5 {
+    font-weight: 600;
+}
+
+.vote {
+    display: flex;
+    align-items: center;
+}
+
+.vote>* {
+    margin: 0 0.2em;
+}
+
+.voted {
+    color: var(--orange);
+    border: 1px solid var(--orange);
+    border-radius: 100px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.voted>span {
+    color: var(--orange);
+}
+
+.thumb-up, .thumb-down {
+    border: 1px solid white;
+    border-radius: 100px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.thumb-down>svg {
+    margin-top: 0.2em;
+}
+
+.thumb-up>svg, .thumb-down>svg {
+    margin-right: 0.2em;
+    color: white;
+}
+
+.voted>svg {
+    margin-right: 0.2em;
+}
+
+.single-point-container {
+    display: flex;
+    align-items: center;
+    margin: 0.5em 0;
+}
+
+.single-point-container>svg {
+    margin-right: 1em;
+}
+
+.single-point-container>h5 {
+    font-family: arial,sans-serif;
+    font-weight: 600;
+    color: var(--grey-txt)
+}
+

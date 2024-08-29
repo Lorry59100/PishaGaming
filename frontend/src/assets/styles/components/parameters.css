@@ -256,8 +256,12 @@ position: relative;
     cursor: pointer;
 }
 
-.profile-picture-container>svg {
+.profile-picture-container>svg:not(.user-icon-circled) {
     color: white;
+}
+
+.user-icon-circled {
+    margin-right: 0.5em;
 }
 
 .profile-picture-container>.user-img-circled-navbar {
