@@ -10,7 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import { AddressForm } from "./AddressForm";
 import { useTokenService } from "../services/tokenService";
 import axios from "axios";
-import { URL, URL_CHANGE_MAIL, URL_CHANGE_PASSWORD, URL_GET_ADDRESS, URL_USER_CHANGE_PSEUDO, URL_USER_DATA, URL_USER_UPLOAD_IMG } from "../../../constants/urls/URLBack";
+import { URL, URL_CHANGE_MAIL, URL_CHANGE_PASSWORD, URL_GET_ADDRESS, URL_USER_AVATAR, URL_USER_CHANGE_PSEUDO, URL_USER_DATA, URL_USER_UPLOAD_IMG } from "../../../constants/urls/URLBack";
 import { PiPencilSimpleLineFill } from 'react-icons/pi';
 import { BsTrash3 } from "react-icons/bs";
 import { Field, Form, Formik } from "formik";
@@ -208,9 +208,19 @@ export function Parameters() {
                     <div className="profile-update-container">
                         <div className="profile-picture-upload">
                             <h3>Photo de profil</h3>
-                            {userData && (
+                            {userData && userData.img ? (
                                 <div className="profile-picture-container" onClick={handleIconClick}>
-                                    <img src={`${URL}/uploads/images/${userData.img}`} alt="User Image" className="user-img-circled-navbar"  />
+                                    <img src={`${URL}${URL_USER_AVATAR}${userData.img}`} alt="User Image" className="user-img-circled-navbar"  />
+                                    <IconContext.Provider value={{ size: "2em" }}>
+                                        <MdOutlineCameraAlt />
+                                    </IconContext.Provider>
+                                    <h5>.png .jpg</h5>
+                                </div>
+                            ) : (
+                                <div className="profile-picture-container" onClick={handleIconClick}>
+                                    <IconContext.Provider value={{ size: '2em'}}>
+                                      <PiUserBold className='user-icon-circled'/>
+                                    </IconContext.Provider>
                                     <IconContext.Provider value={{ size: "2em" }}>
                                         <MdOutlineCameraAlt />
                                     </IconContext.Provider>
