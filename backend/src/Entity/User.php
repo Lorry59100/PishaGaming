@@ -78,6 +78,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $img = null;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Vote::class)]
+    private Collection $votes;
+
     public function __construct()
     {
         $this->tests = new ArrayCollection();
@@ -85,6 +88,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->carts = new ArrayCollection();
         $this->activation_keys = new ArrayCollection();
         $this->address = new ArrayCollection();
+        $this->votes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -429,6 +433,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setImg(?string $img): static
     {
         $this->img = $img;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Vote>
+     */
+    public function getVotes(): Collection
+    {
+        return $this->votes;
+    }
+
+    public function addVote(Vote $vote): static
+    {
+        if (!$this->votes->contains($vote)) {
+            $this->votes->add($vote);
+            $vote->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVote(Vote $vote): static
+    {
+        if ($this->votes->removeElement($vote)) {
+            // set the owning side to null (unless already changed)
+            if ($vote->getUser() === $this) {
+                $vote->setUser(null);
+            }
+        }
 
         return $this;
     }
