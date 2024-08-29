@@ -1,0 +1,120 @@
+.test-form-container {
+    background-color: var(--medium-dark);
+    position: fixed;
+    width: 920px;
+    z-index: 2;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 5em;
+    border: 1px solid black;
+    border-radius: 10px;
+    color: white;
+}
+
+.test-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2em 3em;
+}
+
+.test-form>* {
+    margin: 0.5em 0;
+}
+
+.user-img-circled-test-form {
+    padding: 0.1em;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  height: 80px;
+}
+
+.notation {
+    display: flex;
+    align-items: center;
+}
+
+.notation>h2 {
+    margin-right: 0.5em;
+}
+
+.user-rate-input {
+    width: 50px;
+    text-align: center;
+}
+
+.desc-container, .point-input {
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 7px;
+    font-size: 15px;
+    color: #fff;
+    outline: none;
+    border: 0;
+    transition: .2s;
+    box-shadow: inset 0 0 0 2px var(--grey-tr);
+    background-color: rgba(16,16,16,.4);
+    padding: 1.5em 1em;
+    max-width: 100%;
+}
+
+.user-rate-input {
+    width: 60px;
+    box-sizing: border-box;
+    border-radius: 7px;
+    font-size: 15px;
+    color: #fff;
+    outline: none;
+    border: 0;
+    transition: .2s;
+    box-shadow: inset 0 0 0 2px var(--grey-tr);
+    background-color: rgba(16,16,16,.4);
+    padding: 1.5em 1em;
+}
+
+.points-fields-container {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.pros, .cons {
+    display: flex;
+    flex-direction: column;
+    width: 49%;
+}
+
+.pros-head, .cons-head {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5em;
+}
+
+.pros-head>svg, .cons-head>svg {
+    margin-right: 0.5em;
+}
+
+.pros>input, .cons>input {
+    margin: 0.2em 0;
+    width: 100%;
+}
+
+input[class="point-input"] {
+    width: 100%;
+}
+
+textarea[class="desc-container"] {
+    font-size: 16px;
+}
+
+.close {
+    position: absolute;
+    right: 1em;
+    top: 1em;
+}
+
+.close:hover>svg {
+    color: var(--orange);
+    cursor: pointer;
+}
