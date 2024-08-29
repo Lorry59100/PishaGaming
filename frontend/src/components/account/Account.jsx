@@ -63,14 +63,16 @@ function Account() {
   return (
     <div className="account-container">
       <div className="parameters-container">
-        {!userData && (
-          <IconContext.Provider value={{ size: "4em" }}>
-            <PiUserBold className="user-icon-circled user-icon-circled-big" />
-          </IconContext.Provider>
-        )}
         {userData && (
           <div className="user-info-container">
-            <img src={`${URL}/uploads/images/${userData.img}`} alt="User Image" className="user-img-circled" />
+            {!userData.img && (
+              <IconContext.Provider value={{ size: "4em" }}>
+                <PiUserBold className="user-icon-circled user-icon-circled-big" />
+              </IconContext.Provider>
+            )}
+            {userData.img && (
+              <img src={`${URL}/uploads/images/${userData.img}`} alt="User Image" className="user-img-circled" />
+            )}
             <h1>{userData.pseudo}</h1>
             <h4>Membre depuis : nov. 28, 2017</h4>
           </div>
