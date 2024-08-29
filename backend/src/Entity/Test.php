@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\TestRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,6 +27,21 @@ class Test
 
     #[ORM\ManyToOne(inversedBy: 'tests')]
     private ?User $user = null;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\OneToMany(mappedBy: 'test', targetEntity: Vote::class)]
+    private Collection $vote;
+
+    #[ORM\OneToMany(mappedBy: 'test', targetEntity: Point::class, cascade: ['persist'])]
+    private Collection $points;
+
+    public function __construct()
+    {
+        $this->vote = new ArrayCollection();
+        $this->points = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -75,6 +92,78 @@ class Test
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Vote>
+     */
+    public function getVote(): Collection
+    {
+        return $this->vote;
+    }
+
+    public function addVote(Vote $vote): static
+    {
+        if (!$this->vote->contains($vote)) {
+            $this->vote->add($vote);
+            $vote->setTest($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVote(Vote $vote): static
+    {
+        if ($this->vote->removeElement($vote)) {
+            // set the owning side to null (unless already changed)
+            if ($vote->getTest() === $this) {
+                $vote->setTest(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Point>
+     */
+    public function getPoints(): Collection
+    {
+        return $this->points;
+    }
+
+    public function addPoint(Point $point): static
+    {
+        if (!$this->points->contains($point)) {
+            $this->points->add($point);
+            $point->setTest($this);
+        }
+
+        return $this;
+    }
+
+    public function removePoint(Point $point): static
+    {
+        if ($this->points->removeElement($point)) {
+            // set the owning side to null (unless already changed)
+            if ($point->getTest() === $this) {
+                $point->setTest(null);
+            }
+        }
 
         return $this;
     }
