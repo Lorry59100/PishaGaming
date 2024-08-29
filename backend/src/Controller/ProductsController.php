@@ -2,10 +2,16 @@
 
 namespace App\Controller;
 
-use App\Repository\GenreRepository;
-use App\Repository\PlatformRepository;
+use App\Entity\Vote;
 use Exception;
+use App\Service\TokenService;
+use App\Repository\TestRepository;
+use App\Repository\VoteRepository;
+use App\Repository\GenreRepository;
 use App\Repository\ProductRepository;
+use App\Repository\PlatformRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -13,6 +19,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ProductsController extends AbstractController
 {
+    private $tokenService;
+
     #[Route('/products', name: 'app_products')]
     public function index(): Response
     {
@@ -20,6 +28,12 @@ class ProductsController extends AbstractController
             'controller_name' => 'ProductsController',
         ]);
     }
+
+    public function __construct(TokenService $tokenService)
+    {
+        $this->tokenService = $tokenService;
+    }
+
 
     /**
      * @Route("/products-list", name="products_list", methods={"GET"})
@@ -82,17 +96,24 @@ class ProductsController extends AbstractController
     /**
      * @Route("/single-product/{id}", name="single_product", methods={"GET"})
      */
-    public function singleProduct(ProductRepository $productRepository, $id): JsonResponse | Response
+    public function singleProduct(ProductRepository $productRepository, VoteRepository $voteRepository, Request $request, $id): JsonResponse | Response
     {
-      try  {
-        $product = $productRepository->find($id);
+        try {
+            $user = $this->tokenService->getUserFromRequest($request);
+
+            // Vérifiez si $user est une instance de JsonResponse
+            if ($user instanceof JsonResponse) {
+                $user = null; // Traitez-le comme un utilisateur non connecté
+            }
+
+            $product = $productRepository->find($id);
 
             $platforms = [];
             foreach ($product->getPlatform() as $platform) {
                 $platforms[] = [
                     'id' => $platform->getId(),
                     'name' => $platform->getName(),
-                ]; 
+                ];
             }
 
             $tags = [];
@@ -105,15 +126,47 @@ class ProductsController extends AbstractController
 
             $tests = [];
             foreach ($product->getTests() as $test) {
+                $upVotes = $voteRepository->count(['test' => $test, 'vote' => true]);
+                $downVotes = $voteRepository->count(['test' => $test, 'vote' => false]);
+                // Initialiser les variables en dehors de la boucle
+                $hasVotedPositive = false;
+                $hasVotedNegative = false;
+                $points = $test->getPoints();
+
+                if ($user) {
+                    foreach ($test->getVote() as $vote) {
+                        if ($vote->getUser()->getEmail() == $user->getEmail()) {
+                            if ($vote->isVote() == true) {
+                                $hasVotedPositive = true;
+                            } else if ($vote->isVote() == false) {
+                                $hasVotedNegative = true;
+                            }
+                        }
+                    }
+                }
+
                 $tests[] = [
                     'id' => $test->getId(),
                     'commentaires' => $test->getComment(),
                     'rate' => $test->getRate(),
+                    'publisher' => $test->getUser()->getPseudo(),
+                    'avatar' => $test->getUser()->getImg(),
+                    'date' => $test->getCreatedAt(),
+                    'upVotes' => $upVotes,
+                    'downVotes' => $downVotes,
+                    'hasVotedPositive' => $hasVotedPositive,
+                    'hasVotedNegative' => $hasVotedNegative,
+                    'points' => array_map(function($point) {
+                        return [
+                            'description' => $point->getDescription(),
+                            'isPositive' => $point->isIsPositive(),
+                        ];
+                    }, $test->getPoints()->toArray()),
                 ];
             }
 
             $genres = [];
-            foreach($product->getGenre() as $genre) {
+            foreach ($product->getGenre() as $genre) {
                 $genres[] = [
                     'id' => $genre->getId(),
                     'name' => $genre->getName(),
@@ -123,17 +176,17 @@ class ProductsController extends AbstractController
             $alternativeEditions = $productRepository->getAlternativeEditions($product->getName(), $product->getEdition()->getId());
             $alternativeEditionsArray = [];
             foreach ($alternativeEditions as $alternativeEdition) {
-            $alternativeEditionsArray[] = [
-                'id' => $alternativeEdition['id'],
-                'name' => $alternativeEdition['name'],
-                'img' => $alternativeEdition['img'],
-                'old_price' => $alternativeEdition['old_price'],
-                'price' => $alternativeEdition['price'],
-                'stock' => $alternativeEdition['stock'],
-                'description' => $alternativeEdition['description'],
-                'edition_id' => $alternativeEdition['edition_id'],
-                'edition_name' => $alternativeEdition['edition_name'],
-            ];
+                $alternativeEditionsArray[] = [
+                    'id' => $alternativeEdition['id'],
+                    'name' => $alternativeEdition['name'],
+                    'img' => $alternativeEdition['img'],
+                    'old_price' => $alternativeEdition['old_price'],
+                    'price' => $alternativeEdition['price'],
+                    'stock' => $alternativeEdition['stock'],
+                    'description' => $alternativeEdition['description'],
+                    'edition_id' => $alternativeEdition['edition_id'],
+                    'edition_name' => $alternativeEdition['edition_name'],
+                ];
             }
 
             $productsArray = [
@@ -158,14 +211,12 @@ class ProductsController extends AbstractController
                 'alternative_editions' => $alternativeEditionsArray,
             ];
 
-        return new JsonResponse($productsArray, 200);
-        } 
-        
-        catch(Exception $e) {
+            return new JsonResponse($productsArray, 200);
+        } catch (Exception $e) {
             return new JsonResponse(['error' => 'Internal Server Error'], 500);
         }
     }
-    
+
     /**
      * @Route("/plateformes-list", name="plateformes_list", methods={"GET"})
      */
@@ -196,5 +247,59 @@ class ProductsController extends AbstractController
             ];
         }
         return new JsonResponse($genresArray, 200);
+    }
+
+    /**
+     * @Route("/vote-test/{id}", name="vote_test", methods={"POST"})
+     */
+    public function voteTest(EntityManagerInterface $em, VoteRepository $voteRepository, TestRepository $testRepository, Request $request, $id): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        // Récupérer l'utilisateur
+        $user = $this->tokenService->getUserFromRequest($request);
+
+        // Récupérer les données du test
+        $test = $testRepository->find($id);
+
+        if (!$test) {
+            return new JsonResponse('Test not found', 404);
+        }
+
+        // Détecter si l'utilisateur a déjà voté pour ce test
+        $hasVoted = false;
+        foreach ($test->getVote() as $vote) {
+            if ($vote->getUser() === $user) {
+                $hasVoted = true;
+                break;
+            }
+        }
+
+        if ($hasVoted) {
+            return new JsonResponse('User has already voted for this test', 400);
+        }
+
+        // Détecter le type de vote (positif ou négatif)
+        $isPositive = $data['isPositive'];
+
+        // Créer un nouveau vote
+        $vote = new Vote();
+        $vote->setVote($isPositive);
+        $vote->setTest($test);
+        $vote->setUser($user);
+
+        // Sauvegarder le vote
+        $em->persist($vote);
+        $em->flush();
+
+        $upVotes = $voteRepository->count(['test' => $test, 'vote' => true]);
+        $downVotes = $voteRepository->count(['test' => $test, 'vote' => false]);
+
+        return new JsonResponse([
+            'upVotes' => $upVotes,
+            'downVotes' => $downVotes,
+            'hasVotedPositive' => $isPositive,
+            'hasVotedNegative' => !$isPositive
+        ], 200);
     }
 }
