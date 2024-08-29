@@ -4,19 +4,22 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { IconContext } from "react-icons";
 import { AiOutlineCheck, AiOutlineClose, AiOutlineMinusCircle } from 'react-icons/ai';
 import { TiShoppingCart } from 'react-icons/ti';
-import { ImPriceTag } from 'react-icons/im';
-import {URL, URL_SINGLE_PRODUCT, URL_ADD_TO_CART, URL_USER_CART } from '../../constants/urls/URLBack';
+import { ImCross, ImPriceTag } from 'react-icons/im';
+import {URL, URL_SINGLE_PRODUCT, URL_ADD_TO_CART, URL_USER_CART, URL_VOTE_TEST, URL_USER_AVATAR } from '../../constants/urls/URLBack';
 import logo from '../../assets/img/Logo.png';
 import { IoIosAddCircleOutline } from 'react-icons/io';
-import { PiPencilSimpleLineFill } from 'react-icons/pi';
+import { PiPencilSimpleLineFill, PiUserBold } from 'react-icons/pi';
 import "../../assets/styles/components/singleproduct.css"
 import RatingCircle from './RatingCircle';
 import { calculateDiscountPercentage, convertToEuros } from './services/PriceServices';
 import { formatDate } from '../account/services/dateServices';
-import { FaRegHeart } from "react-icons/fa";
+import { FaCheck, FaRegHeart } from "react-icons/fa";
 import parse from 'html-react-parser';
 import { useTokenService } from '../account/services/tokenService';
 import { CartContext } from '../../contexts/CartContext';
+import { LuThumbsDown, LuThumbsUp } from "react-icons/lu";
+import { LoginAndRegisterForm } from '../account/forms/LoginAndRegisterForm';
+import { TestForm } from '../account/forms/TestForm';
 
 function parseHTML(html, maxLength = null) {
     const tempDiv = document.createElement('div');
@@ -37,6 +40,9 @@ export function SingleProduct() {
     const { decodedUserToken } = useTokenService();
     const { updateCart } = useContext(CartContext)
     const navigate = useNavigate();
+    const [showLoginAndRegisterForm, setShowLoginAndRegisterForm] = useState(false);
+    const [showTestForm, setShowTestForm] = useState(false);
+
 
     const toggleDescription = () => {
         setShowFullDescription(!showFullDescription);
@@ -111,23 +117,92 @@ export function SingleProduct() {
             });
         }
     };
+    
+    const vote = (testId, isPositive) => {
+        if (!decodedUserToken) {
+            setShowLoginAndRegisterForm(true);
+            return;
+        }
+        if (decodedUserToken) {
+            const headers = { 'Authorization': `Bearer ${decodedUserToken.username}` };
+            const data = { isPositive };
+            axios.post(`${URL}${URL_VOTE_TEST}${testId}`, data, { headers })
+                .then(response => {
+                    const updatedTest = response.data;
+                    console.log('Updated test:', updatedTest);
+                    setProduct(prevProduct => {
+                        const updatedTests = prevProduct.tests.map(test => {
+                            if (test.id === testId) {
+                                return {
+                                    ...test,
+                                    upVotes: updatedTest.upVotes,
+                                    downVotes: updatedTest.downVotes,
+                                    hasVotedPositive: updatedTest.hasVotedPositive,
+                                    hasVotedNegative: updatedTest.hasVotedNegative
+                                };
+                            }
+                            return test;
+                        });
+                        return { ...prevProduct, tests: updatedTests };
+                    });
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la récupération du produit :', error);
+                });
+        }
+    };
 
+    const writeTest = () => {
+        if (decodedUserToken) {
+            setShowTestForm(true);
+        } else {
+            setShowLoginAndRegisterForm(true);
+        }
+    };
+
+    const closeTestForm = () => {
+        setShowTestForm(false);
+    };
+
+    
     useEffect(() => {
-        axios.get(`${URL}${URL_SINGLE_PRODUCT}/${id}`)
-        .then(response => {
-            setProduct(response.data);
-        })
-        .catch(error => {
-            console.error('Erreur lors de la récupération du produit :', error);
-        })
-    }, [id]);
+        const headers = decodedUserToken
+            ? { 'Authorization': `Bearer ${decodedUserToken.username}` }
+            : {};
+    
+        axios.get(`${URL}${URL_SINGLE_PRODUCT}/${id}`, { headers })
+            .then(response => {
+                const productData = response.data;
+                const updatedTests = productData.tests.map(test => ({
+                    ...test,
+                    upVotes: test.upVotes || 0,
+                    downVotes: test.downVotes || 0,
+                    hasVotedPositive: test.hasVotedPositive || false,
+                    hasVotedNegative: test.hasVotedNegative || false
+                }));
+                setProduct({ ...productData, tests: updatedTests });
+            })
+            .catch(error => {
+                console.error('Erreur lors de la récupération du produit :', error);
+            });
+    }, [id, decodedUserToken]);
+    
+    
 
     if (product === null) {
         return <div>Chargement en cours...</div>;
     }
 
+    console.log(product);
+
     return (
         <div className='single-product-container'>
+
+        {showTestForm && decodedUserToken && <TestForm onClose={closeTestForm} productId={id}/>}
+
+        {showLoginAndRegisterForm && (
+            <LoginAndRegisterForm onCloseForm={() => setShowLoginAndRegisterForm(false)} />
+        )}
 
         <div className="background-header-container">
             <div className="background-header" style={{ backgroundImage: `url(${product.img})` }}></div>
@@ -210,7 +285,7 @@ export function SingleProduct() {
                 </div>
                 <div className="stock-container">
                         <div className="sold-out">
-                            <div className="logo-container">
+                            <div className="logo-container-sold-out">
                                 <img src={logo} alt="logo" className='orange-logo'/>
                                 <h4>Pisha Gaming</h4>
                                 <div className="spacer"></div>
@@ -289,12 +364,12 @@ export function SingleProduct() {
                     )}
                 </div>
 
-      {product.alternative_editions.length > 0 && (
+    {product.alternative_editions.length > 0 && (
         <div className='editions-card-container'>
-          <h1>Editions</h1>
-          <div className='edition-card'>
+            <h1>Editions</h1>
+            <div className='edition-card'>
             {product.alternative_editions.map((edition) => (
-              <div key={edition.id} className='edition-card-info'>
+                <div key={edition.id} className='edition-card-info'>
                 <Link to={`${URL_SINGLE_PRODUCT}/${edition.id}`}>
                 <img src={edition.img} alt="" />
                 <h3>Edition: {edition.edition_name}</h3>
@@ -321,13 +396,12 @@ export function SingleProduct() {
                         <button type="submit" className='submit-button'>Acheter maintenant</button>
                         )}
                 </div>
-              </Link>
-              </div>
+            </Link>
+            </div>
             ))}
-          </div>
+            </div>
         </div>
-      )}
-
+    )}
                 <div className="visuals-container">
                         <h1>Visuels</h1>
                         <div className="video-container">
@@ -372,14 +446,175 @@ export function SingleProduct() {
                                 <h4>basé sur {product.tests.length} tests</h4>
                             </div>
                         </div>
-                            <button className='submit-button'>
-                                <a href="/">
+                        <button className='submit-button' onClick={writeTest}>
                                     Rédiger votre test sur ce jeu
                                     <IconContext.Provider value={{ size: "1em"}}>
                                         <PiPencilSimpleLineFill/>
                                     </IconContext.Provider>
-                                </a>
                             </button>
+                    </div>
+                    {/* Afficher les tests */}
+                    <div className="tests-container">
+                        <div className="test-most-rated-container">
+                            <h2>Les plus votés</h2>
+                            {product.tests
+                            .sort((a, b) => {
+                                // Calculer le nombre total de votes pour chaque test
+                                const totalVotesA = a.upVotes + a.downVotes;
+                                const totalVotesB = b.upVotes + b.downVotes;
+                                // Comparer d'abord par le nombre total de votes
+                                if (totalVotesA !== totalVotesB) {
+                                    return totalVotesB - totalVotesA;
+                                }
+                                // En cas d'égalité, comparer par le nombre de votes positifs
+                                return b.upVotes - a.upVotes;
+                            })
+                            .map(test => (
+                            <div key={test.id} className="test-item">
+                                <div className="test-item-head">
+                                    <div className="publisher">
+                                        {test.avatar ? (
+                                            <img src={`${URL}${URL_USER_AVATAR}${test.avatar}`} alt="User Image" className="user-img-circled" />
+                                        ) : (
+                                            <IconContext.Provider value={{ size: '2em'}}>
+                                                <PiUserBold className='user-icon-circled'/>
+                                            </IconContext.Provider>
+                                        )}
+                                        <h3>{test.publisher}</h3>
+                                    </div>
+                                    <RatingCircle singleRating={test.rate} />
+                                </div>
+                                <h5>{test.commentaires}</h5>
+
+                                <div className="points-container">
+                                    {test.points.filter(point => point.isPositive).length > 0 && (
+                                        <>
+                                            <div>
+                                                {test.points
+                                                    .filter(point => point.isPositive)
+                                                    .map((point, index) => (
+                                                        <div key={index} className='single-point-container'>
+                                                            <IconContext.Provider value={{ size: '1.2em', color: 'green'}}>
+                                                                <FaCheck />
+                                                            </IconContext.Provider>
+                                                            <h5>{point.description}</h5>
+                                                        </div>
+                                                    ))}
+                                            </div>
+                                        </>
+                                    )}
+                                    {test.points.filter(point => !point.isPositive).length > 0 && (
+                                        <>
+                                                {test.points
+                                                    .filter(point => !point.isPositive)
+                                                    .map((point, index) => (
+                                                        <div key={index} className='single-point-container'>
+                                                            <IconContext.Provider value={{ size: '1.2em', color: 'red'}}>
+                                                                <ImCross />
+                                                            </IconContext.Provider>
+                                                            <h5>{point.description}</h5>
+                                                        </div>
+                                                    ))}
+                                        </>
+                                    )}
+                                </div>
+
+                                <div className="cutline"></div>
+                                <div className="test-item-foot">
+                                    <h5>{formatDate(test.date.date)}</h5>
+                                    <div className="vote">
+                                        <h5>Utile ?</h5>
+                                        <button className={`${test.hasVotedPositive ? 'voted' : 'thumb-up'}`} onClick={() => vote(test.id, true)}>
+                                            <IconContext.Provider value={{ size: '1.5em'}}>
+                                                <LuThumbsUp />
+                                                <span>{test.upVotes}</span>
+                                            </IconContext.Provider>
+                                        </button>
+                                        <button className={`${test.hasVotedNegative ? 'voted' : 'thumb-down'}`} onClick={() => vote(test.id, false)}>
+                                            <IconContext.Provider value={{ size: '1.5em'}}>
+                                                <LuThumbsDown />
+                                                <span>{test.downVotes}</span>
+                                            </IconContext.Provider>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            ))}
+                        </div>
+                        <div className="test-most-recent-container">
+                            <h2>Les plus récents</h2>
+                            {product.tests
+                                .sort((a, b) => new Date(b.date.date) - new Date(a.date.date)) // Trier les tests par date, du plus récent au plus ancien
+                                .map(test => (
+                                    <div key={test.id} className="test-item">
+                                        <div className="test-item-head">
+                                            <div className="publisher">
+                                                {test.avatar ? (
+                                                    <img src={`${URL}/uploads/images/${test.avatar}`} alt="User Image" className="user-img-circled" />
+                                                ) : (
+                                                    <IconContext.Provider value={{ size: '2em'}}>
+                                                        <PiUserBold className='user-icon-circled'/>
+                                                    </IconContext.Provider>
+                                                )}
+                                                <h3>{test.publisher}</h3>
+                                            </div>
+                                            <RatingCircle singleRating={test.rate} />
+                                        </div>
+                                        <h5>{test.commentaires}</h5>
+                                        <div className="points-container">
+                                            {test.points.filter(point => point.isPositive).length > 0 && (
+                                                <>
+                                                    <div>
+                                                        {test.points
+                                                            .filter(point => point.isPositive)
+                                                            .map((point, index) => (
+                                                                <div key={index} className='single-point-container'>
+                                                                    <IconContext.Provider value={{ size: '1.2em', color: 'green'}}>
+                                                                        <FaCheck />
+                                                                    </IconContext.Provider>
+                                                                    <h5>{point.description}</h5>
+                                                                </div>
+                                                        ))}
+                                                    </div>
+                                                </>
+                                            )}
+                                            {test.points.filter(point => !point.isPositive).length > 0 && (
+                                                <>
+                                                    {test.points
+                                                        .filter(point => !point.isPositive)
+                                                        .map((point, index) => (
+                                                            <div key={index} className='single-point-container'>
+                                                                <IconContext.Provider value={{ size: '1.2em', color: 'red'}}>
+                                                                    <ImCross />
+                                                                </IconContext.Provider>
+                                                                <h5>{point.description}</h5>
+                                                            </div>
+                                                    ))}
+                                                </>
+                                            )}
+                                        </div>
+                                        <div className="cutline"></div>
+                                        <div className="test-item-foot">
+                                            <h5>{formatDate(test.date.date)}</h5>
+                                            <div className="vote">
+                                                <h5>Utile ?</h5>
+                                                <button className={`${test.hasVotedPositive ? 'voted' : 'thumb-up'}`}>
+                                                    <IconContext.Provider value={{ size: '1.5em'}}>
+                                                        <LuThumbsUp />
+                                                        <span>{test.upVotes}</span>
+                                                    </IconContext.Provider>
+                                                </button>
+                                                <button className={`${test.hasVotedNegative ? 'voted' : 'thumb-down'}`}>
+                                                    <IconContext.Provider value={{ size: '1.5em'}}>
+                                                        <LuThumbsDown />
+                                                        <span>{test.downVotes}</span>
+                                                    </IconContext.Provider>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                        </div>
                     </div>
                 </div>
         </div>
