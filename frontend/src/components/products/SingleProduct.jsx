@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { useContext, useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useCallback, useContext, useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { IconContext } from "react-icons";
 import { AiOutlineCheck, AiOutlineClose, AiOutlineMinusCircle } from 'react-icons/ai';
 import { TiShoppingCart } from 'react-icons/ti';
@@ -42,6 +42,25 @@ export function SingleProduct() {
     const navigate = useNavigate();
     const [showLoginAndRegisterForm, setShowLoginAndRegisterForm] = useState(false);
     const [showTestForm, setShowTestForm] = useState(false);
+    const [testExist, setTestExist] = useState(false);
+    const location = useLocation();
+    /* const [editTestId, setEditTestId] = useState(null); */
+    const [expandedComments, setExpandedComments] = useState({});
+    const toggleComment = (testId, section) => {
+        setExpandedComments(prevState => ({
+            ...prevState,
+            [`${section}-${testId}`]: !prevState[`${section}-${testId}`]
+        }));
+    };
+    
+    
+
+    useEffect(() => {
+        const editTest = location.state?.editTest;
+        if (editTest) {
+            setShowTestForm(true);
+        }
+    }, [location.state]);
 
 
     const toggleDescription = () => {
@@ -165,11 +184,11 @@ export function SingleProduct() {
     };
 
     
-    useEffect(() => {
+    const updateTests = useCallback(() => {
         const headers = decodedUserToken
             ? { 'Authorization': `Bearer ${decodedUserToken.username}` }
             : {};
-    
+
         axios.get(`${URL}${URL_SINGLE_PRODUCT}/${id}`, { headers })
             .then(response => {
                 const productData = response.data;
@@ -181,11 +200,19 @@ export function SingleProduct() {
                     hasVotedNegative: test.hasVotedNegative || false
                 }));
                 setProduct({ ...productData, tests: updatedTests });
+
+                // Check if testExist is true for any test
+                const testExistValue = updatedTests.some(test => test.testExist);
+                setTestExist(testExistValue);
             })
             .catch(error => {
                 console.error('Erreur lors de la récupération du produit :', error);
             });
     }, [id, decodedUserToken]);
+
+    useEffect(() => {
+        updateTests();
+    }, [updateTests]);
     
     
 
@@ -194,11 +221,12 @@ export function SingleProduct() {
     }
 
     console.log(product);
+    console.log('testExist :', testExist);
 
     return (
         <div className='single-product-container'>
 
-        {showTestForm && decodedUserToken && <TestForm onClose={closeTestForm} productId={id}/>}
+        {showTestForm && decodedUserToken && <TestForm onClose={closeTestForm} productId={id} testExist={testExist} onSubmit={updateTests}/>}
 
         {showLoginAndRegisterForm && (
             <LoginAndRegisterForm onCloseForm={() => setShowLoginAndRegisterForm(false)} />
@@ -423,7 +451,6 @@ export function SingleProduct() {
                             </div>
                         </div>
                 </div>
-
                 <div className={descriptionClassName}>
                     <h1>Description</h1>
                     <div className='big-desc-container'>
@@ -435,7 +462,6 @@ export function SingleProduct() {
                         {showFullDescription ? <AiOutlineMinusCircle /> : <IoIosAddCircleOutline />}
                     </IconContext.Provider>
                 </button>
-
                 <div className="tests">
                     <h1>Tests des joueurs</h1>
                     <div className="your-test">
@@ -447,18 +473,17 @@ export function SingleProduct() {
                             </div>
                         </div>
                         <button className='submit-button' onClick={writeTest}>
-                                    Rédiger votre test sur ce jeu
-                                    <IconContext.Provider value={{ size: "1em"}}>
-                                        <PiPencilSimpleLineFill/>
-                                    </IconContext.Provider>
-                            </button>
+                            {testExist ? 'Editer votre test pour ce jeu' : 'Rédiger votre test sur ce jeu'}
+                            <IconContext.Provider value={{ size: "1em"}}>
+                                <PiPencilSimpleLineFill/>
+                            </IconContext.Provider>
+                        </button>
                     </div>
                     {/* Afficher les tests */}
                     <div className="tests-container">
                         <div className="test-most-rated-container">
                             <h2>Les plus votés</h2>
-                            {product.tests
-                            .sort((a, b) => {
+                            {product.tests.sort((a, b) => {
                                 // Calculer le nombre total de votes pour chaque test
                                 const totalVotesA = a.upVotes + a.downVotes;
                                 const totalVotesB = b.upVotes + b.downVotes;
@@ -468,9 +493,8 @@ export function SingleProduct() {
                                 }
                                 // En cas d'égalité, comparer par le nombre de votes positifs
                                 return b.upVotes - a.upVotes;
-                            })
-                            .map(test => (
-                            <div key={test.id} className="test-item">
+                            }).map(test => (
+                            <div key={test.id} className="test-item" onClick={() => toggleComment(test.id, 'most-rated')}>
                                 <div className="test-item-head">
                                     <div className="publisher">
                                         {test.avatar ? (
@@ -484,45 +508,39 @@ export function SingleProduct() {
                                     </div>
                                     <RatingCircle singleRating={test.rate} />
                                 </div>
-                                <h5>{test.commentaires}</h5>
-
+                                <h5>{expandedComments[`most-rated-${test.id}`] ? parse(test.commentaires) : parseHTML(test.commentaires, 500)}</h5>
                                 <div className="points-container">
-                                    {test.points.filter(point => point.isPositive).length > 0 && (
-                                        <>
-                                            <div>
-                                                {test.points
-                                                    .filter(point => point.isPositive)
-                                                    .map((point, index) => (
-                                                        <div key={index} className='single-point-container'>
-                                                            <IconContext.Provider value={{ size: '1.2em', color: 'green'}}>
-                                                                <FaCheck />
-                                                            </IconContext.Provider>
-                                                            <h5>{point.description}</h5>
-                                                        </div>
-                                                    ))}
+                                {test.points.filter(point => point.isPositive).length > 0 && (
+                                    <>
+                                        <div>
+                                            {test.points.filter(point => point.isPositive).map((point, index) => (
+                                                <div key={index} className='single-point-container'>
+                                                    <IconContext.Provider value={{ size: '1.2em', color: 'green'}}>
+                                                        <FaCheck />
+                                                    </IconContext.Provider>
+                                                    <h5>{point.description}</h5>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
+                                {test.points.filter(point => !point.isPositive).length > 0 && (
+                                    <>
+                                        {test.points.filter(point => !point.isPositive).map((point, index) => (
+                                            <div key={index} className='single-point-container'>
+                                                <IconContext.Provider value={{ size: '1.2em', color: 'red'}}>
+                                                    <ImCross />
+                                                </IconContext.Provider>
+                                                <h5>{point.description}</h5>
                                             </div>
-                                        </>
-                                    )}
-                                    {test.points.filter(point => !point.isPositive).length > 0 && (
-                                        <>
-                                                {test.points
-                                                    .filter(point => !point.isPositive)
-                                                    .map((point, index) => (
-                                                        <div key={index} className='single-point-container'>
-                                                            <IconContext.Provider value={{ size: '1.2em', color: 'red'}}>
-                                                                <ImCross />
-                                                            </IconContext.Provider>
-                                                            <h5>{point.description}</h5>
-                                                        </div>
-                                                    ))}
-                                        </>
-                                    )}
+                                        ))}
+                                    </>
+                                )}
                                 </div>
-
                                 <div className="cutline"></div>
                                 <div className="test-item-foot">
-                                    <h5>{formatDate(test.date.date)}</h5>
-                                    <div className="vote">
+                                        <h5>{formatDate(test.date.date)}</h5>
+                                        <div className="vote">
                                         <h5>Utile ?</h5>
                                         <button className={`${test.hasVotedPositive ? 'voted' : 'thumb-up'}`} onClick={() => vote(test.id, true)}>
                                             <IconContext.Provider value={{ size: '1.5em'}}>
@@ -541,80 +559,82 @@ export function SingleProduct() {
                             </div>
                             ))}
                         </div>
+
                         <div className="test-most-recent-container">
-                            <h2>Les plus récents</h2>
-                            {product.tests
-                                .sort((a, b) => new Date(b.date.date) - new Date(a.date.date)) // Trier les tests par date, du plus récent au plus ancien
-                                .map(test => (
-                                    <div key={test.id} className="test-item">
-                                        <div className="test-item-head">
-                                            <div className="publisher">
-                                                {test.avatar ? (
-                                                    <img src={`${URL}/uploads/images/${test.avatar}`} alt="User Image" className="user-img-circled" />
-                                                ) : (
-                                                    <IconContext.Provider value={{ size: '2em'}}>
-                                                        <PiUserBold className='user-icon-circled'/>
-                                                    </IconContext.Provider>
-                                                )}
-                                                <h3>{test.publisher}</h3>
-                                            </div>
-                                            <RatingCircle singleRating={test.rate} />
+    <h2>Les plus récents</h2>
+    {product.tests
+        .sort((a, b) => new Date(b.date.date) - new Date(a.date.date)) // Trier les tests par date, du plus récent au plus ancien
+        .map(test => (
+            <div key={test.id} className="test-item" onClick={() => toggleComment(test.id, 'most-recent')}>
+                <div className="test-item-head">
+                    <div className="publisher">
+                        {test.avatar ? (
+                            <img src={`${URL}/uploads/images/${test.avatar}`} alt="User Image" className="user-img-circled" />
+                        ) : (
+                            <IconContext.Provider value={{ size: '2em'}}>
+                                <PiUserBold className='user-icon-circled'/>
+                            </IconContext.Provider>
+                        )}
+                        <h3>{test.publisher}</h3>
+                    </div>
+                    <RatingCircle singleRating={test.rate} />
+                </div>
+                <h5>{expandedComments[`most-recent-${test.id}`] ? parse(test.commentaires) : parseHTML(test.commentaires, 500)}</h5>
+                <div className="points-container">
+                    {test.points.filter(point => point.isPositive).length > 0 && (
+                        <>
+                            <div>
+                                {test.points
+                                    .filter(point => point.isPositive)
+                                    .map((point, index) => (
+                                        <div key={index} className='single-point-container'>
+                                            <IconContext.Provider value={{ size: '1.2em', color: 'green'}}>
+                                                <FaCheck />
+                                            </IconContext.Provider>
+                                            <h5>{point.description}</h5>
                                         </div>
-                                        <h5>{test.commentaires}</h5>
-                                        <div className="points-container">
-                                            {test.points.filter(point => point.isPositive).length > 0 && (
-                                                <>
-                                                    <div>
-                                                        {test.points
-                                                            .filter(point => point.isPositive)
-                                                            .map((point, index) => (
-                                                                <div key={index} className='single-point-container'>
-                                                                    <IconContext.Provider value={{ size: '1.2em', color: 'green'}}>
-                                                                        <FaCheck />
-                                                                    </IconContext.Provider>
-                                                                    <h5>{point.description}</h5>
-                                                                </div>
-                                                        ))}
-                                                    </div>
-                                                </>
-                                            )}
-                                            {test.points.filter(point => !point.isPositive).length > 0 && (
-                                                <>
-                                                    {test.points
-                                                        .filter(point => !point.isPositive)
-                                                        .map((point, index) => (
-                                                            <div key={index} className='single-point-container'>
-                                                                <IconContext.Provider value={{ size: '1.2em', color: 'red'}}>
-                                                                    <ImCross />
-                                                                </IconContext.Provider>
-                                                                <h5>{point.description}</h5>
-                                                            </div>
-                                                    ))}
-                                                </>
-                                            )}
-                                        </div>
-                                        <div className="cutline"></div>
-                                        <div className="test-item-foot">
-                                            <h5>{formatDate(test.date.date)}</h5>
-                                            <div className="vote">
-                                                <h5>Utile ?</h5>
-                                                <button className={`${test.hasVotedPositive ? 'voted' : 'thumb-up'}`}>
-                                                    <IconContext.Provider value={{ size: '1.5em'}}>
-                                                        <LuThumbsUp />
-                                                        <span>{test.upVotes}</span>
-                                                    </IconContext.Provider>
-                                                </button>
-                                                <button className={`${test.hasVotedNegative ? 'voted' : 'thumb-down'}`}>
-                                                    <IconContext.Provider value={{ size: '1.5em'}}>
-                                                        <LuThumbsDown />
-                                                        <span>{test.downVotes}</span>
-                                                    </IconContext.Provider>
-                                                </button>
-                                            </div>
-                                        </div>
+                                    ))}
+                            </div>
+                        </>
+                    )}
+                    {test.points.filter(point => !point.isPositive).length > 0 && (
+                        <>
+                            {test.points
+                                .filter(point => !point.isPositive)
+                                .map((point, index) => (
+                                    <div key={index} className='single-point-container'>
+                                        <IconContext.Provider value={{ size: '1.2em', color: 'red'}}>
+                                            <ImCross />
+                                        </IconContext.Provider>
+                                        <h5>{point.description}</h5>
                                     </div>
                                 ))}
-                        </div>
+                        </>
+                    )}
+                </div>
+                <div className="cutline"></div>
+                <div className="test-item-foot">
+                    <h5>{formatDate(test.date.date)}</h5>
+                    <div className="vote">
+                        <h5>Utile ?</h5>
+                        <button className={`${test.hasVotedPositive ? 'voted' : 'thumb-up'}`} onClick={() => vote(test.id, true)}>
+                            <IconContext.Provider value={{ size: '1.5em'}}>
+                                <LuThumbsUp />
+                                <span>{test.upVotes}</span>
+                            </IconContext.Provider>
+                        </button>
+                        <button className={`${test.hasVotedNegative ? 'voted' : 'thumb-down'}`} onClick={() => vote(test.id, false)}>
+                            <IconContext.Provider value={{ size: '1.5em'}}>
+                                <LuThumbsDown />
+                                <span>{test.downVotes}</span>
+                            </IconContext.Provider>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        ))}
+</div>
+
                     </div>
                 </div>
         </div>
