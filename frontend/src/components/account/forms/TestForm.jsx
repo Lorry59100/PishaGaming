@@ -6,9 +6,9 @@ import { ImCross } from "react-icons/im";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useTokenService } from "../services/tokenService";
 import axios from "axios";
-import { URL } from "../../../constants/urls/URLBack";
+import { URL, URL_GET_TEST, URL_SUBMIT_TEST, URL_UPDATE_TEST, URL_USER_AVATAR, URL_USER_DATA } from "../../../constants/urls/URLBack";
 
-export function TestForm({ onClose, productId }) {
+export function TestForm({ onClose, productId, testExist, onSubmit }) {
     const [userData, setUserData] = useState(null);
     const [rating, setRating] = useState('');
     const [description, setDescription] = useState('');
@@ -16,13 +16,14 @@ export function TestForm({ onClose, productId }) {
     const [cons, setCons] = useState(['', '', '']);
     const { decodedUserToken } = useTokenService();
     const formRef = useRef(null);
+    console.log('testExist from form component: ', testExist)
 
     useEffect(() => {
         console.log('useEffect triggered');
         console.log('decodedUserToken:', decodedUserToken);
         if (decodedUserToken) {
             const headers = {'Authorization': `Bearer ${decodedUserToken.username}`};
-            axios.get(`${URL}/get-user-data`, {headers})
+            axios.get(`${URL}${URL_USER_DATA}`, {headers})
             .then(response => {
                 setUserData(response.data);
             })
@@ -30,7 +31,29 @@ export function TestForm({ onClose, productId }) {
                 console.error('Erreur lors de la récupération des adresses :', error);
             });
         }
-    }, [decodedUserToken]);
+
+        if (testExist) {
+            console.log('url appelée : ',  `${URL}${URL_GET_TEST.replace(':id', productId)}`)
+            // Faire une requête pour récupérer les données du test existant
+            axios.get(`${URL}${URL_GET_TEST.replace(':id', productId)}`, {headers: {'Authorization': `Bearer ${decodedUserToken.username}`}})
+            .then(response => {
+                const testData = response.data;
+                console.log('testData: ', testData)
+                setRating(testData.rate);
+                setDescription(testData.comment);
+
+                // Assurez-vous que les tableaux pros et cons ont toujours 3 éléments
+                const positivePoints = testData.positivePoints || [];
+                const negativePoints = testData.negativePoints || [];
+
+                setPros([...positivePoints, ...Array(3 - positivePoints.length).fill('')]);
+                setCons([...negativePoints, ...Array(3 - negativePoints.length).fill('')]);
+            })
+            .catch(error => {
+                console.error('Erreur lors de la récupération des données du test :', error);
+            });
+        }
+    }, [decodedUserToken, testExist, productId]);
 
     const handleClose = useCallback(() => {
         if (onClose) {
@@ -48,14 +71,30 @@ export function TestForm({ onClose, productId }) {
         };
 
         const headers = {'Authorization': `Bearer ${decodedUserToken.username}`};
-        axios.post(`${URL}/submit-test`, data, { headers })
-            .then(response => {
-                console.log('Test submitted successfully:', response.data);
-                handleClose()
-            })
-            .catch(error => {
-                console.error('Erreur lors de la soumission du test :', error);
-            });
+
+        if (testExist) {
+            // Mettre à jour le test existant
+            axios.put(`${URL}${URL_UPDATE_TEST.replace(':id', productId)}`, data, { headers })
+                .then(response => {
+                    console.log('Test updated successfully:', response.data);
+                    handleClose();
+                    onSubmit();
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la mise à jour du test :', error);
+                });
+        } else {
+            // Soumettre un nouveau test
+            axios.post(`${URL}${URL_SUBMIT_TEST}`, data, { headers })
+                .then(response => {
+                    console.log('Test submitted successfully:', response.data);
+                    handleClose();
+                    onSubmit();
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la soumission du test :', error);
+                });
+        }
     };
 
     useEffect(() => {
@@ -81,7 +120,7 @@ export function TestForm({ onClose, productId }) {
             <div className="test-form">
                 <div className="avatar">
                     {userData && userData.img ? (
-                        <img src={`${URL}/uploads/images/${userData.img}`} alt="User Image" className="user-img-circled-test-form"/>
+                        <img src={`${URL}${URL_USER_AVATAR}${userData.img}`} alt="User Image" className="user-img-circled-test-form"/>
                     ) : (
                         <div>Loading...</div>
                     )}
@@ -152,8 +191,9 @@ export function TestForm({ onClose, productId }) {
     )
 }
 
-
 TestForm.propTypes = {
     onClose: PropTypes.func.isRequired,
     productId: PropTypes.string.isRequired,
+    testExist: PropTypes.bool.isRequired,
+    onSubmit: PropTypes.func.isRequired,
 };
