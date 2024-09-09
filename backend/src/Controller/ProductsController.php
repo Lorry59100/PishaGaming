@@ -143,6 +143,14 @@ class ProductsController extends AbstractController
                             }
                         }
                     }
+                    // Vérifier si l'utilisateur a déjà rédigé un test pour ce jeu
+                    $userTests = $user->getTests();
+                    $testExist = false;
+                    foreach($userTests as $userTest) {
+                        if($userTest->getProduct() === $product) {
+                            $testExist = true;
+                        }
+                    }
                 }
 
                 $tests[] = [
@@ -152,6 +160,7 @@ class ProductsController extends AbstractController
                     'publisher' => $test->getUser()->getPseudo(),
                     'avatar' => $test->getUser()->getImg(),
                     'date' => $test->getCreatedAt(),
+                    'testExist' => $testExist,
                     'upVotes' => $upVotes,
                     'downVotes' => $downVotes,
                     'hasVotedPositive' => $hasVotedPositive,
