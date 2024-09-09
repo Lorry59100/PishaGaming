@@ -58,6 +58,21 @@ submit_test:
     controller: App\Controller\TestController::submitTest
     methods: POST
 
+user_tests:
+    path: /user-tests
+    controller: App\Controller\TestController::userTests
+    methods: GET
+
+get_test:
+    path: /get-test/{id}
+    controller: App\Controller\TestController::getTest
+    methods: GET
+
+update_test:
+    path: /update-test/{id}
+    controller: App\Controller\TestController::updateTest
+    methods: PUT
+
 add_product:
     path: /add-product
     controller: App\Controller\AdminController::addProduct
