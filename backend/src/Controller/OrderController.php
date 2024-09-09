@@ -156,9 +156,9 @@ class OrderController extends AbstractController
 /**
  * @Route("/get-order/{id}", name="get_order", methods={"GET"})
  */
-public function getOrder(Request $request, $id, UserRepository $userRepository, 
-OrderRepository $orderRepository, OrderDetailsRepository $orderDetailsRepository, 
-ActivationKeyRepository $activationKeyRepository): JsonResponse 
+public function getOrder(Request $request, $id, UserRepository $userRepository,
+OrderRepository $orderRepository, OrderDetailsRepository $orderDetailsRepository,
+ActivationKeyRepository $activationKeyRepository): JsonResponse
 {
     // Récupérer l'utilisateur
     $user = $userRepository->find($id);
@@ -169,7 +169,7 @@ ActivationKeyRepository $activationKeyRepository): JsonResponse
     }
 
     // Récupérer la commande associée à l'utilisateur
-    $order = $orderRepository->findOneBy(['user' => $user], ['created_at' => 'DESC']);;
+    $order = $orderRepository->findOneBy(['user' => $user], ['created_at' => 'DESC']);
 
     // Vérifier si une commande a été trouvée
     if (!$order) {
@@ -179,17 +179,18 @@ ActivationKeyRepository $activationKeyRepository): JsonResponse
     // Récupérer les détails de la commande associée à la commande
     $orderDetails = $order->getOrderDetails();
 
-    // Vérifier si des détails de commande on été trouvés.
+    // Vérifier si des détails de commande ont été trouvés.
     if (!$orderDetails) {
         return new JsonResponse(['error' => 'Aucune commande trouvée pour cet utilisateur.'], 404);
     }
 
-    //RECUPERER LES CHAMPS ASSOCIES, SINON CELA RENVOIE UN OBJET VIDE
+    // RECUPERER LES CHAMPS ASSOCIES, SINON CELA RENVOIE UN OBJET VIDE
     $userArray = [
        'firstname' => $user->getFirstname(),
        'lastname' => $user->getLastname(),
     ];
 
+    $orderDetailArray = [];
     foreach($orderDetails as $orderDetail) {
         $orderDetailArray[] = [
             'platform' => $orderDetail->getPlatform(),
@@ -207,17 +208,24 @@ ActivationKeyRepository $activationKeyRepository): JsonResponse
         'deliveryDate'=> $order->getDeliveryDate(),
     ];
 
-    $keys = $activationKeyRepository->findAll(['orderDetails' => $orderDetails]);
+    // Initialiser $keyArray
+    $keyArray = [];
 
-    foreach($keys as $key) {
-        $keyArray[] = [
-            'activation_key' => $key->getActivationKey(),
-            'orderId' => $key->getOrderDetails()->getId(),
-        ];
+    // Récupérer les clés d'activation pour chaque détail de commande
+    foreach ($orderDetails as $orderDetail) {
+        $keys = $activationKeyRepository->findBy(['orderDetails' => $orderDetail]);
+        foreach ($keys as $key) {
+            $keyArray[] = [
+                'activation_key' => $key->getActivationKey(),
+                'orderId' => $key->getOrderDetails()->getId(),
+            ];
+        }
     }
 
     return new JsonResponse([$userArray, $orderArray, $orderDetailArray, $keyArray], 200);
 }
+
+
 
     /**
      * @Route("/order-historic", name="order_historic", methods={"GET"})
