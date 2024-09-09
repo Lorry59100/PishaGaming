@@ -29,3 +29,7 @@ export const URL_USER_UPLOAD_IMG = '/upload-user-image'
 export const URL_USER_AVATAR = '/uploads/images/'
 export const URL_USER_CHANGE_PSEUDO = '/change-pseudo'
 export const URL_VOTE_TEST = '/vote-test/'
+export const URL_USER_TESTS = '/user-tests'
+export const URL_GET_TEST = '/get-test/:id';
+export const URL_UPDATE_TEST = '/update-test/:id';
+export const URL_SUBMIT_TEST = '/submit-test';
