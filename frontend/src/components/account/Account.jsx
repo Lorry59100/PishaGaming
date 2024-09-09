@@ -5,6 +5,7 @@ import { MdOutlineSettings } from "react-icons/md";
 import { Link, Outlet, Route, Routes, useLocation } from "react-router-dom";
 import { Parameters } from "./forms/Parameters";
 import OrderHistoric from "./OrderHistoric";
+import { Tests } from "./Tests";
 import { URL_ACCOUNT, URL_ORDER_HISTORIC, URL_PARAMETERS } from "../../constants/urls/URLFront";
 import axios from "axios";
 import { useTokenService } from "./services/tokenService";
@@ -111,10 +112,6 @@ function Account() {
 
 function Wishlist() {
   return <div>Wishlist content</div>;
-}
-
-function Tests() {
-  return <div>Tests content</div>;
 }
 
 export default function AccountPage() {
