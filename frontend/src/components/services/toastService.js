@@ -1,6 +1,9 @@
 // toastService.js
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import React from 'react';
+
+let toastId = null;
 
 export const ToastSuccess = (message) => {
   toast.success(message, {
@@ -27,6 +30,21 @@ export const ToastCenteredSuccess = (message) => {
     progress: undefined,
     theme: "dark",
   });
+};
+
+export const ToastCenteredWarning = (message) => {
+  toastId = toast.warning(message, {
+    position: "top-center",
+    className: "big-toast",
+    autoClose: false,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "dark",
+  });
+  console.log('ToastCenteredWarning called with message:', message);
 };
 
 export const ToastImportantSuccess = (message) => {
@@ -57,10 +75,13 @@ export const ToastError = (errorMessage) => {
 
 export const ToastErrorWithLink = (message, linkText, linkUrl) => {
   toast.error(
-    <div>
-      {message} Vous pouvez en obtenir un nouveau{" "}
-      <a href={linkUrl}>{linkText}</a>
-    </div>,
+    React.createElement(
+      'div',
+      null,
+      message,
+      ' Vous pouvez en obtenir un nouveau ',
+      React.createElement('a', { href: linkUrl }, linkText)
+    ),
     {
       position: "top-right",
       autoClose: false,
@@ -68,4 +89,12 @@ export const ToastErrorWithLink = (message, linkText, linkUrl) => {
       theme: "dark",
     }
   );
+};
+
+export const dismissToast = () => {
+  if (toastId) {
+    console.log('dismissToast called');
+    toast.dismiss(toastId);
+    toastId = null;
+  }
 };
