@@ -95,6 +95,7 @@ color: var(--grey);
 .single-address-container>:first-child>* {
     margin: 0 0.5em;
 }
+
 .active-tab-title {
     color: white;
     margin-left: 1em;
@@ -293,3 +294,54 @@ position: relative;
 .user-info-container>h4 {
     color: var(--grey);
 }
+
+.address-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 90%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+.address-modal-content {
+    background-color: var(--medium-light);
+    width: 730px;
+    border-radius: 10px;
+}
+
+.modal-head-container {
+    display: flex;
+    justify-content: end;
+    margin: 1em;
+    padding-top: 1em;
+}
+
+.submit-address-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 1em;
+}
+
+.single-address-container>h4 {
+    color: var(--grey-txt-light);
+}
+
+.add-address-btn {
+    display: flex;
+    align-items: center;
+}
+
+.add-address-btn>svg {
+    margin-right: 0.5em;
+}
+
+.address-modal-content>h1 {
+    margin-left: 0.5em;
+}
+

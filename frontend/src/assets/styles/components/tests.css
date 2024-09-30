@@ -17,6 +17,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-between;
 }
 
 .test-user-item>img {
@@ -44,4 +45,13 @@
 
 .user-test-btn>h4 {
     margin-right: 0.3em;
+}
+
+.test-desc {
+    padding: 0 1.2em;
+}
+
+.test-user-item>.rating-circle {
+    width: 65px;
+    height: 65px;
 }
