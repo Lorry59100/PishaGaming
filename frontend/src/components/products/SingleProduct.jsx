@@ -20,6 +20,7 @@ import { CartContext } from '../../contexts/CartContext';
 import { LuThumbsDown, LuThumbsUp } from "react-icons/lu";
 import { LoginAndRegisterForm } from '../account/forms/LoginAndRegisterForm';
 import { TestForm } from '../account/forms/TestForm';
+import { dismissToast, ToastCenteredWarning } from '../services/toastService';
 
 function parseHTML(html, maxLength = null) {
     const tempDiv = document.createElement('div');
@@ -52,8 +53,6 @@ export function SingleProduct() {
             [`${section}-${testId}`]: !prevState[`${section}-${testId}`]
         }));
     };
-    
-    
 
     useEffect(() => {
         const editTest = location.state?.editTest;
@@ -78,64 +77,71 @@ export function SingleProduct() {
 
     const addToCart = (redirect) => {
         if (!decodedUserToken) {
-        // Récupérer le panier depuis le stockage local
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        // Vérifier si le produit est déjà dans le panier
-        const existingProductIndex = cart.findIndex(item => item.id === product.id && item.platform === selectedPlatform);
-            if (existingProductIndex !== -1) {
-                // Si le produit est déjà dans le panier, incrémentez la quantité
-                cart[existingProductIndex].quantity += 1;
+          // Récupérer le panier depuis le stockage local
+          const cart = JSON.parse(localStorage.getItem('cart')) || [];
+          // Vérifier si le produit est déjà dans le panier
+          const existingProductIndex = cart.findIndex(item => item.id === product.id && item.platform === selectedPlatform);
+          if (existingProductIndex !== -1) {
+            // Si il existe déjà 10 exemplaires d'un produit dans le panier
+            if(cart[existingProductIndex].quantity >= 10) {
+              ToastCenteredWarning('Vous ne pouvez pas ajouter plus de 10 exemplaires de ce produit.');
             } else {
+              // Si le produit est déjà dans le panier, incrémentez la quantité
+              cart[existingProductIndex].quantity += 1;
+            }
+          } else {
             // Si le produit n'est pas encore dans le panier, ajoutez-le
             cart.push({
-                    id: product.id,
-                    name: product.name,
-                    img: product.img,
-                    platform: selectedPlatform,
-                    price: product.price,
-                    oldPrice: product.old_price,
-                    quantity: 1,
-                });
-            }
-            // Mettre à jour le panier dans le stockage local
-            localStorage.setItem('cart', JSON.stringify(cart));
-            updateCart(cart);
+              id: product.id,
+              name: product.name,
+              img: product.img,
+              platform: selectedPlatform,
+              price: product.price,
+              oldPrice: product.old_price,
+              quantity: 1,
+            });
+          }
+          // Mettre à jour le panier dans le stockage local
+          localStorage.setItem('cart', JSON.stringify(cart));
+          updateCart(cart);
         }
         if (decodedUserToken) {
-            axios.post(`${URL}${URL_ADD_TO_CART}/${id}`, {
-                platform: selectedPlatform,
-                userId: decodedUserToken.id,
-                id: product.id,
-                name: product.name,
-                img: product.img,
-                quantity: 1,
-            })
-            .then(response => {
+          axios.post(`${URL}${URL_ADD_TO_CART}/${id}`, {
+            platform: selectedPlatform,
+            userId: decodedUserToken.id,
+            id: product.id,
+            name: product.name,
+            img: product.img,
+            quantity: 1,
+          })
+          .then(response => {
             if (response.data && response.data.success) {
-                // Faire une requête supplémentaire pour obtenir le panier mis à jour
-                axios.get(`${URL}${URL_USER_CART}/${decodedUserToken.id}`)
-                    .then(cartResponse => {
-                    if (cartResponse.data && Array.isArray(cartResponse.data)) {
-                        updateCart(cartResponse.data);
+              // Faire une requête supplémentaire pour obtenir le panier mis à jour
+              axios.get(`${URL}${URL_USER_CART}/${decodedUserToken.id}`)
+                .then(cartResponse => {
+                  if (cartResponse.data && Array.isArray(cartResponse.data.carts)) {
+                    updateCart(cartResponse.data.carts);
                     if (redirect) {
-                        navigate('/cart');
+                      navigate('/cart');
                     }
-                    } else {
-                        console.error('Invalid cart response:', cartResponse);
-                    }
+                  } else {
+                    console.error('Invalid cart response:', cartResponse);
+                  }
                 })
                 .catch(cartError => {
-                    console.error('Erreur lors de la récupération du panier :', cartError);
+                  console.error('Erreur lors de la récupération du panier :', cartError);
                 });
-                } else {
-                    console.error('Invalid server response:', response);
-                }
-            })
-            .catch(error => {
+            } else {
+              console.error('Invalid server response:', response);
+            }
+          })
+          .catch(error => {
+            ToastCenteredWarning(error.response.data.error);
             console.error('Erreur lors de l\'ajout au panier :', error);
-            });
+          });
         }
-    };
+      };
+      
     
     const vote = (testId, isPositive) => {
         if (!decodedUserToken) {
@@ -213,8 +219,22 @@ export function SingleProduct() {
     useEffect(() => {
         updateTests();
     }, [updateTests]);
-    
-    
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+          // Vérifiez si le clic est en dehors du toast container et non sur le bouton
+            if (!event.target.closest('.Toastify__toast-container') && !event.target.closest('.submit-button')) {
+                console.log('Click outside toast container and not on the button');
+                dismissToast();
+            }
+        };
+        // Ajoutez un écouteur d'événements pour les clics sur le document
+        document.addEventListener('click', handleClickOutside);
+        // Nettoyez l'écouteur d'événements lorsque le composant est démonté
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []);
 
     if (product === null) {
         return <div>Chargement en cours...</div>;
