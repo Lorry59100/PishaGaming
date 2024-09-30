@@ -44,6 +44,8 @@ function Navbar() {
     }
   }, [decodedUserToken]);
 
+  console.log('cart de la navbar : ', cart)
+
   // Utilisation de useMemo pour mémoriser le calcul du nombre d'items dans le panier
   const itemCount = useMemo(() => {
     const count = cart ? cart.reduce((total, item) => total + item.quantity, 0) : 0;
