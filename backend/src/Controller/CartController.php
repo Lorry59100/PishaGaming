@@ -51,6 +51,23 @@ class CartController extends AbstractController
             return new JsonResponse(['error' => 'User not authenticated.'], 401);
         }
 
+        // Récupérer tous les éléments du panier de l'utilisateur
+        $cartItems = $cartRepository->findBy(['user' => $user]);
+
+        // Calculer le montant total actuel du panier
+        $totalAmount = 0;
+        foreach ($cartItems as $cartItem) {
+            $totalAmount += $cartItem->getQuantity() * $cartItem->getProduct()->getPrice();
+        }
+
+        // Calculer le montant total après l'ajout du nouveau produit
+        $newTotalAmount = $totalAmount + ($data['quantity'] * $product->getPrice());
+
+        // Vérifier si le montant total dépasse 400 euros
+        if ($newTotalAmount > 40000) {
+            return new JsonResponse(['error' => 'Le montant total du panier dépasse 400 euros.'], 400);
+        }
+
         $existingCartItem = $cartRepository->findOneBy([
             'user' => $user,
             'product' => $product,
@@ -59,6 +76,9 @@ class CartController extends AbstractController
         
         if ($existingCartItem) {
             // Si l'élément existe déjà, mettez à jour la quantité par exemple
+            if($existingCartItem->getQuantity() >= 10) {
+                return new JsonResponse(['error' => 'Vous avez atteint la quantité maximale pour ce produit. Quantité maximale : 10.'], 401);
+            }
             $existingCartItem->setQuantity($existingCartItem->getQuantity() + $data['quantity']);
             $entityManager->persist($existingCartItem);
             $entityManager->flush();
@@ -100,8 +120,6 @@ class CartController extends AbstractController
                 'name' => $product->getName(),
                 'oldPrice' => $product->getOldPrice(),
                 'price' => $product->getPrice(),
-                /* 'isPhysical' => $product->getPlatform(), */
-                // Ajoutez d'autres propriétés du produit selon vos besoins
             ];
     
             $productsArray[] = $productArray;
@@ -111,33 +129,63 @@ class CartController extends AbstractController
     }
 
     /**
-     * @Route("/get-cart/{id}", name="get_cart", methods={"GET"})
-     */
-    public function getCart(Request $request, $id, PlatformRepository $platformRepository, ProductRepository $productRepository, UserRepository $userRepository,
-    CartRepository $cartRepository): JsonResponse
-    {
+ * @Route("/get-cart/{id}", name="get_cart", methods={"GET"})
+ */
+public function getCart(Request $request, $id, PlatformRepository $platformRepository, ProductRepository $productRepository, UserRepository $userRepository,
+CartRepository $cartRepository, EntityManagerInterface $entityManager): JsonResponse
+{
     $carts = $cartRepository->findBy(['user' => $id]);
     $cartsData = [];
+    $hasUpdates = false; // Drapeau pour vérifier si des mises à jour ont été effectuées
 
     foreach ($carts as $cart) {
-    $platform = $platformRepository->findOneBy(['name' => $cart->getPlatform()]);
-    $cartData = [
-    'id' => $cart->getId(),
-    'quantity' => $cart->getQuantity(),
-    'platform' => $cart->getPlatform(),
-    'img' => $cart->getProduct()->getImg(),
-    'productId' => $cart->getProduct()->getId(),
-    'name' => $cart->getProduct()->getName(),
-    'oldPrice' => $cart->getProduct()->getOldPrice(),
-    'price' => $cart->getProduct()->getPrice(),
-    'isPhysical' => $platform->isIsPhysical(),
-    'category' => $cart->getProduct()->getCategory()->getName(),
+        $product = $cart->getProduct();
+        $availableQuantity = $product->getStock(); // Supposons que getQuantity() retourne la quantité disponible en BDD
+
+        // Vérifier si la quantité dans le panier dépasse la quantité disponible
+        if ($cart->getQuantity() > $availableQuantity) {
+            // Mettre à jour la quantité dans le panier
+            $cart->setQuantity($availableQuantity);
+            $entityManager->persist($cart);
+            $entityManager->flush();
+
+            // Mettre à jour le drapeau
+            $hasUpdates = true;
+        }
+
+        $platform = $platformRepository->findOneBy(['name' => $cart->getPlatform()]);
+        $cartData = [
+            'id' => $cart->getId(),
+            'quantity' => $cart->getQuantity(),
+            'platform' => $cart->getPlatform(),
+            'img' => $cart->getProduct()->getImg(),
+            'productId' => $cart->getProduct()->getId(),
+            'name' => $cart->getProduct()->getName(),
+            'oldPrice' => $cart->getProduct()->getOldPrice(),
+            'price' => $cart->getProduct()->getPrice(),
+            'isPhysical' => $platform->isIsPhysical(),
+            'category' => $cart->getProduct()->getCategory()->getName(),
+        ];
+
+        $cartsData[] = $cartData;
+    }
+
+    $message = '';
+    if($hasUpdates == true) {
+        $message = 'Certains produits n\'étant plus ou insuffisamment disponibles, votre panier a été mis à jour.';
+    }
+
+    // Ajouter les messages à la réponse JSON
+    $responseData = [
+        'carts' => $cartsData,
+        'message' => $message
     ];
 
-    $cartsData[] = $cartData;
-    }
-    return new JsonResponse($cartsData, 200);
-    }
+    return new JsonResponse($responseData, 200);
+}
+
+
+
 
     /**
      * @Route("/update-cart}", name="update_cart", methods={"PUT"})
@@ -148,6 +196,27 @@ class CartController extends AbstractController
     $itemId = $data['itemId'];
     $quantity = $data['quantity'];
     $itemToUpdate = $cartRepository->find($itemId);
+    if($itemToUpdate->getQuantity() >= 10) {
+        return new JsonResponse(['error' => 'Vous avez atteint la quantité maximale pour ce produit.'], 401);
+    }
+     // Récupérer tous les éléments du panier de l'utilisateur
+     $cartItems = $cartRepository->findBy(['user' => $itemToUpdate->getUser()]);
+
+     // Calculer le montant total actuel du panier
+     $totalAmount = 0;
+     foreach ($cartItems as $cartItem) {
+         if ($cartItem->getId() != $itemId) {
+             $totalAmount += $cartItem->getQuantity() * $cartItem->getProduct()->getPrice();
+         } else {
+             $totalAmount += $quantity * $cartItem->getProduct()->getPrice();
+         }
+     }
+ 
+     // Vérifier si le montant total dépasse 400 euros
+     if ($totalAmount > 40000) {
+         return new JsonResponse(['error' => 'Le montant total du panier dépasse 400 euros.'], 400);
+     }
+ 
     $itemToUpdate->setQuantity($quantity);
     $entityManager->persist($itemToUpdate);
     $entityManager->flush();
