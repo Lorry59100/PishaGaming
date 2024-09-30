@@ -94,137 +94,142 @@ class ProductsController extends AbstractController
     }
 
     /**
-     * @Route("/single-product/{id}", name="single_product", methods={"GET"})
-     */
-    public function singleProduct(ProductRepository $productRepository, VoteRepository $voteRepository, Request $request, $id): JsonResponse | Response
-    {
-        try {
-            $user = $this->tokenService->getUserFromRequest($request);
+ * @Route("/single-product/{id}", name="single_product", methods={"GET"})
+ */
+public function singleProduct(ProductRepository $productRepository, VoteRepository $voteRepository, Request $request, $id): JsonResponse | Response
+{
+    try {
+        $user = $this->tokenService->getUserFromRequest($request);
 
-            // Vérifiez si $user est une instance de JsonResponse
-            if ($user instanceof JsonResponse) {
-                $user = null; // Traitez-le comme un utilisateur non connecté
-            }
+        // Vérifiez si $user est une instance de JsonResponse
+        if ($user instanceof JsonResponse) {
+            $user = null; // Traitez-le comme un utilisateur non connecté
+        }
 
-            $product = $productRepository->find($id);
+        $product = $productRepository->find($id);
 
-            $platforms = [];
-            foreach ($product->getPlatform() as $platform) {
-                $platforms[] = [
-                    'id' => $platform->getId(),
-                    'name' => $platform->getName(),
-                ];
-            }
+        if (!$product) {
+            throw new \Exception('Product not found');
+        }
 
-            $tags = [];
-            foreach ($product->getTag() as $tag) {
-                $tags[] = [
-                    'id' => $tag->getId(),
-                    'name' => $tag->getName(),
-                ];
-            }
+        $platforms = [];
+        foreach ($product->getPlatform() as $platform) {
+            $platforms[] = [
+                'id' => $platform->getId(),
+                'name' => $platform->getName(),
+            ];
+        }
 
-            $tests = [];
-            foreach ($product->getTests() as $test) {
-                $upVotes = $voteRepository->count(['test' => $test, 'vote' => true]);
-                $downVotes = $voteRepository->count(['test' => $test, 'vote' => false]);
-                // Initialiser les variables en dehors de la boucle
-                $hasVotedPositive = false;
-                $hasVotedNegative = false;
-                $points = $test->getPoints();
+        $tags = [];
+        foreach ($product->getTag() as $tag) {
+            $tags[] = [
+                'id' => $tag->getId(),
+                'name' => $tag->getName(),
+            ];
+        }
 
-                if ($user) {
-                    foreach ($test->getVote() as $vote) {
-                        if ($vote->getUser()->getEmail() == $user->getEmail()) {
-                            if ($vote->isVote() == true) {
-                                $hasVotedPositive = true;
-                            } else if ($vote->isVote() == false) {
-                                $hasVotedNegative = true;
-                            }
-                        }
-                    }
-                    // Vérifier si l'utilisateur a déjà rédigé un test pour ce jeu
-                    $userTests = $user->getTests();
-                    $testExist = false;
-                    foreach($userTests as $userTest) {
-                        if($userTest->getProduct() === $product) {
-                            $testExist = true;
+        $tests = [];
+        foreach ($product->getTests() as $test) {
+            $upVotes = $voteRepository->count(['test' => $test, 'vote' => true]);
+            $downVotes = $voteRepository->count(['test' => $test, 'vote' => false]);
+            // Initialiser les variables en dehors de la boucle
+            $hasVotedPositive = false;
+            $hasVotedNegative = false;
+            $points = $test->getPoints();
+
+            if ($user) {
+                foreach ($test->getVote() as $vote) {
+                    if ($vote->getUser()->getEmail() == $user->getEmail()) {
+                        if ($vote->isVote() == true) {
+                            $hasVotedPositive = true;
+                        } else if ($vote->isVote() == false) {
+                            $hasVotedNegative = true;
                         }
                     }
                 }
-
-                $tests[] = [
-                    'id' => $test->getId(),
-                    'commentaires' => $test->getComment(),
-                    'rate' => $test->getRate(),
-                    'publisher' => $test->getUser()->getPseudo(),
-                    'avatar' => $test->getUser()->getImg(),
-                    'date' => $test->getCreatedAt(),
-                    'testExist' => $testExist,
-                    'upVotes' => $upVotes,
-                    'downVotes' => $downVotes,
-                    'hasVotedPositive' => $hasVotedPositive,
-                    'hasVotedNegative' => $hasVotedNegative,
-                    'points' => array_map(function($point) {
-                        return [
-                            'description' => $point->getDescription(),
-                            'isPositive' => $point->isIsPositive(),
-                        ];
-                    }, $test->getPoints()->toArray()),
-                ];
+                // Vérifier si l'utilisateur a déjà rédigé un test pour ce jeu
+                $userTests = $user->getTests();
+                $testExist = false;
+                foreach($userTests as $userTest) {
+                    if($userTest->getProduct() === $product) {
+                        $testExist = true;
+                    }
+                }
             }
 
-            $genres = [];
-            foreach ($product->getGenre() as $genre) {
-                $genres[] = [
-                    'id' => $genre->getId(),
-                    'name' => $genre->getName(),
-                ];
-            }
-
-            $alternativeEditions = $productRepository->getAlternativeEditions($product->getName(), $product->getEdition()->getId());
-            $alternativeEditionsArray = [];
-            foreach ($alternativeEditions as $alternativeEdition) {
-                $alternativeEditionsArray[] = [
-                    'id' => $alternativeEdition['id'],
-                    'name' => $alternativeEdition['name'],
-                    'img' => $alternativeEdition['img'],
-                    'old_price' => $alternativeEdition['old_price'],
-                    'price' => $alternativeEdition['price'],
-                    'stock' => $alternativeEdition['stock'],
-                    'description' => $alternativeEdition['description'],
-                    'edition_id' => $alternativeEdition['edition_id'],
-                    'edition_name' => $alternativeEdition['edition_name'],
-                ];
-            }
-
-            $productsArray = [
-                'id' => $product->getId(),
-                'name' => $product->getName(),
-                'stock' => $product->getStock(),
-                'old_price' => $product->getOldPrice(),
-                'price' => $product->getPrice(),
-                'img' => $product->getImg(),
-                'description' => $product->getDescription(),
-                'category' => $product->getCategory()->getName(),
-                'developer' => $product->getDev(),
-                'editor' => $product->getEditor(),
-                'release' => $product->getRelease(),
-                'stock' => $product->getStock(),
-                'edition' => $product->getEdition()->getName(),
-                'trailer' => $product->getTrailer(),
-                'genres' => $genres,
-                'plateformes' => $platforms,
-                'tags' => $tags,
-                'tests' => $tests,
-                'alternative_editions' => $alternativeEditionsArray,
+            $tests[] = [
+                'id' => $test->getId(),
+                'commentaires' => $test->getComment(),
+                'rate' => $test->getRate(),
+                'publisher' => $test->getUser()->getPseudo(),
+                'avatar' => $test->getUser()->getImg(),
+                'date' => $test->getCreatedAt(),
+                'testExist' => $testExist ?? false,
+                'upVotes' => $upVotes,
+                'downVotes' => $downVotes,
+                'hasVotedPositive' => $hasVotedPositive,
+                'hasVotedNegative' => $hasVotedNegative,
+                'points' => array_map(function($point) {
+                    return [
+                        'description' => $point->getDescription(),
+                        'isPositive' => $point->isIsPositive(),
+                    ];
+                }, $test->getPoints()->toArray()),
             ];
-
-            return new JsonResponse($productsArray, 200);
-        } catch (Exception $e) {
-            return new JsonResponse(['error' => 'Internal Server Error'], 500);
         }
+
+        $genres = [];
+        foreach ($product->getGenre() as $genre) {
+            $genres[] = [
+                'id' => $genre->getId(),
+                'name' => $genre->getName(),
+            ];
+        }
+
+        $alternativeEditions = $productRepository->getAlternativeEditions($product->getName(), $product->getEdition()->getId());
+        $alternativeEditionsArray = [];
+        foreach ($alternativeEditions as $alternativeEdition) {
+            $alternativeEditionsArray[] = [
+                'id' => $alternativeEdition['id'],
+                'name' => $alternativeEdition['name'],
+                'img' => $alternativeEdition['img'],
+                'old_price' => $alternativeEdition['old_price'],
+                'price' => $alternativeEdition['price'],
+                'stock' => $alternativeEdition['stock'],
+                'description' => $alternativeEdition['description'],
+                'edition_id' => $alternativeEdition['edition_id'],
+                'edition_name' => $alternativeEdition['edition_name'],
+            ];
+        }
+
+        $productsArray = [
+            'id' => $product->getId(),
+            'name' => $product->getName(),
+            'stock' => $product->getStock(),
+            'old_price' => $product->getOldPrice(),
+            'price' => $product->getPrice(),
+            'img' => $product->getImg(),
+            'description' => $product->getDescription(),
+            'category' => $product->getCategory()->getName(),
+            'developer' => $product->getDev(),
+            'editor' => $product->getEditor(),
+            'release' => $product->getRelease(),
+            'stock' => $product->getStock(),
+            'edition' => $product->getEdition()->getName(),
+            'trailer' => $product->getTrailer(),
+            'genres' => $genres,
+            'plateformes' => $platforms,
+            'tags' => $tags,
+            'tests' => $tests,
+            'alternative_editions' => $alternativeEditionsArray,
+        ];
+
+        return new JsonResponse($productsArray, 200);
+    } catch (\Exception $e) {
+        return new JsonResponse(['error' => 'Internal Server Error', 'message' => $e->getMessage()], 500);
     }
+}
+
 
     /**
      * @Route("/plateformes-list", name="plateformes_list", methods={"GET"})
