@@ -138,6 +138,16 @@ get_address:
     controller: App\Controller\AddressController::getAddress
     methods: GET
 
+change_address:
+    path: /change-address
+    controller: App\Controller\AddressController::changeAddress
+    methods: PUT
+
+delete_address:
+    path: /delete-address
+    controller: App\Controller\AddressController::deleteAddress
+    methods: DELETE
+
 change_mail:
     path: /change-mail
     controller: App\Controller\ParametersController::changeMail
