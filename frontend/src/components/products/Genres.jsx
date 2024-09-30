@@ -27,7 +27,7 @@ function Genres() {
     <div className='genres-container'>
       <h1 className='three-span'>Genres</h1>
       {genres.map(genre => (
-        <Link to={`/order`} key={genre.name} className='genre-container'>
+        <Link to={`/search?genre=${genre.name}`} key={genre.name} className='genre-container'>
           <img src={`/src/assets/img/genres/background/${genre.name}.jpg`} alt="" className='genre-background' />
           <img src={`/src/assets/img/genres/chara/${genre.name}.png`} alt="" className='genre-chara' />
           <h2 className='genre-name'>{genre.name}</h2>
