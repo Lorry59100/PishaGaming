@@ -1,15 +1,15 @@
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import axios from 'axios';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useTokenService } from "./services/tokenService";
 import { URL, URL_USER_CART } from '../../constants/urls/URLBack';
-import "../../assets/styles/components/cart.css"
+import "../../assets/styles/components/cart.css";
 import { BsTrash3 } from "react-icons/bs";
 import { HiMiniComputerDesktop } from 'react-icons/hi2';
 import { IconContext } from "react-icons";
 import { FaPlaystation } from "react-icons/fa";
 import { BsXbox } from "react-icons/bs";
 import { SiNintendo } from "react-icons/si";
-import "../../assets/styles/components/form.css"
+import "../../assets/styles/components/form.css";
 import { calculateDifference, calculateTotal, calculateTotalOldPrice, convertToEuros } from '../products/services/PriceServices';
 import { Paybar } from '../layouts/Navbar/Paybar';
 import { NavbarVisibilityContext } from '../../contexts/NavbarVisibilityContext';
@@ -18,6 +18,7 @@ import { URL_PAYMENT } from '../../constants/urls/URLFront';
 import { useNavigate } from 'react-router-dom';
 import { LoginAndRegisterForm } from './forms/LoginAndRegisterForm';
 import { CartContext } from '../../contexts/CartContext';
+import { dismissToast, ToastCenteredWarning } from '../services/toastService';
 
 export function Cart() {
   const { cart, updateCart } = useContext(CartContext);
@@ -28,8 +29,6 @@ export function Cart() {
   const { hideNavbar, showNavbar } = useContext(NavbarVisibilityContext);
   const [showLoginAndRegisterForm, setShowLoginAndRegisterForm] = useState(false);
   const navigate = useNavigate();
-
-  /* console.log(totalPrice); */
 
   useEffect(() => {
     // Add a class to the body element when the component mounts
@@ -49,23 +48,24 @@ export function Cart() {
     };
   }, [hideNavbar, showNavbar]);
 
-  
-
   useEffect(() => {
     // Vérifier si l'utilisateur est connecté avant de faire la requête
     if (decodedUserToken) {
-      console.log(decodedUserToken);
       const userId = decodedUserToken.id;
       axios.get(`${URL}${URL_USER_CART}/${userId}`)
         .then(response => {
-          console.log(response.data)
-          updateCart(response.data);
+          if (response.data && response.data.carts) {
+            updateCart(response.data.carts);
+            if (response.data.message && response.data.message.trim() !== '') {
+              console.log('y a un mess : ', response.data.message); // Gérer le message si nécessaire
+              ToastCenteredWarning(response.data.message)
+            }
+          }
         })
         .catch(error => {
           console.error('Erreur lors de la récupération du panier :', error);
         });
-    }
-    if(!decodedUserToken) {
+    } else {
       const getCart = localStorage.getItem('cart');
       if (getCart) {
         const cartItems = JSON.parse(getCart);
@@ -84,10 +84,11 @@ export function Cart() {
       setShowLoginAndRegisterForm(true);
     }
   };
-  const removeItem = async (userId = null, itemId) => {
+
+  const removeItem = useCallback(async (userId = null, itemId) => {
     if (decodedUserToken) {
       try {
-          await axios.delete('https://127.0.0.1:8000/delete-item', {
+        await axios.delete('https://127.0.0.1:8000/delete-item', {
           data: {
             userId,
             itemId
@@ -106,12 +107,9 @@ export function Cart() {
       // Mettre à jour l'état local du composant avec le nouveau panier
       updateCart(newCartItems);
     }
-  };
-  
-  
-  
-  
-  const updateQuantity = async (userId, productId, platform, quantity, itemId) => {
+  }, [decodedUserToken, cart, updateCart]);
+
+  const updateQuantity = useCallback(async (userId, productId, platform, quantity, itemId) => {
     try {
       await axios.put('https://127.0.0.1:8000/update-cart', {
         userId,
@@ -121,17 +119,39 @@ export function Cart() {
         itemId
       });
       // Mettre à jour l'état du composant avec la nouvelle quantité
-      // Vous pouvez utiliser la fonction updateCart() du CartContext pour mettre à jour le panier
+      const newCartData = cart.map((cartItem) => {
+        if (cartItem.id === itemId && cartItem.platform === platform) {
+          return { ...cartItem, quantity: quantity };
+        }
+        return cartItem;
+      });
+      updateCart(newCartData);
     } catch (error) {
+      console.log('error: ', error.response.data.error);
+      ToastCenteredWarning(error.response.data.error);
       console.error(error);
     }
-  };
-  
-  
+  }, [cart, updateCart]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Vérifiez si le clic est en dehors du toast container et non sur le bouton
+      if (!event.target.closest('.Toastify__toast-container') && !event.target.closest('.submit-button')) {
+        console.log('Click outside toast container and not on the button');
+        dismissToast();
+      }
+    };
+    // Ajoutez un écouteur d'événements pour les clics sur le document
+    document.addEventListener('click', handleClickOutside);
+    // Nettoyez l'écouteur d'événements lorsque le composant est démonté
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className='tunnel-cart-container'>
-      <Paybar isPaymentFormContext={false} isActivationContext={false}/>
+      <Paybar isPaymentFormContext={false} isActivationContext={false} />
       <div className="cart-component-layout-container">
         <div className="cart-component-container">
           <div className="cart-container">
@@ -159,33 +179,21 @@ export function Cart() {
                           </div>
                           <span>{item.platform}</span>
                           <div className="middle-foot">
-                          <button type='submit' onClick={() => removeItem(decodedUserToken.id, item.id)}><IconContext.Provider value={{ size: '1.2em'}}><BsTrash3 /></IconContext.Provider></button>
-
+                            <button type='submit' onClick={() => removeItem(decodedUserToken.id, item.id)}><IconContext.Provider value={{ size: '1.2em' }}><BsTrash3 /></IconContext.Provider></button>
                             <div className="vertical-spacer"></div>
                             <button>Déplacer en wishlist</button>
                           </div>
                         </div>
                         <div className="quantity-selector">
-                          <h3>{convertToEuros(item.price*item.quantity)} €</h3>
+                          <h3>{convertToEuros(item.price * item.quantity)} €</h3>
                           <select
-  className="quantity-dropdown"
-  value={item.quantity}
-  onChange={(e) => {
-    const newQuantity = parseInt(e.target.value);
-    // Appeler la fonction updateQuantity() pour mettre à jour la quantité du produit dans la base de données
-    updateQuantity(decodedUserToken.id, item.productId, item.platform, newQuantity, item.id); // Ajouter l'ID de l'élément du panier à la fonction updateQuantity()
-    // Mettre à jour l'état local du composant avec la nouvelle quantité
-    const newCartData = cart.map((cartItem) => {
-      if (cartItem.id === item.id && cartItem.platform === item.platform) {
-        return { ...cartItem, quantity: newQuantity };
-      }
-      return cartItem;
-    });
-    updateCart(newCartData);
-  }}
->
-
-
+                            className="quantity-dropdown"
+                            value={item.quantity}
+                            onChange={(e) => {
+                              const newQuantity = parseInt(e.target.value);
+                              updateQuantity(decodedUserToken.id, item.productId, item.platform, newQuantity, item.id);
+                            }}
+                          >
                             {(() => {
                               const options = [];
                               for (let i = 1; i <= 10; i++) {
@@ -234,7 +242,7 @@ export function Cart() {
                             {(item.platform === 'Nintendo Switch' || item.platform === 'Super Nintendo') && (
                               <div className='nintendo-icon'>
                                 <IconContext.Provider value={{ size: '1.2em', color: 'white' }}>
-                                  <SiNintendo className='nintendo-svg'/>
+                                  <SiNintendo className='nintendo-svg' />
                                 </IconContext.Provider>
                               </div>
                             )}
@@ -242,14 +250,13 @@ export function Cart() {
                           </div>
                           <span>{item.platform}</span>
                           <div className="middle-foot">
-                          <button type='submit' onClick={() => removeItem(null, item.id)}><IconContext.Provider value={{ size: '1.2em'}}><BsTrash3 /></IconContext.Provider></button>
-
+                            <button type='submit' onClick={() => removeItem(null, item.id)}><IconContext.Provider value={{ size: '1.2em' }}><BsTrash3 /></IconContext.Provider></button>
                             <div className="vertical-spacer"></div>
                             <button>Déplacer en wishlist</button>
                           </div>
                         </div>
                         <div className="quantity-selector">
-                          <h3>{convertToEuros(item.price*item.quantity)} €</h3>
+                          <h3>{convertToEuros(item.price * item.quantity)} €</h3>
                           <select
                             className="quantity-dropdown"
                             value={item.quantity}
@@ -312,5 +319,5 @@ export function Cart() {
         </div>
       </div>
     </div>
-  )
+  );
 }
