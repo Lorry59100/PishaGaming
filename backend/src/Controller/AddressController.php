@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Address;
+use App\Repository\AddressRepository;
 use App\Service\TokenService;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,24 +28,53 @@ class AddressController extends AbstractController
     public function addAddress(Request $request, UserRepository $userRepository, EntityManagerInterface $em) : JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $houseNumber = $data['housenumber'];
-        $street = $data['street'];
-        $postcode = $data['postcode'];
-        $city = $data['city'];
-        $email = $data['email'];
+        $houseNumber = $data['housenumber'] ?? null;
+    $street = $data['street'] ?? null;
+    $postcode = $data['postcode'] ?? null;
+    $city = $data['city'] ?? null;
+    $email = $data['email'] ?? null;
         $user = $userRepository->findOneBy(['email' => $email]);
 
+        // Vérifier si l'utilisateur a déjà des adresses
+        $hasAddresses = !$user->getAddress()->isEmpty();
+
         $address = new Address;
+        // Vérifier et définir les valeurs non nulles
+    if ($houseNumber !== null) {
         $address->setHousenumber($houseNumber);
+    }
+    if ($street !== null) {
         $address->setStreet($street);
+    }
+    if ($postcode !== null) {
         $address->setPostcode($postcode);
+    }
+    if ($city !== null) {
         $address->setCity($city);
+    }
+
+
+        if($hasAddresses == false) {
+            $address->setIsActive(true);
+        } else {
+            $address->setIsActive(false);
+        }
 
         $user->addAddress($address);
         $em->persist($user);
         $em->flush();
 
-        return new JsonResponse(['success' => true, 'data' => $data], 200);
+        // Retourner les données de l'adresse ajoutée
+        $addressData = [
+        'id' => $address->getId(),
+        'housenumber' => $address->getHousenumber() ?? null,
+        'street' => $address->getStreet() ?? null,
+        'city' => $address->getCity() ?? null,
+        'postcode' => $address->getPostcode() ?? null,
+        'isActive' => $address->isIsActive(),
+        ];
+
+        return new JsonResponse(['success' => true, 'data' => $addressData], 200);
     }
 
     /**
@@ -67,6 +97,115 @@ class AddressController extends AbstractController
             'street' => $address->getStreet(),
             'city' => $address->getCity(),
             'postcode' => $address->getPostcode(),
+            'isActive' => $address->isIsActive(),
+        ];
+    }
+        return new JsonResponse($addressArray, 200);
+    }
+
+    /**
+ * @Route("/change-address", name="change_address", methods={"PUT"})
+ */
+public function changeAddress(AddressRepository $addressRepository, EntityManagerInterface $em, Request $request): JsonResponse
+{
+    $data = json_decode($request->getContent(), true);
+
+    // Vérifier que les données reçues sont bien définies
+    if (!isset($data['addressId'])) {
+        return new JsonResponse(['message' => 'Address ID is required'], 400);
+    }
+
+    $user = $this->tokenService->getUserFromRequest($request);
+
+    if ($user instanceof JsonResponse) {
+        // If $userOrResponse is a JsonResponse, there's an error
+        return $user;
+    }
+
+    // Passer l'adresse active à inactive
+    $addresses = $user->getAddress();
+    foreach ($addresses as $singleAddress) {
+        if ($singleAddress->isIsActive()) {
+            $singleAddress->setIsActive(false);
+            $em->persist($singleAddress);
+        }
+    }
+
+    // Passer l'adresse cliquée sur active
+    $addressToChange = $addressRepository->findOneBy([
+        'id' => $data['addressId'],
+    ]);
+
+    if (!$addressToChange) {
+        return new JsonResponse(['message' => 'Address not found'], 404);
+    }
+
+    $addressToChange->setIsActive(true);
+    $em->persist($addressToChange);
+    $em->flush();
+
+    return new JsonResponse(['message' => 'Address changed successfully'], 200);
+}
+
+
+    /**
+     * @Route("/delete-address", name="delete_address", methods={"DELETE"})
+     */
+    public function deleteAddress(AddressRepository $addressRepository, EntityManagerInterface $em, Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        // Vérifier que les données reçues sont bien définies
+        if (!isset($data['addressId'])) {
+            return new JsonResponse(['message' => 'Address ID is required'], 400);
+        }
+
+        $user = $this->tokenService->getUserFromRequest($request);
+
+        if ($user instanceof JsonResponse) {
+            // If $userOrResponse is a JsonResponse, there's an error
+            return $user;
+        }
+
+        // Récupérer l'adresse à supprimer
+        $addressToDelete = $addressRepository->findOneBy([
+            'id' => $data['addressId'],
+        ]);
+
+        if (!$addressToDelete) {
+            return new JsonResponse(['message' => 'Address not found'], 404);
+        }
+
+        // Supprimer l'adresse
+        $em->remove($addressToDelete);
+        $em->flush();
+
+        // Récupérer toutes les adresses de l'utilisateur
+        $userAddresses = $user->getAddress();
+
+        // Vérifier si l'adresse supprimée était active
+        if ($addressToDelete->isIsActive()) {
+            // Trouver une autre adresse à passer à active
+            foreach ($userAddresses as $address) {
+                if (!$address->isIsActive()) {
+                    $address->setIsActive(true);
+                    $em->persist($address);
+                    $em->flush();
+                    break; // Sortir de la boucle après avoir trouvé une adresse à passer à active
+                }
+            }
+        }
+
+        // Retourner les adresses mises à jour
+    $addressArray = [];
+    foreach ($userAddresses as $address) {
+        $addressArray[] = [
+            'id' => $address->getId(),
+            'housenumber' => $address->getHouseNumber(),
+            'street' => $address->getStreet(),
+            'city' => $address->getCity(),
+            'postcode' => $address->getPostcode(),
+            'isActive' => $address->isIsActive(),
         ];
     }
         return new JsonResponse($addressArray, 200);
