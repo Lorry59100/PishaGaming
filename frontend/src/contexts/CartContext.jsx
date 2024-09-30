@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { decodeToken } from 'react-jwt';
 import axios from 'axios';
 import { URL, URL_USER_CART } from '../constants/urls/URLBack';
+import { ToastCenteredWarning } from '../components/services/toastService';
 
 const CartContext = createContext();
 
@@ -34,11 +35,13 @@ export const CartProvider = ({ children }) => {
           const fetchData = async () => {
             try {
               // Effectuer une requête au backend pour obtenir le panier de l'utilisateur
-              const response = await axios.get(`${URL}${URL_USER_CART}/${userId}`, {
-                params: { cart: cart },
-              });
-              if (response.data) {
-                setCart(response.data);
+              const response = await axios.get(`${URL}${URL_USER_CART}/${userId}`);
+              if (response.data && response.data.carts) {
+                setCart(response.data.carts);
+                if (response.data.message) {
+                  console.log(response.data.message); // Gérer le message si nécessaire
+                  ToastCenteredWarning(response.data.message)
+                }
               }
             } catch (error) {
               console.error('Erreur lors de la récupération du panier utilisateur :', error);
@@ -48,17 +51,20 @@ export const CartProvider = ({ children }) => {
           // Mise à jour de la référence après l'exécution du code
           fetchDataExecuted.current = true;
         }
-      }, [decodedUserToken, cart]);
+      }, [decodedUserToken]);
 
       const updateCart = useCallback((newCart) => {
         if (decodedUserToken) {
           const userId = decodedUserToken.id;
+          const params = { cart: cart };
+          console.log('Params envoyés :', params);
           axios.get(`${URL}${URL_USER_CART}/${userId}`, {
             params: { cart: cart },
           })
           .then(response => {
-            if (response.data && JSON.stringify(response.data) !== JSON.stringify(cart)) {
-              setCart(response.data);
+            console.log('Réponse du backend :', response.data);
+            if (response.data && response.data.carts && JSON.stringify(response.data.carts) !== JSON.stringify(cart)) {
+              setCart(response.data.carts);           
             }
           })
           .catch(error => {
@@ -69,13 +75,8 @@ export const CartProvider = ({ children }) => {
           setCart(newCart);
         }
       }, [decodedUserToken, cart]);
-
-      // Mettre à jour le panier une fois user déconnecté
-      useEffect(() => {
-        if (!decodedUserToken && fetchDataExecuted.current) {
-          resetCart();
-        }
-      }, [decodedUserToken, resetCart]);
+      
+      
 
       return (
         <CartContext.Provider value={{ cart, updateCart, resetCart }}>
