@@ -15,7 +15,7 @@ class Address
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $housenumber = null;
 
     #[ORM\Column(length: 255)]
@@ -29,6 +29,9 @@ class Address
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'address')]
     private Collection $users;
+
+    #[ORM\Column]
+    private ?bool $isActive = null;
 
     public function __construct()
     {
@@ -45,7 +48,7 @@ class Address
         return $this->housenumber;
     }
 
-    public function setHousenumber(string $housenumber): static
+    public function setHousenumber(?string $housenumber): static
     {
         $this->housenumber = $housenumber;
 
@@ -111,6 +114,18 @@ class Address
         if ($this->users->removeElement($user)) {
             $user->removeAddress($this);
         }
+
+        return $this;
+    }
+
+    public function isIsActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): static
+    {
+        $this->isActive = $isActive;
 
         return $this;
     }
