@@ -33,6 +33,5 @@ export const getSuggestions = async (query) => {
       setSelectedSuggestion(selectedSuggestion);
       setSelectedAddress(selectedSuggestion.properties.label);
       setSuggestions([]);
-    } else {
     }
   };
