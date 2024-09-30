@@ -8,6 +8,15 @@ import { PiPencilSimpleLineFill } from "react-icons/pi";
 import { IconContext } from "react-icons";
 import { useNavigate } from 'react-router-dom';
 
+
+// Fonction utilitaire pour tronquer le texte
+const truncateText = (text, maxLength) => {
+    if (text.length > maxLength) {
+      return text.substring(0, maxLength) + '...';
+    }
+    return text;
+  };
+
 export function Tests() {
     const { decodedUserToken } = useTokenService();
     const [tests, setTests] = useState([]);
@@ -41,7 +50,7 @@ export function Tests() {
                     <div key={test.id} className="test-user-item">
                         <img src={test.img} alt={test.id} />
                         <RatingCircle singleRating={test.rate} />
-                        <h5>{test.comment}</h5>
+                        <h5 className="test-desc">{truncateText(test.comment, 200)}</h5>
                         <button className='submit-button user-test-btn' onClick={() => navigate(`/single-product/${test.productId}`, { state: { editTest: true } })}>
                             <h4>Editer mon avis</h4>
                             <IconContext.Provider value={{ size: "1em"}}>
