@@ -30,7 +30,7 @@ export function RetroGamingSelection() {
     {games.map(game => (
         <div key={game.id} className='game-container'>
             <div className="game-card">
-                <Link to={`${URL_SINGLE_PRODUCT}/${game.id}`}><img src={game.img} alt={game.name} /></Link>
+                <Link to={`${URL_SINGLE_PRODUCT}/${game.id}`}><img src={`${URL}/uploads/images/products/videogames/main_img/${game.img}`} alt={game.name} /></Link>
                 <div className="discount-label-cards">
                     <h5><strong>-</strong>{calculateDiscountPercentage(game.old_price, game.price)}</h5>
                 </div>
