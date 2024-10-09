@@ -70,6 +70,9 @@ class Product
     #[ORM\OneToMany(mappedBy: 'product', targetEntity: Cart::class)]
     private Collection $carts;
 
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: SideImages::class)]
+    private Collection $side_imgs;
+
     public function __construct()
     {
         $this->genre = new ArrayCollection();
@@ -78,6 +81,7 @@ class Product
         $this->tests = new ArrayCollection();
         $this->orderDetails = new ArrayCollection();
         $this->carts = new ArrayCollection();
+        $this->side_imgs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -385,6 +389,36 @@ class Product
             // set the owning side to null (unless already changed)
             if ($cart->getProduct() === $this) {
                 $cart->setProduct(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SideImages>
+     */
+    public function getSideImgs(): Collection
+    {
+        return $this->side_imgs;
+    }
+
+    public function addSideImg(SideImages $sideImg): static
+    {
+        if (!$this->side_imgs->contains($sideImg)) {
+            $this->side_imgs->add($sideImg);
+            $sideImg->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSideImg(SideImages $sideImg): static
+    {
+        if ($this->side_imgs->removeElement($sideImg)) {
+            // set the owning side to null (unless already changed)
+            if ($sideImg->getProduct() === $this) {
+                $sideImg->setProduct(null);
             }
         }
 
