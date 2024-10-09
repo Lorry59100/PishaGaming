@@ -253,13 +253,13 @@ export function SingleProduct() {
         )}
 
         <div className="background-header-container">
-            <div className="background-header" style={{ backgroundImage: `url(${product.img})` }}></div>
+            <div className="background-header" style={{ backgroundImage: `url(${URL}/uploads/images/products/videogames/main_img/${product.img})` }}></div>
         </div>
 
         <div className="dual-cards-container">
 
             <div className="single-product-img-container">
-                <img src={product.img} alt={product.name} />
+                <img src={`${URL}/uploads/images/products/videogames/main_img/${product.img}`} alt={product.name} />
             </div>
 
             {/* EN STOCK */}
@@ -453,20 +453,26 @@ export function SingleProduct() {
                 <div className="visuals-container">
                         <h1>Visuels</h1>
                         <div className="video-container">
-                            <iframe width="100%" height="700px" src={product.trailer.replace("http://www.youtube.com", "https://www.youtube.com")} title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+                        <video width="100%" height="700px" controls>
+    <source src={`${URL}/uploads/videos/videogames/trailer/${product.trailer}`} type="video/mp4" />
+    <source src={`${URL}/uploads/videos/videogames/trailer/${product.trailer}`} type="video/webm" />
+    <source src={`${URL}/uploads/videos/videogames/trailer/${product.trailer}`} type="video/x-matroska" />
+    Your browser does not support the video tag.
+</video>
+
                         </div>
                         <div className="screenshots-container">
                             <div className="main-img">
-                                <img src={product.img} alt={product.name} />
+                                <img src={`${URL}/uploads/images/products/videogames/main_img/${product.img}`} alt={product.name} />
                             </div>
                             <div className="gallery">
                                 <div className="gallery-line">
-                                    <img src={product.img} alt={product.name} />
-                                    <img src={product.img} alt={product.name} />
+                                    <img src={`${URL}/uploads/images/products/videogames/main_img/${product.img}`} alt={product.name} />
+                                    <img src={`${URL}/uploads/images/products/videogames/main_img/${product.img}`} alt={product.name} />
                                 </div>
                                 <div className="gallery-line">
-                                    <img src={product.img} alt={product.name} />
-                                    <img src={product.img} alt={product.name} />
+                                    <img src={`${URL}/uploads/images/products/videogames/main_img/${product.img}`} alt={product.name} />
+                                    <img src={`${URL}/uploads/images/products/videogames/main_img/${product.img}`} alt={product.name} />
                                 </div>
                             </div>
                         </div>
