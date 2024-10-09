@@ -33,7 +33,7 @@ function GameBanner() {
                 {randomProduct && (
                     <div className='random-game-container'>
                         <div key={randomProduct.id}>
-                            <div className="background-header" style={{ backgroundImage: `url(${randomProduct.img})` }}></div>
+                            <div className="background-header" style={{ backgroundImage: `url(${URL}/uploads/images/products/videogames/main_img/${randomProduct.img})` }}></div>
                             <div className="random-game-content">
                                 <h1>{randomProduct.name}</h1>
                                 <div className="random-game-price">
