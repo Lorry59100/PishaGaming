@@ -34,6 +34,19 @@ class GameFixtures extends Fixture implements DependentFixtureInterface
         $this->fetchGamesFromApi($manager, $apiKey, '2000-01-01,2023-12-31', 25, 3);
     }
 
+    private function downloadImage($url, $destination)
+    {
+        $httpClient = HttpClient::create();
+        $response = $httpClient->request('GET', $url);
+
+        if ($response->getStatusCode() === 200) {
+            file_put_contents($destination, $response->getContent());
+            return basename($destination); // Retourne uniquement le nom du fichier
+        }
+
+        return false;
+    }
+
     private function fetchGamesFromApi(ObjectManager $manager, $apiKey, $dates, $pageSize, $page) {
         $httpClient = HttpClient::create();
 
@@ -79,7 +92,17 @@ class GameFixtures extends Fixture implements DependentFixtureInterface
                 } else {
                     $game->setDev('inconnu');
                 }
-                $game->setImg($gameData['background_image']);
+
+                // Télécharger et enregistrer l'image
+                $imageUrl = $gameData['background_image'];
+                $imagePath = __DIR__ . '/../../public/uploads/images/products/videogames/main_img/' . uniqid() . '.jpg';
+                $imageFileName = $this->downloadImage($imageUrl, $imagePath);
+                if ($imageFileName) {
+                    $game->setImg($imageFileName);
+                } else {
+                    $game->setImg('default_image_path.jpg'); // Chemin par défaut si le téléchargement échoue
+                }
+                
                 $game->setStock(rand(0, 99));
 
                 $game->setOldPrice(rand(100, 15000));
