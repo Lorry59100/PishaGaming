@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { URL, URL_GENRES_LIST, URL_PLATFORMS_LIST, URL_PRODUCTS_LIST, URL_SINGLE_PRODUCT } from "../../constants/urls/URLBack";
+import { URL, URL_GENRES_LIST, URL_MAIN_IMG, URL_PLATFORMS_LIST, URL_PRODUCTS_LIST, URL_SINGLE_PRODUCT } from "../../constants/urls/URLBack";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { calculateDiscountPercentage, convertToEuros } from "./services/PriceServices";
 import "../../assets/styles/components/gamestaffselection.css"
@@ -268,7 +268,7 @@ function Search() {
         currentProducts.map(game => (
           <div key={game.id} className='game-container'>
             <div className="game-card">
-              <Link to={`${URL_SINGLE_PRODUCT}/${game.id}`}><img src={game.img} alt={game.name} /></Link>
+              <Link to={`${URL_SINGLE_PRODUCT}/${game.id}`}><img src={`${URL}${URL_MAIN_IMG}/${game.img}`} alt={game.name} /></Link>
               <div className="discount-label-cards">
                 <h5><strong>-</strong>{calculateDiscountPercentage(game.old_price, game.price)}</h5>
               </div>
