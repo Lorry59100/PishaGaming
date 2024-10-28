@@ -6,7 +6,7 @@ import "../../../assets/styles/components/paymentform.css";
 import { PiPencilSimpleLineFill } from 'react-icons/pi';
 import { IconContext } from "react-icons";
 import { useTokenService } from "../services/tokenService";
-import { URL, URL_USER_CART } from "../../../constants/urls/URLBack";
+import { URL, URL_IMG, URL_USER_CART, URL_VG_IMG, URL_VG_MAIN_IMG } from "../../../constants/urls/URLBack";
 import { calculateTotal, convertToEuros } from "../../products/services/PriceServices";
 import { Elements } from '@stripe/react-stripe-js';
 import CheckoutForm from "./CheckoutForm";
@@ -17,12 +17,11 @@ import { addDays } from 'date-fns';
 export function PaymentForm() {
   const { hideNavbar, showNavbar } = useContext(NavbarVisibilityContext);
   const { decodedUserToken } = useTokenService();
-  const [cartData, setCartData] = useState(null);
-  const totalPrice = calculateTotal(cartData);
+  const [cartData, setCartData] = useState({ carts: [], message: "" });
+  const totalPrice = calculateTotal(cartData.carts);
   const [stripe, setStripe] = useState(null);
   const checkoutFormRef = useRef();
   const [selectedDate, setSelectedDate] = useState(null);
-  
 
   useEffect(() => {
     document.body.classList.add('unset-padding');
@@ -69,8 +68,6 @@ export function PaymentForm() {
     }
   }, [decodedUserToken]);
 
-  console.log('dans le panier :', cartData)
-
   return (
     <div>
       <Paybar isPaymentFormContext={true} isActivationContext={true} />
@@ -81,69 +78,70 @@ export function PaymentForm() {
               <h2>Adresse de facturation</h2>
               <div className="info-change-container">
                 <div className="address-info">
-                  <h4>CARREL Lorry</h4>
-                  <h5>17 rue Isabeau de Roubaix, 59100 ROUBAIX</h5>
+                <h4>CARREL Lorry</h4>
+                <h5>17 rue Isabeau de Roubaix, 59100 ROUBAIX</h5>
                 </div>
                 <div className="change-address">
-                  <IconContext.Provider value={{ size: "1.2em"}}>
-                    <PiPencilSimpleLineFill/>
-                  </IconContext.Provider>
+                <IconContext.Provider value={{ size: "1.2em"}}>
+                <PiPencilSimpleLineFill/>
+                </IconContext.Provider>
                 </div>
               </div>
-              {cartData && cartData.length > 0 && cartData.some(item => item.isPhysical) && (
-  <div className="date-picker-container">
-    <h2>Vous devez choisir une date de livraison pour les produits suivants</h2>
-    <div className="physical-products-container">
-
+              {cartData.carts && cartData.carts.length > 0 && cartData.carts.some(item => item.isPhysical) && (
+                <div className="date-picker-container">
+                  <h2>Vous devez choisir une date de livraison pour les produits suivants</h2>
+                  <div className="physical-products-container">
                     <div className="datepicker-container">
                       <h5>Date de livraison</h5>
                       <DatePicker
-                        className="deliveryDate"
-                        dateFormat="dd/MM/yyyy"
-                        placeholderText="Date de livraison"
-                        selected={selectedDate}
-                        minDate={addDays(new Date(), 2)}
-                        onChange={date => setSelectedDate(date)}
+                      className="deliveryDate"
+                      dateFormat="dd/MM/yyyy"
+                      placeholderText="Date de livraison"
+                      selected={selectedDate}
+                      minDate={addDays(new Date(), 2)}
+                      onChange={date => setSelectedDate(date)}
                       />
                     </div>
-
-      <div className="delivery-items-container">
-
-      {cartData && cartData.filter(item => (item.category === 'Hardware' || (item.category === 'Jeux Vidéos' && item.isPhysical))).map((item, index) => (
-  <div key={index} className="physical-product">
-    <img src={item.img} alt={item.name} />
-    <div className="single-physical-product">
-      <h4>{item.name}</h4>
-      <span className={item.quantity > 1 ? 'multiple-items' : ''}>
-        {item.quantity > 1 ? `x${item.quantity} ` : ''}
-        {/* {item.platform} */}
-      </span>
-    </div>
-  </div>
-))}
-
-
-      </div>
-    </div>
-  </div>
-)}
+                    <div className="delivery-items-container">
+                      {cartData.carts && cartData.carts.filter(item => (item.category === 'Hardware' || (item.category === 'Jeux Vidéos' && item.isPhysical))).map((item, index) => (
+                        <div key={index} className="physical-product">
+                          <img src={`${URL}${URL_IMG}${URL_VG_IMG}${URL_VG_MAIN_IMG}/${item.img}`} alt={item.name} />
+                          <h4 className="physical-product-name">{item.name}</h4>
+                          <div className="multiple-items">
+                            <div className="delivery-platform">
+                              <img src={`/src/assets/img/platforms/${item.platform}.png`} alt={item.platform} className='logo-img-delivery' />
+                            </div>
+                            {item.quantity > 1 && (
+                              <div className="delivery-quantity">
+                              <h4>
+                                {`x${item.quantity} `}
+                              </h4>
+                            </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
             <div className="payform-container">
               <h2>Méthode de paiement</h2>
               <Elements stripe={stripe}>
-                <CheckoutForm cartData={cartData} selectedDate={selectedDate} ref={checkoutFormRef}/>
+                <CheckoutForm cartData={cartData.carts} selectedDate={selectedDate} ref={checkoutFormRef}/>
               </Elements>
             </div>
           </div>
           <div className="summary-and-total-container">
             <h2>Résumé</h2>
-            {cartData && cartData.map((item, index) => (
+            {cartData.carts && cartData.carts.map((item, index) => (
               <div key={item.id} className="items-container">
                 <div className="single-item-container">
                   <div className="product-info-quantity">
                     <h3>
                       {item.name}
-                      <span className={item.quantity > 1 ? 'multiple-items' : ''}>
+                      <span className={item.quantity > 1 ? 'multiple-items-info' : ''}>
                         {item.quantity > 1 ? `x${item.quantity} ` : ''}
                       </span>
                     </h3>
@@ -153,7 +151,7 @@ export function PaymentForm() {
                     <h4>{convertToEuros(item.price*item.quantity)} €</h4>
                   </div>
                 </div>
-                {index !== cartData.length - 1 && <div className="cutline-summary-form"></div>}
+                {index !== cartData.carts.length - 1 && <div className="cutline-summary-form"></div>}
               </div>
             ))}
             <div className="white-line"></div>
