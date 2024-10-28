@@ -5,7 +5,7 @@ import { IconContext } from "react-icons";
 import { AiOutlineCheck, AiOutlineClose, AiOutlineMinusCircle } from 'react-icons/ai';
 import { TiShoppingCart } from 'react-icons/ti';
 import { ImCross, ImPriceTag } from 'react-icons/im';
-import {URL, URL_SINGLE_PRODUCT, URL_ADD_TO_CART, URL_USER_CART, URL_VOTE_TEST, URL_USER_AVATAR } from '../../constants/urls/URLBack';
+import {URL, URL_SINGLE_PRODUCT, URL_ADD_TO_CART, URL_USER_CART, URL_VOTE_TEST, URL_USER_AVATAR, URL_ADD_TO_WISHLIST, URL_GET_WISHLIST, URL_MAIN_IMG, URL_TRAILER, URL_IMG } from '../../constants/urls/URLBack';
 import logo from '../../assets/img/Logo.png';
 import { IoIosAddCircleOutline } from 'react-icons/io';
 import { PiPencilSimpleLineFill, PiUserBold } from 'react-icons/pi';
@@ -13,7 +13,7 @@ import "../../assets/styles/components/singleproduct.css"
 import RatingCircle from './RatingCircle';
 import { calculateDiscountPercentage, convertToEuros } from './services/PriceServices';
 import { formatDate } from '../account/services/dateServices';
-import { FaCheck, FaRegHeart } from "react-icons/fa";
+import { FaCheck, FaHeart, FaRegHeart } from "react-icons/fa";
 import parse from 'html-react-parser';
 import { useTokenService } from '../account/services/tokenService';
 import { CartContext } from '../../contexts/CartContext';
@@ -21,6 +21,7 @@ import { LuThumbsDown, LuThumbsUp } from "react-icons/lu";
 import { LoginAndRegisterForm } from '../account/forms/LoginAndRegisterForm';
 import { TestForm } from '../account/forms/TestForm';
 import { dismissToast, ToastCenteredWarning } from '../services/toastService';
+import { URL_CART } from '../../constants/urls/URLFront';
 
 function parseHTML(html, maxLength = null) {
     const tempDiv = document.createElement('div');
@@ -47,6 +48,7 @@ export function SingleProduct() {
     const location = useLocation();
     /* const [editTestId, setEditTestId] = useState(null); */
     const [expandedComments, setExpandedComments] = useState({});
+    const [wishlist, setWishlist] = useState([]);
     const toggleComment = (testId, section) => {
         setExpandedComments(prevState => ({
             ...prevState,
@@ -74,6 +76,73 @@ export function SingleProduct() {
             setSelectedPlatform(product.plateformes[0].name);
         }
     }, [product]);
+
+    
+    const getWishlist = useCallback(async (decodedUserToken) => {
+        if (!decodedUserToken) {
+            console.error('decodedUserToken is undefined');
+            return;
+        }
+
+        try {
+            const response = await axios.get(`${URL}${URL_GET_WISHLIST}`, {
+                headers: {
+                    'Authorization': `Bearer ${decodedUserToken.username}`,
+                }
+            });
+
+            if (response.data) {
+                setWishlist(response.data);
+            } else {
+                console.error('Invalid server response:', response);
+            }
+        } catch (error) {
+            console.error('Erreur lors de la récupération de la wishlist:', error);
+        }
+    }, [] );
+
+    useEffect(() => {
+        if (decodedUserToken) {
+            getWishlist(decodedUserToken);
+        }
+    }, [decodedUserToken, getWishlist]);
+
+    const isProductInWishlist = (wishlist, productId) => {
+        return wishlist.some(item => {
+            if (item.product && typeof item.product.id !== 'undefined') {
+                return item.product.id == productId;
+            } else {
+                console.error('item.product or item.product.id is undefined');
+                return false;
+            }
+        });
+    };
+    
+    const addToWishlist = async (productId, decodedUserToken) => {
+        if (!decodedUserToken) {
+            console.error('decodedUserToken is undefined');
+            return;
+        }
+
+        try {
+            const response = await axios.post(`${URL}${URL_ADD_TO_WISHLIST.replace(':id', productId)}`, {
+                userId: decodedUserToken.id
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.data.success) {
+                getWishlist(decodedUserToken);
+            } else {
+                alert('Erreur : ' + response.data.error);
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'ajout à la wishlist:', error);
+            alert('Une erreur s\'est produite lors de l\'ajout à la wishlist.');
+        }
+    };
 
     const addToCart = (redirect) => {
         if (!decodedUserToken) {
@@ -122,7 +191,7 @@ export function SingleProduct() {
                   if (cartResponse.data && Array.isArray(cartResponse.data.carts)) {
                     updateCart(cartResponse.data.carts);
                     if (redirect) {
-                      navigate('/cart');
+                      navigate(`${URL_CART}`);
                     }
                   } else {
                     console.error('Invalid cart response:', cartResponse);
@@ -154,7 +223,6 @@ export function SingleProduct() {
             axios.post(`${URL}${URL_VOTE_TEST}${testId}`, data, { headers })
                 .then(response => {
                     const updatedTest = response.data;
-                    console.log('Updated test:', updatedTest);
                     setProduct(prevProduct => {
                         const updatedTests = prevProduct.tests.map(test => {
                             if (test.id === testId) {
@@ -189,7 +257,6 @@ export function SingleProduct() {
         setShowTestForm(false);
     };
 
-    
     const updateTests = useCallback(() => {
         const headers = decodedUserToken
             ? { 'Authorization': `Bearer ${decodedUserToken.username}` }
@@ -224,7 +291,6 @@ export function SingleProduct() {
         const handleClickOutside = (event) => {
           // Vérifiez si le clic est en dehors du toast container et non sur le bouton
             if (!event.target.closest('.Toastify__toast-container') && !event.target.closest('.submit-button')) {
-                console.log('Click outside toast container and not on the button');
                 dismissToast();
             }
         };
@@ -240,9 +306,6 @@ export function SingleProduct() {
         return <div>Chargement en cours...</div>;
     }
 
-    console.log(product);
-    console.log('testExist :', testExist);
-
     return (
         <div className='single-product-container'>
 
@@ -253,20 +316,26 @@ export function SingleProduct() {
         )}
 
         <div className="background-header-container">
-            <div className="background-header" style={{ backgroundImage: `url(${URL}/uploads/images/products/videogames/main_img/${product.img})` }}></div>
+            <div className="background-header" style={{ backgroundImage: `url(${URL}${URL_MAIN_IMG}/${product.img})` }}></div>
         </div>
 
         <div className="dual-cards-container">
 
             <div className="single-product-img-container">
-                <img src={`${URL}/uploads/images/products/videogames/main_img/${product.img}`} alt={product.name} />
+                <img src={`${URL}${URL_MAIN_IMG}/${product.img}`} alt={product.name} />
             </div>
 
             {/* EN STOCK */}
             {product.stock > 0 && (
             <div className="buy-info-container">
-                <IconContext.Provider value={{ size: "1.5em" }}>
-                    <FaRegHeart className='heart' />
+                <IconContext.Provider value={{ size: "2em" }}>
+                    <button type="submit" onClick={() => addToWishlist(id, decodedUserToken)}>
+                {isProductInWishlist(wishlist, id) ? (
+                        <FaHeart className='heart' />
+                    ) : (
+                            <FaRegHeart className='heart' />
+                        )}
+                        </button>
                 </IconContext.Provider>
                 <div className="title">
                     <h1>{product.name}</h1>
@@ -454,25 +523,25 @@ export function SingleProduct() {
                         <h1>Visuels</h1>
                         <div className="video-container">
                         <video width="100%" height="700px" controls>
-    <source src={`${URL}/uploads/videos/videogames/trailer/${product.trailer}`} type="video/mp4" />
-    <source src={`${URL}/uploads/videos/videogames/trailer/${product.trailer}`} type="video/webm" />
-    <source src={`${URL}/uploads/videos/videogames/trailer/${product.trailer}`} type="video/x-matroska" />
+    <source src={`${URL}${URL_TRAILER}/${product.trailer}`} type="video/mp4" />
+    <source src={`${URL}${URL_TRAILER}/${product.trailer}`} type="video/webm" />
+    <source src={`${URL}${URL_TRAILER}/${product.trailer}`} type="video/x-matroska" />
     Your browser does not support the video tag.
 </video>
 
                         </div>
                         <div className="screenshots-container">
                             <div className="main-img">
-                                <img src={`${URL}/uploads/images/products/videogames/main_img/${product.img}`} alt={product.name} />
+                                <img src={`${URL}${URL_MAIN_IMG}/${product.img}`} alt={product.name} />
                             </div>
                             <div className="gallery">
                                 <div className="gallery-line">
-                                    <img src={`${URL}/uploads/images/products/videogames/main_img/${product.img}`} alt={product.name} />
-                                    <img src={`${URL}/uploads/images/products/videogames/main_img/${product.img}`} alt={product.name} />
+                                <img src={`${URL}${URL_MAIN_IMG}/${product.img}`} alt={product.name} />
+                                <img src={`${URL}${URL_MAIN_IMG}/${product.img}`} alt={product.name} />
                                 </div>
                                 <div className="gallery-line">
-                                    <img src={`${URL}/uploads/images/products/videogames/main_img/${product.img}`} alt={product.name} />
-                                    <img src={`${URL}/uploads/images/products/videogames/main_img/${product.img}`} alt={product.name} />
+                                <img src={`${URL}${URL_MAIN_IMG}/${product.img}`} alt={product.name} />
+                                <img src={`${URL}${URL_MAIN_IMG}/${product.img}`} alt={product.name} />
                                 </div>
                             </div>
                         </div>
@@ -595,7 +664,7 @@ export function SingleProduct() {
                 <div className="test-item-head">
                     <div className="publisher">
                         {test.avatar ? (
-                            <img src={`${URL}/uploads/images/${test.avatar}`} alt="User Image" className="user-img-circled" />
+                            <img src={`${URL}${URL_IMG}/${test.avatar}`} alt="User Image" className="user-img-circled" />
                         ) : (
                             <IconContext.Provider value={{ size: '2em'}}>
                                 <PiUserBold className='user-icon-circled'/>
