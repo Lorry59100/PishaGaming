@@ -6,12 +6,12 @@ import logo from '../../../assets/img/Logo.png';
 import Searchbar from './Searchbar';
 import '../../../assets/styles/components/navbar.css';
 import { useTokenService } from '../../account/services/tokenService';
-import { URL, URL_ADMIN, URL_USER_ORDER } from '../../../constants/urls/URLBack';
+import { URL, URL_ADMIN, URL_IMG } from '../../../constants/urls/URLBack';
 import { Link } from 'react-router-dom';
 import { LoginAndRegisterForm } from '../../account/forms/LoginAndRegisterForm';
 import { NavbarVisibilityContext } from '../../../contexts/NavbarVisibilityContext';
 import { useContext } from 'react';
-import { URL_ACCOUNT, URL_CART, URL_HOME, URL_ORDER_HISTORIC, URL_PARAMETERS } from '../../../constants/urls/URLFront';
+import { URL_ACCOUNT, URL_CART, URL_HOME, URL_ORDER_HISTORIC, URL_PARAMETERS, URL_WISHLIST } from '../../../constants/urls/URLFront';
 import { CartContext } from '../../../contexts/CartContext';
 import axios from 'axios';
 
@@ -31,7 +31,6 @@ function Navbar() {
     if (decodedUserToken) {
       const headers = {
         'Authorization': `Bearer ${decodedUserToken.username}`,
-        // autres en-têtes si nécessaire...
       };
 
       axios.get(`${URL}/get-user-data`, {headers})
@@ -44,12 +43,9 @@ function Navbar() {
     }
   }, [decodedUserToken]);
 
-  console.log('cart de la navbar : ', cart)
-
   // Utilisation de useMemo pour mémoriser le calcul du nombre d'items dans le panier
   const itemCount = useMemo(() => {
     const count = cart ? cart.reduce((total, item) => total + item.quantity, 0) : 0;
-    console.log('Item count calculated:', count);
     return count;
   }, [cart]);
 
@@ -84,7 +80,6 @@ function Navbar() {
       const isScrolled = window.scrollY > 0;
       if (isScrolled !== scrolled) {
         setScrolled(isScrolled);
-        console.log(isScrolled)
       }
       const shouldShowLinks = window.scrollY === 0;
       if (shouldShowLinks !== isVisible) {
@@ -169,7 +164,7 @@ function Navbar() {
               )}
               {decodedUserToken && userData && userData.img && (
                 <button onClick={toggleProfileVisibility}>
-                  <img src={`${URL}/uploads/images/${userData.img}`} alt="User Image" className="user-img-circled-navbar"/>
+                  <img src={`${URL}${URL_IMG}/${userData.img}`} alt="User Image" className="user-img-circled-navbar"/>
                 </button>
               )}
             </IconContext.Provider>
@@ -183,7 +178,7 @@ function Navbar() {
                   <Link to={`${URL_ACCOUNT}${URL_ORDER_HISTORIC}`} onClick={handleLinkClick}>Achats</Link>
                   </li>
                   <li>
-                  <Link to={`${URL_USER_ORDER}`} onClick={handleLinkClick}>Wishlist</Link>
+                  <Link to={`${URL_ACCOUNT}${URL_WISHLIST}`} onClick={handleLinkClick}>Wishlist</Link>
                   </li>
                   {decodedUserToken && (
                     <div className='user-panel-connected'>
