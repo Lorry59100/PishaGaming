@@ -2,13 +2,14 @@ import { NavbarVisibilityContext } from "../../contexts/NavbarVisibilityContext"
 import { useContext, useEffect, useState } from 'react';
 import { Paybar } from "../layouts/Navbar/Paybar";
 import "../../assets/styles/components/activation.css"
-import { URL, URL_GET_ORDER } from "../../constants/urls/URLBack";
+import { URL, URL_GET_ORDER, URL_IMG, URL_VG_IMG, URL_VG_MAIN_IMG } from "../../constants/urls/URLBack";
 import { useTokenService } from "./services/tokenService";
 import axios from 'axios'
 import { convertToEuros } from "../products/services/PriceServices";
 import { IconContext } from "react-icons";
 import { formatDate } from "./services/dateServices";
 import { IoIosWarning } from "react-icons/io";
+import { PLATFORM_IMG } from "../../constants/urls/URLFront";
 
 export function Activation() {
 const { hideNavbar, showNavbar } = useContext(NavbarVisibilityContext);
@@ -95,8 +96,10 @@ useEffect(() => {
                   return (
                     <div key={index} className="order-detail">
                       <div className="order-img-container">
-                        <div className="platform-order-icon"><img src={`/src/assets/img/platforms/${orderDetail.platform}.png`} alt={orderDetail.name} /></div>
-                        <img src={orderDetail.img} alt={orderDetail.name} />
+                        <div className="img-container">
+                          <div className="platform-order-icon"><img src={`${PLATFORM_IMG}/${orderDetail.platform}.png`} alt={orderDetail.name} /></div>
+                          <img src={`${URL}${URL_IMG}${URL_VG_IMG}${URL_VG_MAIN_IMG}/${orderDetail.img}`} alt={orderDetail.name} />
+                        </div>
                       </div>
                       <div className="order-infos-container">
                         <div className="order-info-title">
