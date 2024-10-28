@@ -57,7 +57,7 @@
     margin: 1em;
     border-radius: 10px;
 }
-.single-order-detail-container>img {
+.single-order-detail-container>.img-container>img {
     width: 350px;
     height: 200px;
     border-radius: 10px;
@@ -73,4 +73,16 @@ color: var(--grey)
 .single-order-details-bottom-container>p {
 margin-left: 1em;
 color: var(--grey);
+}
+
+.logo-img-order-container {
+width: 40px;
+height: 40px;
+background-color: black;
+padding: 0.5em;
+border-radius: 50%;
+display: flex;
+position: absolute;
+top: 0;
+right: 0;
 }

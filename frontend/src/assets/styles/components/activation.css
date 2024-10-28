@@ -23,11 +23,8 @@ grid-column: span 6;
 }
 
 .order-detail {
-display: grid;
-grid-template-columns: repeat(6, 1fr);
-gap: 2em;
 background: var(--medium-dark);
-padding: 2em;
+padding: 3em;
 margin: 1em;
 border-radius: 10px;
 }
@@ -39,9 +36,9 @@ flex-direction: column;
 justify-content: center;
 align-items: center;
 }
-.order-img-container>img {
-width: 200px;
-height: 100px;
+.order-img-container>.img-container>img {
+width: 380px;
+height: 218px;
 border-radius: 10px;
 }
 
@@ -55,7 +52,7 @@ align-items: center;
 
 .order-info-title {
 display: flex;
-justify-content: space-around;
+justify-content: center;
 width: 100%;
 }
 
@@ -100,11 +97,19 @@ transform: translate(-50%, -50%);
 color: white;
 }
 
+.img-container {
+  position: relative;
+}
+
 .platform-order-icon {
-margin-bottom: 1em;
 background-color: black;
 padding: 1em;
 border-radius: 50%;
+width: 50px;
+height: 50px;
+position: absolute;
+bottom: 80%;
+  left: 89%;
 }
 
 .platform-order-icon>img {

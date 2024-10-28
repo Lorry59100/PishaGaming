@@ -130,8 +130,36 @@ padding-bottom: 0.5em;
 }
 
 .multiple-items {
-color: var(--grey);
-margin-left: 0.5em;
+color: white;
+/* background-color: purple; */
+width: 6px;
+height: 100px;
+padding: 0.8em;
+border-radius: 50px;
+position: absolute;
+right: 0;
+bottom: 25px;
+margin-bottom: 0.5em;
+}
+
+.multiple-items {
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+.multiple-items>* {
+margin: 1em;
+}
+
+.multiple-items-info {
+    margin-left: 0.5em;
+    color: var(--grey);
+}
+
+.logo-img-delivery {
+    width: 16px;
+    height: 16px;
 }
 
 .datepicker-container {
@@ -139,6 +167,7 @@ display: flex;
 flex-direction: column;
 justify-content: center;
 align-items: center;
+margin-bottom: 1em;
 }
 
 .datepicker-container>h5 {
@@ -146,9 +175,41 @@ color: white;
 margin-bottom: 0.2em;
 }
 
+.physical-product {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    justify-content: space-between;
+}
+
 .single-physical-product {
 display: flex;
 align-items: center;
 color: white;
 }
+
+.physical-product-name {
+    text-align: center;
+    margin-top: 0.5em;
+}
+
+.delivery-quantity, .delivery-platform {
+background-color: black;
+width: 16px;
+height: 16px;
+padding: 0.8em;
+border-radius: 50px;
+position: absolute;
+right: -10px;
+}
+
+.delivery-platform {
+top: -16px;
+}
+
+.delivery-quantity {
+    bottom: -16px;
+}
+
+
 

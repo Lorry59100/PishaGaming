@@ -41,7 +41,7 @@ border-radius: 10px;
 
 .cart-products {
 background: var(--medium-dark);
-padding: 1em;
+padding: 1.5em;
 border-radius: 10px;
 }
 
@@ -225,6 +225,7 @@ align-items: center;
 .delivery-items-container {
 display: grid;
 grid-template-columns: repeat(5, 1fr);
+grid-row-gap: 2em;
 }
 .react-datepicker-wrapper {
 display: flex !important;
@@ -285,4 +286,59 @@ margin-left: 0.5em;
 
 .middle-foot>button:hover {
 color: white;
+}
+
+.quantity-dropdown:hover, .quantity-dropdown:hover .dropdown-quantity-options {
+border: 1px solid var(--orange);
+}
+
+.quantity-dropdown {
+position: relative;
+cursor: pointer;
+transition: .2s;
+background-color: hsla(0,0%,100%,.05);
+color: white;
+border: none;
+border: 1px solid grey;
+border-radius: 7px;
+}
+
+.dropdown-quantity-options {
+color: black;
+}
+
+.empty-cart-container {
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.empty-cart-container>* {
+    margin: 0.5em;
+}
+
+.empty-cart-container>p {
+    color: var(--grey);
+}
+
+.empty-cart-container>svg {
+    color: var(--orange);
+}
+
+.discover-btn {
+background-color: var(--medium-dark);
+color: white;
+border: none;
+border-radius: 5px;
+border: 1px solid var(--grey);
+padding: 15px 20px;
+font-size: 18px;
+cursor: pointer;
+transition: background-color 0.3s ease;
+}
+
+.discover-btn:hover {
+background-color: var(--grey);
 }
