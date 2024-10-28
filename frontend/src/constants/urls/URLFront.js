@@ -14,3 +14,7 @@ export const URL_SEARCH = '/search';
 export const URL_ACCOUNT = '/account';
 export const URL_PARAMETERS = '/parameters';
 export const URL_ORDER_HISTORIC = '/order-historic'
+export const URL_WISHLIST = '/wishlist'
+export const URL_TESTS = '/tests'
+
+export const PLATFORM_IMG = '/src/assets/img/platforms'
