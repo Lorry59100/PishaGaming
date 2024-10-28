@@ -39,7 +39,6 @@ export const CartProvider = ({ children }) => {
               if (response.data && response.data.carts) {
                 setCart(response.data.carts);
                 if (response.data.message) {
-                  console.log(response.data.message); // Gérer le message si nécessaire
                   ToastCenteredWarning(response.data.message)
                 }
               }
@@ -56,13 +55,10 @@ export const CartProvider = ({ children }) => {
       const updateCart = useCallback((newCart) => {
         if (decodedUserToken) {
           const userId = decodedUserToken.id;
-          const params = { cart: cart };
-          console.log('Params envoyés :', params);
           axios.get(`${URL}${URL_USER_CART}/${userId}`, {
             params: { cart: cart },
           })
           .then(response => {
-            console.log('Réponse du backend :', response.data);
             if (response.data && response.data.carts && JSON.stringify(response.data.carts) !== JSON.stringify(cart)) {
               setCart(response.data.carts);           
             }
