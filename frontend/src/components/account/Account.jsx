@@ -6,10 +6,11 @@ import { Link, Outlet, Route, Routes, useLocation } from "react-router-dom";
 import { Parameters } from "./forms/Parameters";
 import OrderHistoric from "./OrderHistoric";
 import { Tests } from "./Tests";
-import { URL_ACCOUNT, URL_ORDER_HISTORIC, URL_PARAMETERS } from "../../constants/urls/URLFront";
+import { Wishlist } from "./Wishlist";
+import { URL_ACCOUNT, URL_ORDER_HISTORIC, URL_PARAMETERS, URL_TESTS, URL_WISHLIST } from "../../constants/urls/URLFront";
 import axios from "axios";
 import { useTokenService } from "./services/tokenService";
-import { URL, URL_USER_DATA } from "../../constants/urls/URLBack";
+import { URL, URL_IMG, URL_USER_DATA } from "../../constants/urls/URLBack";
 import { useEffect, useState } from "react";
 import { LoginAndRegisterForm } from "./forms/LoginAndRegisterForm";
 
@@ -72,7 +73,7 @@ function Account() {
               </IconContext.Provider>
             )}
             {userData.img && (
-              <img src={`${URL}/uploads/images/${userData.img}`} alt="User Image" className="user-img-circled" />
+              <img src={`${URL}${URL_IMG}/${userData.img}`} alt="User Image" className="user-img-circled" />
             )}
             <h1>{userData.pseudo}</h1>
             <h4>Membre depuis : nov. 28, 2017</h4>
@@ -84,11 +85,11 @@ function Account() {
               <span>Mes achats</span>
               <div className="active-link-line"></div>
             </Link>
-            <Link to="/account/wishlist" className={location.pathname === "/account/wishlist" ? "active" : ""}>
+            <Link to={`${URL_ACCOUNT}${URL_WISHLIST}`} className={location.pathname === `${URL_ACCOUNT}${URL_WISHLIST}` ? "active" : ""}>
               <span>Wishlist</span>
               <div className="active-link-line"></div>
             </Link>
-            <Link to="/account/tests" className={location.pathname === "/account/tests" ? "active" : ""}>
+            <Link to={`${URL_ACCOUNT}${URL_TESTS}`} className={location.pathname === `${URL_ACCOUNT}${URL_TESTS}` ? "active" : ""}>
               <span>Tests</span>
               <div className="active-link-line"></div>
             </Link>
@@ -110,17 +111,13 @@ function Account() {
   );
 }
 
-function Wishlist() {
-  return <div>Wishlist content</div>;
-}
-
 export default function AccountPage() {
   return (
     <Routes>
       <Route path={URL_ACCOUNT} element={<Account />}>
         <Route path={`${URL_ACCOUNT}${URL_ORDER_HISTORIC}`} element={<OrderHistoric />} />
-        <Route path="wishlist" element={<Wishlist />} />
-        <Route path="tests" element={<Tests />} />
+        <Route path={`${URL_ACCOUNT}${URL_WISHLIST}`} element={<Wishlist />} />
+        <Route path={`${URL_ACCOUNT}${URL_TESTS}`} element={<Tests />} />
         <Route path={`${URL_ACCOUNT}${URL_PARAMETERS}`} element={<Parameters />} />
       </Route>
     </Routes>
