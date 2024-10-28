@@ -25,17 +25,13 @@ export function calculateDiscountPercentage(oldPriceInCents, priceInCents) {
 
 export const calculateTotal = (cartData, priceField = 'price') => {
   if (!cartData || !Array.isArray(cartData) || cartData.length === 0) {
-    console.log('Cart data is empty or not an array');
     return 0; // Retourne zéro si le panier est vide ou n'est pas défini
   }
 
   return cartData.reduce((accumulator, item) => {
     const price = parseFloat(item[priceField]);
     if (!isNaN(price)) {
-      console.log(`Calculating total for item ${item.id}: price ${price}, quantity ${item.quantity}`);
       return accumulator + price * item.quantity;
-    } else {
-      console.log(`Invalid price for item ${item.id}: ${item[priceField]}`);
     }
     return accumulator;
   }, 0);
@@ -43,16 +39,12 @@ export const calculateTotal = (cartData, priceField = 'price') => {
 
 export const calculateTotalOldPrice = (cartData) => {
   if (!cartData || !Array.isArray(cartData) || cartData.length === 0) {
-    console.log('Cart data is empty or not an array');
     return 0; // Retourne zéro si le panier est vide ou n'est pas défini
   }
   return cartData.reduce((accumulator, item) => {
     const oldPrice = parseFloat(item.oldPrice);
     if (!isNaN(oldPrice)) {
-      console.log(`Calculating total old price for item ${item.id}: oldPrice ${oldPrice}, quantity ${item.quantity}`);
       return accumulator + oldPrice * item.quantity;
-    } else {
-      console.log(`Invalid old price for item ${item.id}: ${item.oldPrice}`);
     }
     return accumulator;
   }, 0);
@@ -61,10 +53,6 @@ export const calculateTotalOldPrice = (cartData) => {
 export const calculateDifference = (cartData) => {
   const totalOldPrice = calculateTotalOldPrice(cartData);
   const totalPrice = calculateTotal(cartData);
-
-  console.log('Total old price:', totalOldPrice);
-  console.log('Total price:', totalPrice);
-
   return totalOldPrice - totalPrice;
 };
 
