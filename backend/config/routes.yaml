@@ -103,6 +103,21 @@ get_storage:
     controller: App\Controller\CartController::getStorage
     methods: GET
 
+add_to_wishlist:
+    path: /add-to-wishlist/{id}
+    controller: App\Controller\WishlistController::addToWishlist
+    methods: POST
+
+move_to_wishlist:
+    path: /move-to-wishlist/{id}
+    controller: App\Controller\WishlistController::moveToWishlist
+    methods: POST
+
+get_wishlist:
+    path: /get-wishlist
+    controller: App\Controller\WishlistController::getWishlist
+    methods: GET
+
 pay:
     path: /pay
     controller: App\Controller\PaymentController::pay
