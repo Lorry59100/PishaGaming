@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTokenService } from "./services/tokenService";
-import { URL, URL_USER_ORDER } from "../../constants/urls/URLBack";
+import { URL, URL_MAIN_IMG, URL_USER_ORDER } from "../../constants/urls/URLBack";
 import axios from "axios";
 import "../../assets/styles/components/orderhistoric.css"
 import { formatDate } from "./services/dateServices";
@@ -21,7 +21,6 @@ function OrderHistoric() {
       
           axios.get(`${URL}${URL_USER_ORDER}`, {headers})
             .then(response => {
-                console.log(response.data);
                 setOrders(response.data);
             })
             .catch(error => {
@@ -49,7 +48,7 @@ function OrderHistoric() {
                                     <div key={detail.id}>
                                         <div className="order-detail-container">
                                             <div className="order-detail-img-info">
-                                                <img src={detail.img} alt={detail.product} />
+                                                <img src={`${URL}${URL_MAIN_IMG}/${detail.img}`} alt={detail.product} />
                                                 <div className="order-detail-info">
                                                     <h2>{detail.product} {detail.quantity > 1 && `x${detail.quantity}`}</h2>
                                                     <h4>{detail.platform}</h4>
