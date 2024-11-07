@@ -103,6 +103,7 @@ color: var(--grey);
 .address-btn-container {
     display: flex;
     justify-content: center;
+    margin-top: 2em;
 }
 
 .title-security-container {
@@ -343,5 +344,13 @@ position: relative;
 
 .address-modal-content>h1 {
     margin-left: 0.5em;
+    margin-bottom: 0.5em;
 }
 
+.close-button>svg {
+    color: red;
+}
+
+.close-button>svg:hover {
+    color: white;
+}

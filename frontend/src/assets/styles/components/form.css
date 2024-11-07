@@ -65,7 +65,7 @@ overflow: auto;
 .wallpaper-container {
 width: 50%;
 height: 100%;
-background-image: url('../../img/wallpaper.jpg');
+background-image: url('../../img/wallpaper-min.jpg');
 background-size: cover;
 display: flex;
 justify-content: end;
@@ -372,4 +372,8 @@ width: 100%;
 .forgotten-button {
     width: 100%;
     margin: 0 1em;
+}
+
+.no-scroll {
+    overflow: hidden;
 }
