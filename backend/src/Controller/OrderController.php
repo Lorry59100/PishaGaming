@@ -14,6 +14,7 @@ use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\OrderDetailsRepository;
 use App\Repository\ActivationKeyRepository;
+use App\Repository\PlatformRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -158,7 +159,7 @@ class OrderController extends AbstractController
  */
 public function getOrder(Request $request, $id, UserRepository $userRepository,
 OrderRepository $orderRepository, OrderDetailsRepository $orderDetailsRepository,
-ActivationKeyRepository $activationKeyRepository): JsonResponse
+ActivationKeyRepository $activationKeyRepository, PlatformRepository $platformRepository): JsonResponse
 {
     // Récupérer l'utilisateur
     $user = $userRepository->find($id);
@@ -186,12 +187,13 @@ ActivationKeyRepository $activationKeyRepository): JsonResponse
 
     // RECUPERER LES CHAMPS ASSOCIES, SINON CELA RENVOIE UN OBJET VIDE
     $userArray = [
-       'firstname' => $user->getFirstname(),
-       'lastname' => $user->getLastname(),
+    'firstname' => $user->getFirstname(),
+    'lastname' => $user->getLastname(),
     ];
 
     $orderDetailArray = [];
     foreach($orderDetails as $orderDetail) {
+        $platform = $platformRepository->findOneBy(['name' => $orderDetail->getPlatform()]);
         $orderDetailArray[] = [
             'platform' => $orderDetail->getPlatform(),
             'price'=> $orderDetail->getPrice(),
@@ -199,6 +201,7 @@ ActivationKeyRepository $activationKeyRepository): JsonResponse
             'id' => $orderDetail->getId(),
             'img'=> $orderDetail->getProducts()->getImg(),
             'name'=> $orderDetail->getProducts()->getName(),
+            'isPhysical' => $platform->isIsPhysical(),
         ];
     }
 
