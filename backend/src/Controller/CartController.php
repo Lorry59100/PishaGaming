@@ -93,6 +93,10 @@ class CartController extends AbstractController
             $entityManager->flush();
         }
 
+        // Décrémenter la quantité du produit en stock
+        $product->setStock($product->getStock() - $data['quantity']);
+        $entityManager->persist($product);
+
         return new JsonResponse(['success' => true, 'message' => 'Product added to cart.']);
         }
 
@@ -184,44 +188,92 @@ CartRepository $cartRepository, EntityManagerInterface $entityManager): JsonResp
     return new JsonResponse($responseData, 200);
 }
 
-
-
-
     /**
-     * @Route("/update-cart}", name="update_cart", methods={"PUT"})
-     */
-    public function updateCart(Request $request, CartRepository $cartRepository, EntityManagerInterface $entityManager): JsonResponse
-    {
+ * @Route("/update-cart}", name="update_cart", methods={"PUT"})
+ */
+public function updateCart(Request $request, CartRepository $cartRepository, EntityManagerInterface $entityManager): JsonResponse
+{
     $data = json_decode($request->getContent(), true);
     $itemId = $data['itemId'];
     $quantity = $data['quantity'];
+
     $itemToUpdate = $cartRepository->find($itemId);
-    if($itemToUpdate->getQuantity() >= 10) {
+    if (!$itemToUpdate) {
+        return new JsonResponse(['error' => 'Élément du panier non trouvé.'], 404);
+    }
+
+    if ($quantity > 10) {
         return new JsonResponse(['error' => 'Vous avez atteint la quantité maximale pour ce produit.'], 401);
     }
-     // Récupérer tous les éléments du panier de l'utilisateur
-     $cartItems = $cartRepository->findBy(['user' => $itemToUpdate->getUser()]);
 
-     // Calculer le montant total actuel du panier
-     $totalAmount = 0;
-     foreach ($cartItems as $cartItem) {
-         if ($cartItem->getId() != $itemId) {
-             $totalAmount += $cartItem->getQuantity() * $cartItem->getProduct()->getPrice();
-         } else {
-             $totalAmount += $quantity * $cartItem->getProduct()->getPrice();
-         }
-     }
- 
-     // Vérifier si le montant total dépasse 400 euros
-     if ($totalAmount > 40000) {
-         return new JsonResponse(['error' => 'Le montant total du panier dépasse 400 euros.'], 400);
-     }
- 
+    // Récupérer tous les éléments du panier de l'utilisateur
+    $cartItems = $cartRepository->findBy(['user' => $itemToUpdate->getUser()]);
+
+    // Calculer le montant total actuel du panier
+    $totalAmount = 0;
+    foreach ($cartItems as $cartItem) {
+        if ($cartItem->getId() != $itemId) {
+            $totalAmount += $cartItem->getQuantity() * $cartItem->getProduct()->getPrice();
+        } else {
+            $totalAmount += $quantity * $cartItem->getProduct()->getPrice();
+        }
+    }
+
+    // Vérifier si le montant total dépasse 400 euros
+    if ($totalAmount > 40000) {
+        return new JsonResponse(['error' => 'Le montant total du panier dépasse 400 euros.'], 400);
+    }
+
+    // Mettre à jour la quantité dispo en BDD
+    $product = $itemToUpdate->getProduct();
+    $stock = $product->getStock();
+
+    // Vérifier si on ajoute ou réduit la quantité du produit dans le panier
+    if ($quantity > $itemToUpdate->getQuantity()) {
+        $difference = $quantity - $itemToUpdate->getQuantity();
+        // Retirer en BDD la différence
+        $product->setStock($stock - $difference);
+    } elseif ($quantity < $itemToUpdate->getQuantity()) {
+        $difference = $itemToUpdate->getQuantity() - $quantity;
+        // Ajouter en BDD la différence
+        $product->setStock($stock + $difference);
+    }
+
+    $entityManager->persist($product);
+    $entityManager->flush();
+
     $itemToUpdate->setQuantity($quantity);
     $entityManager->persist($itemToUpdate);
     $entityManager->flush();
+
     return new JsonResponse($itemToUpdate, 200);
+}
+
+
+    /**
+ * @Route("/delete-cart", name="delete_cart", methods={"DELETE"})
+ */
+public function deleteCart(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager): JsonResponse
+{
+    $data = json_decode($request->getContent(), true);
+    // Récupérer l'utilisateur connecté (vous devrez implémenter votre propre logique d'authentification ici)
+    $userId = $data['userId'];
+    $user = $userRepository->find($userId);
+
+    if (!$user) {
+        return new JsonResponse(['error' => 'User not found'], 404);
     }
+
+    $carts = $user->getCarts();
+
+    foreach ($carts as $cart) {
+        $entityManager->remove($cart);
+    }
+
+    $entityManager->flush();
+
+    return new JsonResponse($carts, 200);
+}
 
     /**
      * @Route("/delete-item}", name="delete_item", methods={"DELETE"})
@@ -231,6 +283,11 @@ CartRepository $cartRepository, EntityManagerInterface $entityManager): JsonResp
     $data = json_decode($request->getContent(), true);
     $itemId = $data['itemId'];
     $itemToUpdate = $cartRepository->find($itemId);
+    // Réincrémenter le stock en BDD
+    $quantity = $itemToUpdate->getQuantity();
+    $product = $itemToUpdate->getProduct();
+    $product->setStock($product->getStock() + $quantity);
+    $entityManager->persist($product);
     $entityManager->remove($itemToUpdate);
     $entityManager->flush();
     return new JsonResponse($itemToUpdate, 200);
