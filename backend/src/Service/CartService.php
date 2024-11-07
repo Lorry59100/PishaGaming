@@ -42,6 +42,10 @@ class CartService
                 // Add the Cart entity to the EntityManager
                 $this->entityManager->persist($cartEntity);
             }
+
+            // Update the product stock
+            $product->setStock($product->getStock() - $cartItem['quantity']);
+            $this->entityManager->persist($product);
         }
         // Flush all changes to the database
         $this->entityManager->flush();
