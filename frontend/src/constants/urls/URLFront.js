@@ -1,4 +1,4 @@
-export const URL_HOME = '/';
+/* export const URL_HOME = '/';
 export const URL_SINGLE_PRODUCT = '/single-product/:id';
 export const URL_CART = '/cart';
 export const URL_PAYMENT = '/payment';
@@ -14,7 +14,7 @@ export const URL_SEARCH = '/search';
 export const URL_ACCOUNT = '/account';
 export const URL_PARAMETERS = '/parameters';
 export const URL_ORDER_HISTORIC = '/order-historic'
-export const URL_WISHLIST = '/wishlist'
+export const URL_WISHLIST = '/wishlist' */
 export const URL_TESTS = '/tests'
 
 export const PLATFORM_IMG = '/src/assets/img/platforms'
