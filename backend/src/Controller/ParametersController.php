@@ -25,7 +25,7 @@ class ParametersController extends AbstractController
         $this->tokenService = $tokenService;
         $this->emailService = $emailService;
     }
-    
+
     /**
      * @Route("/change-mail", name="change_mail", methods={"POST"})
      */
@@ -33,7 +33,6 @@ class ParametersController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $user = $this->tokenService->getUserFromRequest($request);
-        /* dd($user); */
         $email = $data['mail'];
 
         //Vérifier si l'utilisateur existe en BDD
