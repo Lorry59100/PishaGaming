@@ -93,6 +93,11 @@ update_cart:
     controller: App\Controller\CartController::updateCart
     methods: PUT
 
+delete_cart:
+    path: /delete-cart
+    controller: App\Controller\CartController::deleteCart
+    methods: DELETE
+
 delete_item:
     path: /delete-item
     controller: App\Controller\CartController::deleteItem
@@ -192,6 +197,21 @@ get_user_data:
     path: /get-user-data
     controller: App\Controller\ParametersController::getUserData
     methods: GET
+
+reset_password:
+    path: /reset-password
+    controller: App\Controller\ResetPasswordController::resetPassword
+    methods: POST
+
+forgot_password:
+    path: /forgot-password
+    controller: App\Controller\ResetPasswordController::forgotPassword
+    methods: POST
+
+check-token:
+  path: /check-token
+  controller: App\Controller\ResetPasswordController::checkToken
+  methods: POST
 
 app_logout:
     path: /logout
