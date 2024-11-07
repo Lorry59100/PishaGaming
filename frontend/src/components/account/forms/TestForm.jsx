@@ -6,7 +6,6 @@ import { ImCross } from "react-icons/im";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useTokenService } from "../services/tokenService";
 import axios from "axios";
-import { URL, URL_GET_TEST, URL_SUBMIT_TEST, URL_UPDATE_TEST, URL_USER_AVATAR, URL_USER_DATA } from "../../../constants/urls/URLBack";
 
 export function TestForm({ onClose, productId, testExist, onSubmit }) {
     const [userData, setUserData] = useState(null);
@@ -16,11 +15,14 @@ export function TestForm({ onClose, productId, testExist, onSubmit }) {
     const [cons, setCons] = useState(['', '', '']);
     const { decodedUserToken } = useTokenService();
     const formRef = useRef(null);
-    console.log('testExist from form component: ', testExist)
+    const URL = import.meta.env.VITE_BACKEND;
+    const URL_GET_TEST = import.meta.env.VITE_GET_TEST;
+    const URL_SUBMIT_TEST = import.meta.env.VITE_SUBMIT_TEST;
+    const URL_UPDATE_TEST = import.meta.env.VITE_UPDATE_TEST;
+    const URL_USER_AVATAR = import.meta.env.VITE_USER_AVATAR;
+    const URL_USER_DATA = import.meta.env.VITE_USER_DATA;
 
     useEffect(() => {
-        console.log('useEffect triggered');
-        console.log('decodedUserToken:', decodedUserToken);
         if (decodedUserToken) {
             const headers = {'Authorization': `Bearer ${decodedUserToken.username}`};
             axios.get(`${URL}${URL_USER_DATA}`, {headers})
@@ -33,12 +35,10 @@ export function TestForm({ onClose, productId, testExist, onSubmit }) {
         }
 
         if (testExist) {
-            console.log('url appelée : ',  `${URL}${URL_GET_TEST.replace(':id', productId)}`)
             // Faire une requête pour récupérer les données du test existant
             axios.get(`${URL}${URL_GET_TEST.replace(':id', productId)}`, {headers: {'Authorization': `Bearer ${decodedUserToken.username}`}})
             .then(response => {
                 const testData = response.data;
-                console.log('testData: ', testData)
                 setRating(testData.rate);
                 setDescription(testData.comment);
 
@@ -53,7 +53,7 @@ export function TestForm({ onClose, productId, testExist, onSubmit }) {
                 console.error('Erreur lors de la récupération des données du test :', error);
             });
         }
-    }, [decodedUserToken, testExist, productId]);
+    }, [decodedUserToken, testExist, productId, URL, URL_GET_TEST, URL_USER_DATA]);
 
     const handleClose = useCallback(() => {
         if (onClose) {
@@ -75,8 +75,7 @@ export function TestForm({ onClose, productId, testExist, onSubmit }) {
         if (testExist) {
             // Mettre à jour le test existant
             axios.put(`${URL}${URL_UPDATE_TEST.replace(':id', productId)}`, data, { headers })
-                .then(response => {
-                    console.log('Test updated successfully:', response.data);
+                .then(()=> {
                     handleClose();
                     onSubmit();
                 })
@@ -86,8 +85,7 @@ export function TestForm({ onClose, productId, testExist, onSubmit }) {
         } else {
             // Soumettre un nouveau test
             axios.post(`${URL}${URL_SUBMIT_TEST}`, data, { headers })
-                .then(response => {
-                    console.log('Test submitted successfully:', response.data);
+                .then(() => {
                     handleClose();
                     onSubmit();
                 })

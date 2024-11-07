@@ -36,7 +36,7 @@ export function LoginAndRegisterForm({ onCloseForm }) {
           </a>
         </div>
         {showLoginAndRegisterForm ? (
-          <LoginForm toggleForm={toggleForm} onFormSuccess={handleFormSuccess} />
+          <LoginForm toggleForm={toggleForm} onFormSuccess={handleFormSuccess} onForgotPasswordClick={handleCloseForm} />
         ) : (
           <RegisterForm toggleForm={toggleForm} onFormSuccess={handleFormSuccess} />
         )}

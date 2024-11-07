@@ -1,7 +1,6 @@
-import { useState  } from "react";
+import { useEffect, useState  } from "react";
 import axios from "axios";
 import { Formik, Form, Field } from 'formik';
-import { URL, URL_REGISTER } from "../../../constants/urls/URLBack";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 import { registerLocale } from "react-datepicker";
@@ -11,6 +10,8 @@ import PropTypes from "prop-types";
 import {  ToastImportantSuccess ,ToastError } from "../../services/toastService";
 export function RegisterForm(props) {
   const [birthDate, setBirthDate] = useState(null);
+  const URL = import.meta.env.VITE_BACKEND;
+  const URL_REGISTER = import.meta.env.VITE_REGISTER;
     // Logique de controle du formulaire
     const initialValues= {
       firstname: '',
@@ -42,6 +43,16 @@ export function RegisterForm(props) {
         console.error('Erreur lors de la récupération des données :', error);
       });
     };
+
+    useEffect(() => {
+      // Ajouter une classe pour désactiver la barre de défilement
+      document.body.classList.add('no-scroll');
+  
+      // Nettoyer la classe lorsque le composant est démonté
+      return () => {
+        document.body.classList.remove('no-scroll');
+      };
+    }, []);
 
   return (
     <div className="little-form-container">

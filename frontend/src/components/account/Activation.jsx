@@ -2,7 +2,6 @@ import { NavbarVisibilityContext } from "../../contexts/NavbarVisibilityContext"
 import { useContext, useEffect, useState } from 'react';
 import { Paybar } from "../layouts/Navbar/Paybar";
 import "../../assets/styles/components/activation.css"
-import { URL, URL_GET_ORDER, URL_IMG, URL_VG_IMG, URL_VG_MAIN_IMG } from "../../constants/urls/URLBack";
 import { useTokenService } from "./services/tokenService";
 import axios from 'axios'
 import { convertToEuros } from "../products/services/PriceServices";
@@ -16,6 +15,11 @@ const { hideNavbar, showNavbar } = useContext(NavbarVisibilityContext);
 const { decodedUserToken } = useTokenService();
 const [order, setOrder] = useState({});
 const [renderActivation, setRenderActivation] = useState(true);
+const URL = import.meta.env.VITE_BACKEND;
+const URL_GET_ORDER = import.meta.env.VITE_GET_ORDER;
+const URL_IMG = import.meta.env.VITE_IMG;
+const URL_VG_IMG = import.meta.env.VITE_VG_IMG;
+const URL_VG_MAIN_IMG = import.meta.env.VITE_VG_MAIN_IMG;
 
 useEffect(() => {
   // Add a class to the body element when the component mounts
@@ -64,7 +68,7 @@ useEffect(() => {
           console.error('Erreur lors de la récupération du produit :', error);
         });
     }
-  }, [decodedUserToken]);
+  }, [decodedUserToken, URL, URL_GET_ORDER]);
 
   const handleRevealClick = (activationIndex) => {
     setOrder(prevOrder => {
@@ -76,6 +80,7 @@ useEffect(() => {
       };
     });
   };
+  console.log(order)
 
   return (
     <div className="activation-layout-container">

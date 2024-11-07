@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { URL, URL_GENRES_LIST, URL_MAIN_IMG, URL_PLATFORMS_LIST, URL_PRODUCTS_LIST, URL_SINGLE_PRODUCT } from "../../constants/urls/URLBack";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { calculateDiscountPercentage, convertToEuros } from "./services/PriceServices";
 import "../../assets/styles/components/gamestaffselection.css"
@@ -30,6 +29,13 @@ function Search() {
   const [selectedSort, setSelectedSort] = useState(searchParams.get('sort') || "default-value");
   const searchQuery = searchParams.get('q') || "";
 
+  const URL = import.meta.env.VITE_BACKEND;
+  const URL_GENRES_LIST = import.meta.env.VITE_GENRES_LIST;
+  const URL_MAIN_IMG = import.meta.env.VITE_MAIN_IMG;
+  const URL_PLATFORMS_LIST = import.meta.env.VITE_PLATFORMS_LIST;
+  const URL_PRODUCTS_LIST = import.meta.env.VITE_PRODUCTS_LIST;
+  const URL_SINGLE_PRODUCT = import.meta.env.VITE_SINGLE_PRODUCT_BACK;
+
   useEffect(() => {
     axios.get(`${URL}${URL_PRODUCTS_LIST}`)
       .then(response => {
@@ -42,7 +48,7 @@ function Search() {
       .catch(error => {
         console.error('Erreur lors de la récupération de la liste de jeux :', error)
       });
-  }, []);
+  }, [URL, URL_PRODUCTS_LIST]);
 
   useEffect(() => {
     axios.get(`${URL}${URL_PLATFORMS_LIST}`)
@@ -52,7 +58,7 @@ function Search() {
       .catch(error => {
         console.error('Erreur lors de la récupération de la liste des plateformes :', error)
       });
-  }, []);
+  }, [URL, URL_PLATFORMS_LIST]);
 
   useEffect(() => {
     axios.get(`${URL}${URL_GENRES_LIST}`)
@@ -62,7 +68,7 @@ function Search() {
       .catch(error => {
         console.error('Erreur lors de la récupération de la liste des genres :', error)
       });
-  }, []);
+  }, [URL, URL_GENRES_LIST]);
 
   useEffect(() => {
     let filtered = games;

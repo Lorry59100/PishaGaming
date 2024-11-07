@@ -4,9 +4,9 @@ import { GiPadlock } from "react-icons/gi";
 import { IconContext } from 'react-icons';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { URL_HOME } from "../../../constants/urls/URLFront";
 
 export function Paybar({ isPaymentFormContext, isActivationContext }) {
+    const URL_HOME = import.meta.env.VITE_HOME;
     return (
         <div className="buying-tunnel-layout-container">
             <div className="logo-paybar-container">

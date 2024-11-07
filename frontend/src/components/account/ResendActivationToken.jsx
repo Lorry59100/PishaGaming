@@ -1,8 +1,10 @@
 import { Field, Form, Formik } from "formik";
-import { URL, URL_ACTIVATION_TOKEN_AGAIN } from "../../constants/urls/URLBack";
+/* import { URL, URL_ACTIVATION_TOKEN_AGAIN } from "../../constants/urls/URLBack"; */
 import axios from "axios";
 
 export function ResendActivationToken() {
+    const URL = import.meta.env.VITE_BACKEND;
+    const URL_ACTIVATION_TOKEN_AGAIN = import.meta.env.VITE_ACTIVATION_TOKEN_AGAIN;
 
     const onSubmit=(values) => {
         console.log(values);

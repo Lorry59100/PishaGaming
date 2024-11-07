@@ -10,7 +10,6 @@ import { useEffect, useRef, useState } from "react";
 import { AddressForm } from "./AddressForm";
 import { useTokenService } from "../services/tokenService";
 import axios from "axios";
-import { URL, URL_CHANGE_MAIL, URL_CHANGE_PASSWORD, URL_GET_ADDRESS, URL_USER_AVATAR, URL_USER_CHANGE_PSEUDO, URL_USER_DATA, URL_USER_UPLOAD_IMG } from "../../../constants/urls/URLBack";
 import { PiPencilSimpleLineFill } from 'react-icons/pi';
 import { BsTrash3 } from "react-icons/bs";
 import { Field, Form, Formik } from "formik";
@@ -30,6 +29,16 @@ export function Parameters() {
     const [userData, setUserData] = useState(null);
     const [newPseudo, setNewPseudo] = useState('');
     const { onPseudoChange } = useOutletContext();
+    const URL = import.meta.env.VITE_BACKEND;
+    const URL_CHANGE_MAIL = import.meta.env.VITE_CHANGE_MAIL;
+    const URL_CHANGE_PASSWORD = import.meta.env.VITE_CHANGE_PASSWORD;
+    const URL_GET_ADDRESS = import.meta.env.VITE_GET_ADDRESS;
+    const URL_USER_AVATAR = import.meta.env.VITE_USER_AVATAR;
+    const URL_USER_CHANGE_PSEUDO = import.meta.env.VITE_USER_CHANGE_PSEUDO;
+    const URL_USER_DATA = import.meta.env.VITE_USER_DATA;
+    const URL_USER_UPLOAD_IMG = import.meta.env.VITE_USER_UPLOAD_IMG;
+    const URL_DELETE_ADDRESS = import.meta.env.VITE_DELETE_ADDRESS;
+    const URL_CHANGE_ADDRESS = import.meta.env.VITE_CHANGE_ADDRESS;
 
     useEffect(() => {
         if (decodedUserToken) {
@@ -45,7 +54,7 @@ export function Parameters() {
                     console.error('Erreur lors de la récupération des adresses :', error);
                 });
         }
-    }, [decodedUserToken]);
+    }, [decodedUserToken, URL, URL_USER_DATA]);
 
     useEffect(() => {
         if (userData) {
@@ -90,7 +99,6 @@ export function Parameters() {
     };
 
     const handleAddressAdded = (newAddress) => {
-        console.log('New address added:', newAddress); // Debug log
         setAddresses(prevAddresses => [...prevAddresses, newAddress]);
         setAddressFormVisible(false);
     };
@@ -126,24 +134,14 @@ export function Parameters() {
                     console.error('Erreur lors de la récupération des adresses :', error);
                 });
         }
-    }, [decodedUserToken]);
+    }, [decodedUserToken, URL, URL_GET_ADDRESS]);
     
-    
-
-    useEffect(() => {
-        console.log('Addresses updated:', addresses); // Debug log
-    }, [addresses]);
-    
-
     const handleEmailFormSubmit = (values, actions) => {
         const { mail, mail_confirm, password } = values;
         const headers = {
             'Authorization': `Bearer ${decodedUserToken.username}`,
         };
         axios.post(`${URL}${URL_CHANGE_MAIL}`, { mail, mail_confirm, password }, { headers })
-            .then(response => {
-                console.log('Email form submitted successfully:', response.data);
-            })
             .catch(error => {
                 console.error('Erreur lors de la soumission du formulaire email :', error);
             })
@@ -160,7 +158,6 @@ export function Parameters() {
         axios.post(`${URL}${URL_CHANGE_PASSWORD}`, { password, newPassword, passwordConfirm }, { headers })
             .then(response => {
                 ToastCenteredSuccess(response.data.message);
-                console.log('Password form submitted successfully:', response.data);
             })
             .catch(error => {
                 console.error('Erreur lors de la soumission du formulaire email :', error);
@@ -177,7 +174,6 @@ export function Parameters() {
         axios.post(`${URL}${URL_USER_CHANGE_PSEUDO}`, { pseudo: newPseudo }, { headers })
             .then(response => {
                 ToastCenteredSuccess(response.data.message);
-                console.log('Pseudo form submitted successfully:', response.data);
                 onPseudoChange(newPseudo);
             })
             .catch(error => {
@@ -195,9 +191,8 @@ export function Parameters() {
             'Content-Type': 'application/json',
         };
     
-        axios.put(`${URL}/change-address`, { addressId: address.id }, { headers })
-            .then(response => {
-                console.log('Address changed successfully:', response.data);
+        axios.put(`${URL}${URL_CHANGE_ADDRESS}`, { addressId: address.id }, { headers })
+            .then(()=> {
                 setAddressModalVisible(false);
                 // Update the active address in the state
                 setAddresses(addresses.map(addr => ({
@@ -215,15 +210,11 @@ export function Parameters() {
             'Authorization': `Bearer ${decodedUserToken.username}`,
         };
     
-        axios.delete(`${URL}/delete-address`, {
+        axios.delete(`${URL}${URL_DELETE_ADDRESS}`, {
             headers: headers,
             data: { addressId: address.id }
         })
-        .then(response => {
-            console.log('Address deleted successfully:', response.data);
-            // Log the updated addresses
-            console.log('Updated addresses:', response.data);
-    
+        .then(response => {    
             // Ensure the response is an array
             if (Array.isArray(response.data)) {
                 // Update the active address in the state
@@ -371,7 +362,7 @@ export function Parameters() {
                                 <div className="address-modal-content">
                                     <div className='modal-head-container'>
                                         <button className="close-button" onClick={() => setAddressModalVisible(false)}>
-                                            <IconContext.Provider value={{ size: "1.5em", color: "white" }}>
+                                            <IconContext.Provider value={{ size: "1.5em" }}>
                                                 <ImCross/>
                                             </IconContext.Provider>
                                         </button>

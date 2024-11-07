@@ -6,12 +6,10 @@ import logo from '../../../assets/img/Logo.png';
 import Searchbar from './Searchbar';
 import '../../../assets/styles/components/navbar.css';
 import { useTokenService } from '../../account/services/tokenService';
-import { URL, URL_ADMIN, URL_IMG } from '../../../constants/urls/URLBack';
 import { Link } from 'react-router-dom';
 import { LoginAndRegisterForm } from '../../account/forms/LoginAndRegisterForm';
 import { NavbarVisibilityContext } from '../../../contexts/NavbarVisibilityContext';
 import { useContext } from 'react';
-import { URL_ACCOUNT, URL_CART, URL_HOME, URL_ORDER_HISTORIC, URL_PARAMETERS, URL_WISHLIST } from '../../../constants/urls/URLFront';
 import { CartContext } from '../../../contexts/CartContext';
 import axios from 'axios';
 
@@ -26,6 +24,16 @@ function Navbar() {
   const { isNavbarVisible } = useContext(NavbarVisibilityContext);
   const { cart, resetCart } = useContext(CartContext);
   const [userData, setUserData] = useState(null);
+  const URL = import.meta.env.VITE_BACKEND;
+  const URL_ADMIN = import.meta.env.VITE_ADMIN;
+  const URL_IMG = import.meta.env.VITE_IMG;
+  const URL_ACCOUNT = import.meta.env.VITE_ACCOUNT;
+  const URL_CART = import.meta.env.VITE_CART;
+  const URL_HOME = import.meta.env.VITE_HOME;
+  const URL_ORDER_HISTORIC = import.meta.env.VITE_ORDER_HISTORIC;
+  const URL_PARAMETERS = import.meta.env.VITE_PARAMETERS;
+  const URL_WISHLIST = import.meta.env.VITE_WISHLIST;
+  const URL_USER_DATA = import.meta.env.VITE_USER_DATA ;
 
   useEffect(() => {
     if (decodedUserToken) {
@@ -33,7 +41,7 @@ function Navbar() {
         'Authorization': `Bearer ${decodedUserToken.username}`,
       };
 
-      axios.get(`${URL}/get-user-data`, {headers})
+      axios.get(`${URL}${URL_USER_DATA}`, {headers})
         .then(response => {
           setUserData(response.data);
         })
@@ -41,7 +49,7 @@ function Navbar() {
             console.error('Erreur lors de la récupération des adresses :', error);
         });
     }
-  }, [decodedUserToken]);
+  }, [decodedUserToken, URL, URL_USER_DATA]);
 
   // Utilisation de useMemo pour mémoriser le calcul du nombre d'items dans le panier
   const itemCount = useMemo(() => {

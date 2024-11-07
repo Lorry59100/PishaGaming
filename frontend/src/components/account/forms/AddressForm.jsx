@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { ImCross } from "react-icons/im";
 import { IconContext } from "react-icons";
 import { getSuggestions, handleAddressChange, handleAddressClick } from "../services/addressServices";
-import { URL, URL_ADD_ADDRESS } from "../../../constants/urls/URLBack";
 import axios from "axios";
 import { Formik, Form } from "formik";
 import { useTokenService } from "../services/tokenService";
@@ -13,6 +12,8 @@ export function AddressForm({ onClose, onAddressAdded }) {
     const [selectedAddress, setSelectedAddress] = useState();
     const [selectedSuggestion, setSelectedSuggestion] = useState(null);
     const { decodedUserToken } = useTokenService();
+    const URL = import.meta.env.VITE_BACKEND
+    const URL_ADD_ADDRESS = import.meta.env.VITE_ADD_ADDRESS
 
     const handleCloseForm = () => {
         onClose();
@@ -44,7 +45,6 @@ export function AddressForm({ onClose, onAddressAdded }) {
             })
             .then((response) => {
                 if (response.status === 200) {
-                    console.log(response.data.data);
                     onAddressAdded(response.data.data); // Notifier le composant parent
                 }
             })
@@ -55,9 +55,6 @@ export function AddressForm({ onClose, onAddressAdded }) {
             console.error('decodedUserToken is null. Unable to make the request.');
         }
     };
-
-
-    console.log(selectedSuggestion);
 
     return (
         <div className="address-form-overlay">

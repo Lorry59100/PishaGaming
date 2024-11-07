@@ -1,14 +1,13 @@
 /* eslint-disable no-dupe-keys */
-import React, { useState, useEffect, forwardRef } from 'react';
+import React, { useState, useEffect, forwardRef, useContext } from 'react';
 import { useStripe, useElements, CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/react-stripe-js';
 import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
 import '../../../assets/styles/components/checkoutform.css';
-import { URL, URL_PAY, URL_ORDER } from '../../../constants/urls/URLBack';
-import { URL_ACTIVATION } from '../../../constants/urls/URLFront';
 import PropTypes from "prop-types";
 import { useTokenService } from '../services/tokenService';
 import { useNavigate } from "react-router-dom";
+import { CartContext } from '../../../contexts/CartContext';
 
 const CheckoutForm = forwardRef(({ cartData, selectedDate }, ref) => {
   const [isFormValid, setIsFormValid] = useState(false);
@@ -17,6 +16,12 @@ const CheckoutForm = forwardRef(({ cartData, selectedDate }, ref) => {
   const [customerName, setCustomerName] = useState('');
   const { decodedUserToken } = useTokenService();
   const navigate = useNavigate();
+  const {  updateCart } = useContext(CartContext);
+  const URL = import.meta.env.VITE_BACKEND;
+  const URL_PAY = import.meta.env.VITE_PAY;
+  const URL_ORDER = import.meta.env.VITE_ORDER;
+  const URL_DELETE_CART = import.meta.env.VITE_DELETE_CART;
+  const URL_ACTIVATION = import.meta.env.VITE_ACTIVATION;
 
   const getClientSecret = async () => {
     try {
@@ -118,6 +123,10 @@ const CheckoutForm = forwardRef(({ cartData, selectedDate }, ref) => {
                 .then(response => {
                     console.log(response.data)
                     if (response.status === 200) {
+                      axios.delete(`${URL}${URL_DELETE_CART}`, {
+                        data: { userId }, // Pass the userId in the request body
+                      })
+                      updateCart([]);
                       navigate(URL_ACTIVATION);
                     }
                 })

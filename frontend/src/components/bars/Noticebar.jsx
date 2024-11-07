@@ -6,7 +6,7 @@ import "../../assets/styles/components/noticebar.css"
 export function Noticebar() {
   return (
     <div className='notice-bar-container'>
-        <img src={GamerImg} alt="" />
+        <img src={GamerImg} alt="gamer" />
         <div className="content">
             <div className="stars">
                 <IconContext.Provider value={{ size: "1.5em", color: "#FCAF02" }}>

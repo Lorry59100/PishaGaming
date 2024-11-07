@@ -2,7 +2,7 @@ import { createContext, useEffect, useRef, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { decodeToken } from 'react-jwt';
 import axios from 'axios';
-import { URL, URL_USER_CART } from '../constants/urls/URLBack';
+/* import { URL, URL_USER_CART } from '../constants/urls/URLBack'; */
 import { ToastCenteredWarning } from '../components/services/toastService';
 
 const CartContext = createContext();
@@ -14,6 +14,9 @@ export const CartProvider = ({ children }) => {
     const authToken = localStorage.getItem('authToken');
     const decodedUserToken = authToken ? decodeToken(authToken) : null;
     const fetchDataExecuted = useRef(false);
+
+    const URL = import.meta.env.VITE_BACKEND;
+    const URL_USER_CART = import.meta.env.VITE_USER_CART;
 
     // Fonction pour vider panier
     const resetCart = useCallback(() => {
@@ -50,7 +53,7 @@ export const CartProvider = ({ children }) => {
           // Mise à jour de la référence après l'exécution du code
           fetchDataExecuted.current = true;
         }
-      }, [decodedUserToken]);
+      }, [decodedUserToken, URL, URL_USER_CART]);
 
       const updateCart = useCallback((newCart) => {
         if (decodedUserToken) {
@@ -70,7 +73,7 @@ export const CartProvider = ({ children }) => {
         if (newCart && JSON.stringify(newCart) !== JSON.stringify(cart)) {
           setCart(newCart);
         }
-      }, [decodedUserToken, cart]);
+      }, [decodedUserToken, cart, URL, URL_USER_CART]);
       
       
 

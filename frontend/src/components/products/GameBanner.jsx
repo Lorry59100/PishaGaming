@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import axios from 'axios';
-import { URL, URL_PRODUCTS_LIST, URL_SINGLE_PRODUCT } from "../../constants/urls/URLBack";
+/* import { URL, URL_PRODUCTS_LIST, URL_SINGLE_PRODUCT } from "../../constants/urls/URLBack"; */
 import "../../assets/styles/components/gamebanner.css"
 import { convertToEuros, calculateDiscountPercentage } from "./services/PriceServices";
 import { Link } from 'react-router-dom';
 
 function GameBanner() {
     const [randomProduct, setRandomProduct] = useState(null);
+    const URL = import.meta.env.VITE_BACKEND;
+    const URL_PRODUCTS_LIST = import.meta.env.VITE_PRODUCTS_LIST;
+    const URL_SINGLE_PRODUCT = import.meta.env.VITE_SINGLE_PRODUCT_BACK;
 
     useEffect(() => {
         axios.get(`${URL}${URL_PRODUCTS_LIST}`)
@@ -24,7 +27,7 @@ function GameBanner() {
             .catch(error => {
                 console.error('Erreur lors de la récupération de la liste de jeux :', error)
             });
-    }, []);
+    }, [URL, URL_PRODUCTS_LIST]);
 
     return (
         <div className="game-banner-container">

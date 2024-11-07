@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import { useTokenService } from "./services/tokenService";
-import { URL, URL_MAIN_IMG, URL_USER_ORDER } from "../../constants/urls/URLBack";
 import axios from "axios";
 import "../../assets/styles/components/orderhistoric.css"
 import { formatDate } from "./services/dateServices";
 import { convertToEuros } from "../products/services/PriceServices";
 import { Link } from 'react-router-dom';
-import { URL_SINGLE_ORDER_HISTORIC } from "../../constants/urls/URLFront";
 
 function OrderHistoric() {
     const { decodedUserToken } = useTokenService();
     const [orders, setOrders] = useState(null);
+    const URL = import.meta.env.VITE_BACKEND;
+    const URL_MAIN_IMG = import.meta.env.VITE_MAIN_IMG;
+    const URL_USER_ORDER = import.meta.env.VITE_USER_ORDER;
+    const URL_SINGLE_ORDER_HISTORIC = import.meta.env.VITE_SINGLE_ORDER_HISTORIC;
 
     useEffect(() => {
         if (decodedUserToken) {
@@ -27,7 +29,7 @@ function OrderHistoric() {
                 console.error('Erreur lors de la récupération des adresses :', error);
             });
         }
-      }, [decodedUserToken]);
+      }, [decodedUserToken, URL, URL_USER_ORDER]);
 
   return (
     <div className="order-historic-container">

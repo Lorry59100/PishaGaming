@@ -5,7 +5,7 @@ import GameBanner from "../components/products/GameBanner"
 import { GameStaffSelection } from "../components/products/GameStaffSelection"
 import { RetroGamingSelection } from "../components/products/RetroGamingSelection"
 
-function Homeview() {
+export function Homeview() {
   return (
     <div>
        <GameBanner/>
@@ -17,5 +17,3 @@ function Homeview() {
     </div>
   )
 }
-
-export default Homeview

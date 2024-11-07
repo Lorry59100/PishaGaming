@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import "../../assets/styles/components/genres.css"
-import { URL, URL_GENRES_LIST } from "../../constants/urls/URLBack";
 import { Link } from 'react-router-dom';
 
 function Genres() {
   const [genres, setGenres] = useState([]);
+  const URL = import.meta.env.VITE_BACKEND;
+  const URL_GENRES_LIST = import.meta.env.VITE_GENRES_LIST;
 
   useEffect(() => {
     // Récupérer la liste des genres à partir de l'API
@@ -21,7 +22,7 @@ function Genres() {
       .catch(error => {
         console.error(error);
       });
-  }, []);
+  }, [URL, URL_GENRES_LIST]);
 
   return (
     <div className='genres-container'>

@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
 import { useTokenService } from "./services/tokenService";
 import axios from "axios";
-import { URL, URL_MAIN_IMG, URL_USER_TESTS } from "../../constants/urls/URLBack";
 import "../../assets/styles/components/tests.css";
 import RatingCircle from "../products/RatingCircle";
 import { PiPencilSimpleLineFill } from "react-icons/pi";
 import { IconContext } from "react-icons";
 import { useNavigate } from 'react-router-dom';
-import { URL_SINGLE_PRODUCT } from "../../constants/urls/URLFront";
-
 
 // Fonction utilitaire pour tronquer le texte
 const truncateText = (text, maxLength) => {
@@ -22,6 +19,10 @@ export function Tests() {
     const { decodedUserToken } = useTokenService();
     const [tests, setTests] = useState([]);
     const navigate = useNavigate();
+    const URL = import.meta.env.VITE_BACKEND;
+    const URL_MAIN_IMG = import.meta.env.VITE_MAIN_IMG;
+    const URL_USER_TESTS = import.meta.env.VITE_USER_TESTS;
+    const URL_SINGLE_PRODUCT = import.meta.env.VITE_SINGLE_PRODUCT_FRONT;
 
     useEffect(() => {
         if (decodedUserToken) {
@@ -29,7 +30,6 @@ export function Tests() {
             'Authorization': `Bearer ${decodedUserToken.username}`,
             // autres en-têtes si nécessaire...
         };
-
             axios.get(`${URL}${URL_USER_TESTS}`, {headers})
             .then(response => {
                 setTests(response.data);
@@ -38,7 +38,7 @@ export function Tests() {
                 console.error('Erreur lors de la récupération des adresses :', error);
             });
         }
-    }, [decodedUserToken]);
+    }, [decodedUserToken, URL, URL_USER_TESTS]);
 
     return (
         <div className="user-tests-container">

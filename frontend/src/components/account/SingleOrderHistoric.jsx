@@ -1,17 +1,20 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { URL, URL_USER_SINGLE_ORDER } from "../../constants/urls/URLBack";
 import "../../assets/styles/components/singleorder.css";
 import { IoChevronBackOutline } from "react-icons/io5";
 import { IconContext } from "react-icons";
 import { FaShippingFast, FaCheck } from "react-icons/fa";
 import { formatDate } from "./services/dateServices";
-import { PLATFORM_IMG, URL_ACCOUNT, URL_ORDER_HISTORIC } from "../../constants/urls/URLFront";
+import { PLATFORM_IMG } from "../../constants/urls/URLFront";
 
 function SingleOrderHistoric() {
   const { reference } = useParams();
   const [orders, setOrders] = useState(null);
+  const URL = import.meta.env.VITE_BACKEND;
+  const URL_USER_SINGLE_ORDER = import.meta.env.VITE_USER_SINGLE_ORDER;
+  const URL_ACCOUNT = import.meta.env.VITE_ACCOUNT;
+  const URL_ORDER_HISTORIC = import.meta.env.VITE_ORDER_HISTORIC;
 
   useEffect(() => {
     axios.get(`${URL}${URL_USER_SINGLE_ORDER}/${reference}`)
@@ -21,7 +24,7 @@ function SingleOrderHistoric() {
       .catch(error => {
         console.error('Erreur lors de la récupération de la commande :', error);
       });
-  }, [reference]);
+  }, [reference, URL, URL_USER_SINGLE_ORDER]);
 
   return (
     <div className="single-order-container">

@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useTokenService } from "./services/tokenService";
 import axios from "axios";
-import { URL, URL_ADD_TO_WISHLIST, URL_MAIN_IMG, URL_SINGLE_PRODUCT } from "../../constants/urls/URLBack";
+/* import { URL, URL_ADD_TO_WISHLIST, URL_MAIN_IMG, URL_SINGLE_PRODUCT } from "../../constants/urls/URLBack"; */
 import "../../assets/styles/components/wishlist.css";
 import { calculateDiscountPercentage, convertToEuros } from "../products/services/PriceServices";
 import { ImCross } from "react-icons/im";
@@ -11,6 +11,11 @@ import { Link } from "react-router-dom";
 export function Wishlist() {
     const [wishlists, setWishlists] = useState([]);
     const { decodedUserToken } = useTokenService();
+    const URL = import.meta.env.VITE_BACKEND;
+    const URL_ADD_TO_WISHLIST = import.meta.env.VITE_ADD_TO_WISHLIST;
+    const URL_MAIN_IMG = import.meta.env.VITE_MAIN_IMG;
+    const URL_SINGLE_PRODUCT = import.meta.env.VITE_SINGLE_PRODUCT_FRONT;
+    const URL_GET_WISHLIST = import.meta.env.VITE_GET_WISHLIST;
 
     const fetchWishlist = useCallback(() => {
         if (!decodedUserToken) return;
@@ -19,14 +24,14 @@ export function Wishlist() {
             'Authorization': `Bearer ${decodedUserToken.username}`,
         };
 
-        axios.get(`${URL}/get-wishlist`, { headers })
+        axios.get(`${URL}${URL_GET_WISHLIST}`, { headers })
             .then(response => {
                 setWishlists(response.data);
             })
             .catch(error => {
                 console.error('Erreur lors de la récupération des adresses :', error);
             });
-    }, [decodedUserToken]);
+    }, [decodedUserToken, URL, URL_GET_WISHLIST]);
 
     useEffect(() => {
         if (decodedUserToken) {
@@ -67,7 +72,7 @@ export function Wishlist() {
                 <div key={wishlist.id} className="single-wishlist-container">
                     {wishlist && wishlist.product ? (
                         <div className="wishlist-user-item">
-                            <Link to={`${URL_SINGLE_PRODUCT}/${wishlist.product.id}`}>
+                            <Link to={`${URL_SINGLE_PRODUCT.replace(':id', wishlist.product.id)}`}>
                                 <img src={`${URL}${URL_MAIN_IMG}/${wishlist.product.img}`} alt={wishlist.product.name} />
                             </Link>
                             <div className="discount-label-cards">

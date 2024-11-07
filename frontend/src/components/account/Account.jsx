@@ -7,10 +7,10 @@ import { Parameters } from "./forms/Parameters";
 import OrderHistoric from "./OrderHistoric";
 import { Tests } from "./Tests";
 import { Wishlist } from "./Wishlist";
-import { URL_ACCOUNT, URL_ORDER_HISTORIC, URL_PARAMETERS, URL_TESTS, URL_WISHLIST } from "../../constants/urls/URLFront";
+/* import { URL_ACCOUNT, URL_ORDER_HISTORIC, URL_PARAMETERS, URL_TESTS, URL_WISHLIST } from "../../constants/urls/URLFront"; */
 import axios from "axios";
 import { useTokenService } from "./services/tokenService";
-import { URL, URL_IMG, URL_USER_DATA } from "../../constants/urls/URLBack";
+/* import { URL, URL_IMG, URL_USER_DATA } from "../../constants/urls/URLBack"; */
 import { useEffect, useState } from "react";
 import { LoginAndRegisterForm } from "./forms/LoginAndRegisterForm";
 
@@ -18,7 +18,15 @@ function Account() {
   const location = useLocation();
   const { decodedUserToken, login } = useTokenService();
   const [userData, setUserData] = useState(null);
-  const [showLoginAndRegisterForm, setShowLoginAndRegisterForm] = useState(false); // État pour gérer l'affichage du formulaire
+  const [showLoginAndRegisterForm, setShowLoginAndRegisterForm] = useState(false);
+  const URL = import.meta.env.VITE_BACKEND;
+  const URL_ACCOUNT = import.meta.env.VITE_ACCOUNT;
+  const URL_ORDER_HISTORIC = import.meta.env.VITE_ORDER_HISTORIC;
+  const URL_PARAMETERS = import.meta.env.VITE_PARAMETERS;
+  const URL_TESTS = import.meta.env.VITE_TESTS;
+  const URL_WISHLIST = import.meta.env.VITE_WISHLIST;
+  const URL_IMG = import.meta.env.VITE_IMG;
+  const URL_USER_DATA = import.meta.env.VITE_USER_DATA;
 
   useEffect(() => {
     if (decodedUserToken) {
@@ -35,7 +43,7 @@ function Account() {
           console.error('Erreur lors de la récupération des adresses :', error);
         });
     }
-  }, [decodedUserToken]);
+  }, [decodedUserToken, URL, URL_USER_DATA]);
 
   const handleLoginButtonClick = () => {
     setShowLoginAndRegisterForm(!showLoginAndRegisterForm);
@@ -112,6 +120,11 @@ function Account() {
 }
 
 export default function AccountPage() {
+  const URL_ACCOUNT = import.meta.env.VITE_ACCOUNT;
+  const URL_ORDER_HISTORIC = import.meta.env.VITE_ORDER_HISTORIC;
+  const URL_PARAMETERS = import.meta.env.VITE_PARAMETERS;
+  const URL_TESTS = import.meta.env.VITE_TESTS;
+  const URL_WISHLIST = import.meta.env.VITE_WISHLIST;
   return (
     <Routes>
       <Route path={URL_ACCOUNT} element={<Account />}>

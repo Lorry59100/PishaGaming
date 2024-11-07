@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState, useCallback } from 'react';
 import { useTokenService } from "./services/tokenService";
-import { URL, URL_DELETE_ITEM, URL_IMG, URL_MOVE_TO_WISHLIST, URL_UPDATE_CART, URL_USER_CART, URL_VG_IMG, URL_VG_MAIN_IMG } from '../../constants/urls/URLBack';
+/* import { URL, URL_DELETE_ITEM, URL_IMG, URL_MOVE_TO_WISHLIST, URL_UPDATE_CART, URL_USER_CART, URL_VG_IMG, URL_VG_MAIN_IMG } from '../../constants/urls/URLBack'; */
 import "../../assets/styles/components/cart.css";
 import { BsTrash3 } from "react-icons/bs";
 import { IconContext } from "react-icons";
@@ -10,7 +10,7 @@ import { calculateDifference, calculateTotal, calculateTotalOldPrice, convertToE
 import { Paybar } from '../layouts/Navbar/Paybar';
 import { NavbarVisibilityContext } from '../../contexts/NavbarVisibilityContext';
 import { useContext } from 'react';
-import { PLATFORM_IMG, URL_PAYMENT } from '../../constants/urls/URLFront';
+import { PLATFORM_IMG } from '../../constants/urls/URLFront';
 import { useNavigate } from 'react-router-dom';
 import { LoginAndRegisterForm } from './forms/LoginAndRegisterForm';
 import { CartContext } from '../../contexts/CartContext';
@@ -26,6 +26,15 @@ export function Cart() {
   const { hideNavbar, showNavbar } = useContext(NavbarVisibilityContext);
   const [showLoginAndRegisterForm, setShowLoginAndRegisterForm] = useState(false);
   const navigate = useNavigate();
+  const URL = import.meta.env.VITE_BACKEND;
+  const URL_DELETE_ITEM = import.meta.env.VITE_DELETE_ITEM;
+  const URL_IMG = import.meta.env.VITE_IMG;
+  const URL_MOVE_TO_WISHLIST = import.meta.env.VITE_MOVE_TO_WISHLIST;
+  const URL_UPDATE_CART = import.meta.env.VITE_UPDATE_CART;
+  const URL_USER_CART = import.meta.env.VITE_USER_CART;
+  const URL_VG_IMG = import.meta.env.VITE_VG_IMG;
+  const URL_VG_MAIN_IMG = import.meta.env.VITE_VG_MAIN_IMG;
+  const URL_PAYMENT = import.meta.env.VITE_PAYMENT;
 
   useEffect(() => {
     // Add a class to the body element when the component mounts
@@ -69,7 +78,7 @@ export function Cart() {
         updateCart(cartItems);
       }
     }
-  }, [decodedUserToken, updateCart]);
+  }, [decodedUserToken, updateCart, URL_USER_CART, URL]);
 
   const handlePaymentClick = () => {
     if (decodedUserToken) {
@@ -103,7 +112,7 @@ export function Cart() {
       // Mettre à jour l'état local du composant avec le nouveau panier
       updateCart(newCartItems);
     }
-  }, [decodedUserToken, cart, updateCart]);
+  }, [decodedUserToken, cart, updateCart, URL, URL_DELETE_ITEM]);
 
   const updateQuantity = useCallback(async (userId, productId, platform, quantity, itemId) => {
     try {
@@ -125,7 +134,7 @@ export function Cart() {
     } catch (error) {
       ToastCenteredWarning(error.response.data.error);
     }
-  }, [cart, updateCart]);
+  }, [cart, updateCart, URL, URL_UPDATE_CART]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -153,7 +162,7 @@ export function Cart() {
     } catch (error) {
       console.error(error);
     }
-  }, [cart, updateCart]);
+  }, [cart, updateCart, URL, URL_MOVE_TO_WISHLIST]);
 
   return (
     <div className='tunnel-cart-container'>

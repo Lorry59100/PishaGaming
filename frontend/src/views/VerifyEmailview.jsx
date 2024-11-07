@@ -1,29 +1,26 @@
 import { useEffect, useRef } from "react";
 import axios from "axios";
-import { URL, URL_ACCOUNT_ACTIVATION } from "../constants/urls/URLBack";
 import { useNavigate, useParams } from "react-router-dom";
 import { ToastErrorWithLink, ToastSuccess } from "../components/services/toastService";
 import "react-toastify/dist/ReactToastify.css";
 import "../assets/styles/components/verify-account.css"
 import loader from "../assets/img/loader.gif"
-import { URL_HOME } from "../constants/urls/URLFront";
 
 export function VerifyEmailview() {
     const { token } = useParams();
     const isToastDisplayed = useRef(false);
     const navigate = useNavigate();
     console.log(token);
+    const URL = import.meta.env.VITE_BACKEND;
+    const URL_ACCOUNT_ACTIVATION = import.meta.env.VITE_ACCOUNT_ACTIVATION;
+    const URL_HOME = import.meta.env.VITE_HOME;
 
     useEffect(() => {
       const handleCheckEmail = async () => {
         try {
-          const response = await axios.post(`${URL}${URL_ACCOUNT_ACTIVATION}`, { token: token });
-          console.log('Response data', response.data);
-  
+          const response = await axios.post(`${URL}${URL_ACCOUNT_ACTIVATION}`, { token: token });  
           if (!isToastDisplayed.current) {
             if (response.status === 200 && response.data.message) {
-              // Traitement réussi
-              console.log(response.data.message);
               ToastSuccess(response.data.message);
               navigate(URL_HOME)
             } else if (response.data.error) {
@@ -41,7 +38,7 @@ export function VerifyEmailview() {
       };
   
       handleCheckEmail();
-    }, [token, navigate]);
+    }, [token, navigate, URL, URL_ACCOUNT_ACTIVATION, URL_HOME]);
 
   return (
     <div className="verify-account-container">

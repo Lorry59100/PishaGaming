@@ -1,12 +1,10 @@
 import { useEffect, useRef } from "react";
 import axios from "axios";
-import { URL, URL_CHECK_MAIL } from "../constants/urls/URLBack";
 import { useNavigate, useParams } from "react-router-dom";
 import { ToastErrorWithLink, ToastSuccess } from "../components/services/toastService";
 import "react-toastify/dist/ReactToastify.css";
 import "../assets/styles/components/verify-account.css"
 import loader from "../assets/img/loader.gif"
-import { URL_HOME } from "../constants/urls/URLFront";
 import { useTokenService } from "../components/account/services/tokenService";
 
 export function ChangeMailview() {
@@ -15,6 +13,9 @@ export function ChangeMailview() {
     const navigate = useNavigate();
     const { logout, login } = useTokenService();
     console.log(token);
+    const URL = import.meta.env.VITE_BACKEND;
+    const URL_CHECK_MAIL = import.meta.env.VITE_CHECK_MAIL;
+    const URL_HOME = import.meta.env.VITE_HOME;
 
     useEffect(() => {
       const handleCheckEmail = async () => {
@@ -47,7 +48,7 @@ export function ChangeMailview() {
       };
   
       handleCheckEmail();
-    }, [token, navigate, login, logout]);
+    }, [token, navigate, login, logout, URL, URL_CHECK_MAIL, URL_HOME]);
     return (
     <div className="verify-account-container">
       <h2>Verification en cours...</h2>

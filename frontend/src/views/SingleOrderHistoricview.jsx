@@ -1,11 +1,9 @@
 import SingleOrderHistoric from "../components/account/SingleOrderHistoric"
 
-function SingleOrderHistoricview() {
+export function SingleOrderHistoricview() {
   return (
     <div className="single-order-historic-view-container">
         <SingleOrderHistoric/>
     </div>
   )
 }
-
-export default SingleOrderHistoricview

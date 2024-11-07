@@ -4,21 +4,22 @@ import { FaFacebookF, FaApple, FaDiscord } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { Link } from 'react-router-dom';
 import { IconContext } from "react-icons";
-import { URL, URL_LOGIN } from "../../../constants/urls/URLBack";
 import { useTokenService } from '../../account/services/tokenService';
 import PropTypes from "prop-types";
 import { ToastError } from "../../services/toastService";
-import { URL_FORGOTTEN_PASSWORD } from "../../../constants/urls/URLFront";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { CartContext } from "../../../contexts/CartContext";
 
-export function LoginForm({ toggleForm, onFormSuccess }) {
+export function LoginForm({ toggleForm, onFormSuccess, onForgotPasswordClick }) {
   const { login } = useTokenService();
   const { updateCart } = useContext(CartContext);
   const initialValues = {
     email: '',
     password: '',
   };
+  const URL = import.meta.env.VITE_BACKEND;
+  const URL_LOGIN = import.meta.env.VITE_LOGIN;
+  const URL_FORGOTTEN_PASSWORD = import.meta.env.VITE_FORGOTTEN_PASSWORD;
 
   const onSubmit = (values) => {
     const cartItems = JSON.parse(localStorage.getItem('cart'));
@@ -41,6 +42,16 @@ export function LoginForm({ toggleForm, onFormSuccess }) {
       ToastError(error.response.data.error);
     });
   };
+
+  useEffect(() => {
+    // Ajouter une classe pour désactiver la barre de défilement
+    document.body.classList.add('no-scroll');
+
+    // Nettoyer la classe lorsque le composant est démonté
+    return () => {
+      document.body.classList.remove('no-scroll');
+    };
+  }, []);
 
   return (
     <div className="little-form-container">
@@ -85,7 +96,7 @@ export function LoginForm({ toggleForm, onFormSuccess }) {
       </Formik>
       <div className="switch">
         <button onClick={toggleForm}>Pas encore de compte ?</button>
-        <Link to={URL_FORGOTTEN_PASSWORD}>Mot de passe oublié ?</Link>
+        <Link to={URL_FORGOTTEN_PASSWORD} onClick={onForgotPasswordClick}>Mot de passe oublié ?</Link>
       </div>
     </div>
   );
@@ -94,4 +105,5 @@ export function LoginForm({ toggleForm, onFormSuccess }) {
 LoginForm.propTypes = {
   toggleForm: PropTypes.func.isRequired,
   onFormSuccess: PropTypes.func.isRequired,
+  onForgotPasswordClick: PropTypes.func.isRequired,
 };
