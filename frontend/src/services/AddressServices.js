@@ -1,4 +1,4 @@
-import { URL_API_GOUV } from "../../../constants/urls/URLBack";
+import { URL_API_GOUV } from "../constants/urls/URLBack";
 import axios from "axios";
 
 const apiDataGouv = axios.create({
