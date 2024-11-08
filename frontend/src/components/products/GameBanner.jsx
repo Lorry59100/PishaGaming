@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from 'axios';
-/* import { URL, URL_PRODUCTS_LIST, URL_SINGLE_PRODUCT } from "../../constants/urls/URLBack"; */
 import "../../assets/styles/components/gamebanner.css"
-import { convertToEuros, calculateDiscountPercentage } from "./services/PriceServices";
 import { Link } from 'react-router-dom';
+import { calculateDiscountPercentage, convertToEuros } from "../../services/PriceServices";
 
 function GameBanner() {
     const [randomProduct, setRandomProduct] = useState(null);

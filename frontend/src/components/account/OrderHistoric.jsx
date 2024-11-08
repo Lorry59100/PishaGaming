@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useTokenService } from "./services/tokenService";
 import axios from "axios";
 import "../../assets/styles/components/orderhistoric.css"
-import { formatDate } from "./services/dateServices";
-import { convertToEuros } from "../products/services/PriceServices";
 import { Link } from 'react-router-dom';
+import { useTokenService } from "../../services/TokenService";
+import { formatDate } from "../../services/DateServices";
+import { convertToEuros } from "../../services/PriceServices";
 
 function OrderHistoric() {
     const { decodedUserToken } = useTokenService();
@@ -16,12 +16,11 @@ function OrderHistoric() {
 
     useEffect(() => {
         if (decodedUserToken) {
-          const headers = {
+            const headers = {
             'Authorization': `Bearer ${decodedUserToken.username}`,
-            // autres en-têtes si nécessaire...
-          };
-      
-          axios.get(`${URL}${URL_USER_ORDER}`, {headers})
+        };
+
+        axios.get(`${URL}${URL_USER_ORDER}`, {headers})
             .then(response => {
                 setOrders(response.data);
             })
@@ -29,9 +28,9 @@ function OrderHistoric() {
                 console.error('Erreur lors de la récupération des adresses :', error);
             });
         }
-      }, [decodedUserToken, URL, URL_USER_ORDER]);
+    }, [decodedUserToken, URL, URL_USER_ORDER]);
 
-  return (
+    return (
     <div className="order-historic-container">
             <h2>Mes achats</h2>
             {orders !== null && orders.map((order) => (

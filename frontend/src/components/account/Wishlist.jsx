@@ -1,12 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
-import { useTokenService } from "./services/tokenService";
 import axios from "axios";
-/* import { URL, URL_ADD_TO_WISHLIST, URL_MAIN_IMG, URL_SINGLE_PRODUCT } from "../../constants/urls/URLBack"; */
 import "../../assets/styles/components/wishlist.css";
-import { calculateDiscountPercentage, convertToEuros } from "../products/services/PriceServices";
 import { ImCross } from "react-icons/im";
 import { IconContext } from "react-icons";
 import { Link } from "react-router-dom";
+import { useTokenService } from "../../services/TokenService";
+import { calculateDiscountPercentage, convertToEuros } from "../../services/PriceServices";
 
 export function Wishlist() {
     const [wishlists, setWishlists] = useState([]);

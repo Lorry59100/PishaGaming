@@ -7,7 +7,7 @@ import { registerLocale } from "react-datepicker";
 import fr from "date-fns/locale/fr";
 registerLocale("fr", fr);
 import PropTypes from "prop-types";
-import {  ToastImportantSuccess ,ToastError } from "../../services/toastService";
+import {  ToastImportantSuccess ,ToastError } from "../../../services/ToastService";
 export function RegisterForm(props) {
   const [birthDate, setBirthDate] = useState(null);
   const URL = import.meta.env.VITE_BACKEND;

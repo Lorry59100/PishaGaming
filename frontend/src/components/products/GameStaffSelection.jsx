@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-/* import { URL, URL_SINGLE_PRODUCT, URL_PRODUCTS_LIST } from "../../constants/urls/URLBack"; */
 import "../../assets/styles/components/gamestaffselection.css"
-import { calculateDiscountPercentage, convertToEuros } from "./services/PriceServices";
+import { calculateDiscountPercentage, convertToEuros } from "../../services/PriceServices";
 
 export function GameStaffSelection() {
     const [games, setGames] = useState([]);

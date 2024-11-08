@@ -2,10 +2,10 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from "react";
 import { ImCross } from "react-icons/im";
 import { IconContext } from "react-icons";
-import { getSuggestions, handleAddressChange, handleAddressClick } from "../services/addressServices";
 import axios from "axios";
 import { Formik, Form } from "formik";
-import { useTokenService } from "../services/tokenService";
+import { getSuggestions, handleAddressChange, handleAddressClick } from '../../../services/AddressServices';
+import { useTokenService } from '../../../services/TokenService';
 
 export function AddressForm({ onClose, onAddressAdded }) {
     const [suggestions, setSuggestions] = useState([]);

@@ -4,11 +4,11 @@ import { FaFacebookF, FaApple, FaDiscord } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { Link } from 'react-router-dom';
 import { IconContext } from "react-icons";
-import { useTokenService } from '../../account/services/tokenService';
 import PropTypes from "prop-types";
-import { ToastError } from "../../services/toastService";
+import { ToastError } from "../../../services/ToastService";
 import { useContext, useEffect } from "react";
 import { CartContext } from "../../../contexts/CartContext";
+import { useTokenService } from "../../../services/TokenService";
 
 export function LoginForm({ toggleForm, onFormSuccess, onForgotPasswordClick }) {
   const { login } = useTokenService();

@@ -7,12 +7,10 @@ import { Parameters } from "./forms/Parameters";
 import OrderHistoric from "./OrderHistoric";
 import { Tests } from "./Tests";
 import { Wishlist } from "./Wishlist";
-/* import { URL_ACCOUNT, URL_ORDER_HISTORIC, URL_PARAMETERS, URL_TESTS, URL_WISHLIST } from "../../constants/urls/URLFront"; */
 import axios from "axios";
-import { useTokenService } from "./services/tokenService";
-/* import { URL, URL_IMG, URL_USER_DATA } from "../../constants/urls/URLBack"; */
 import { useEffect, useState } from "react";
 import { LoginAndRegisterForm } from "./forms/LoginAndRegisterForm";
+import { useTokenService } from "../../services/TokenService";
 
 function Account() {
   const location = useLocation();

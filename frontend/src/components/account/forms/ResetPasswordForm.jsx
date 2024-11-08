@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { ToastError, ToastImportantSuccess } from "../../services/toastService";
+import { ToastError, ToastImportantSuccess } from "../../../services/toastService";
 import '../../../assets/styles/components/resetpassword.css';
 
 function ResetPasswordForm() {

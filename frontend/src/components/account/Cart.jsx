@@ -1,12 +1,9 @@
 import axios from 'axios';
 import React, { useEffect, useState, useCallback } from 'react';
-import { useTokenService } from "./services/tokenService";
-/* import { URL, URL_DELETE_ITEM, URL_IMG, URL_MOVE_TO_WISHLIST, URL_UPDATE_CART, URL_USER_CART, URL_VG_IMG, URL_VG_MAIN_IMG } from '../../constants/urls/URLBack'; */
 import "../../assets/styles/components/cart.css";
 import { BsTrash3 } from "react-icons/bs";
 import { IconContext } from "react-icons";
 import "../../assets/styles/components/form.css";
-import { calculateDifference, calculateTotal, calculateTotalOldPrice, convertToEuros } from '../products/services/PriceServices';
 import { Paybar } from '../layouts/Navbar/Paybar';
 import { NavbarVisibilityContext } from '../../contexts/NavbarVisibilityContext';
 import { useContext } from 'react';
@@ -14,8 +11,10 @@ import { PLATFORM_IMG } from '../../constants/urls/URLFront';
 import { useNavigate } from 'react-router-dom';
 import { LoginAndRegisterForm } from './forms/LoginAndRegisterForm';
 import { CartContext } from '../../contexts/CartContext';
-import { dismissToast, ToastCenteredWarning } from '../services/toastService';
+import { dismissToast, ToastCenteredWarning } from '../../services/ToastService';
 import { TiShoppingCart } from 'react-icons/ti';
+import { useTokenService } from '../../services/TokenService';
+import { calculateDifference, calculateTotal, calculateTotalOldPrice, convertToEuros } from '../../services/PriceServices';
 
 export function Cart() {
   const { cart, updateCart } = useContext(CartContext);

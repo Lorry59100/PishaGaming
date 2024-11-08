@@ -2,13 +2,13 @@ import { NavbarVisibilityContext } from "../../contexts/NavbarVisibilityContext"
 import { useContext, useEffect, useState } from 'react';
 import { Paybar } from "../layouts/Navbar/Paybar";
 import "../../assets/styles/components/activation.css"
-import { useTokenService } from "./services/tokenService";
 import axios from 'axios'
-import { convertToEuros } from "../products/services/PriceServices";
 import { IconContext } from "react-icons";
-import { formatDate } from "./services/dateServices";
 import { IoIosWarning } from "react-icons/io";
 import { PLATFORM_IMG } from "../../constants/urls/URLFront";
+import { useTokenService } from "../../services/TokenService";
+import { convertToEuros } from "../../services/PriceServices";
+import { formatDate } from "../../services/DateServices";
 
 export function Activation() {
 const { hideNavbar, showNavbar } = useContext(NavbarVisibilityContext);
@@ -80,7 +80,6 @@ useEffect(() => {
       };
     });
   };
-  console.log(order)
 
   return (
     <div className="activation-layout-container">

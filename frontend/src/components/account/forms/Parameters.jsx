@@ -8,16 +8,16 @@ import { GiPadlockOpen } from "react-icons/gi";
 import { BsGeoAlt } from "react-icons/bs";
 import { useEffect, useRef, useState } from "react";
 import { AddressForm } from "./AddressForm";
-import { useTokenService } from "../services/tokenService";
 import axios from "axios";
 import { PiPencilSimpleLineFill } from 'react-icons/pi';
 import { BsTrash3 } from "react-icons/bs";
 import { Field, Form, Formik } from "formik";
-import { ToastCenteredSuccess } from "../../services/toastService";
+import { ToastCenteredSuccess } from "../../../services/ToastService";
 import { MdOutlineCameraAlt } from "react-icons/md";
 import { useOutletContext } from "react-router-dom";
 import { ImCross } from 'react-icons/im';
 import { FaCheck, FaHouse } from "react-icons/fa6";
+import { useTokenService } from '../../../services/TokenService';
 
 export function Parameters() {
     const [activeTab, setActiveTab] = useState(0);

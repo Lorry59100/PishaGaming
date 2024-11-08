@@ -1,12 +1,12 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { calculateDiscountPercentage, convertToEuros } from "./services/PriceServices";
 import "../../assets/styles/components/gamestaffselection.css"
 import "../../assets/styles/components/search.css"
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { IconContext } from "react-icons";
 import { FaChevronDown, FaTimes } from "react-icons/fa";
+import { calculateDiscountPercentage, convertToEuros } from "../../services/PriceServices";
 
 function Search() {
   const [games, setGames] = useState([]);

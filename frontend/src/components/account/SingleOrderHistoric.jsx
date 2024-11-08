@@ -5,8 +5,8 @@ import "../../assets/styles/components/singleorder.css";
 import { IoChevronBackOutline } from "react-icons/io5";
 import { IconContext } from "react-icons";
 import { FaShippingFast, FaCheck } from "react-icons/fa";
-import { formatDate } from "./services/dateServices";
 import { PLATFORM_IMG } from "../../constants/urls/URLFront";
+import { formatDate } from "../../services/DateServices";
 
 function SingleOrderHistoric() {
   const { reference } = useParams();

@@ -5,21 +5,21 @@ import { Paybar } from "../../layouts/Navbar/Paybar";
 import "../../../assets/styles/components/paymentform.css";
 import { PiPencilSimpleLineFill } from 'react-icons/pi';
 import { IconContext } from "react-icons";
-import { useTokenService } from "../services/tokenService";
-import { calculateTotal, convertToEuros } from "../../products/services/PriceServices";
 import { Elements } from '@stripe/react-stripe-js';
 import CheckoutForm from "./CheckoutForm";
 import DatePicker from "react-datepicker";
 import { addDays } from 'date-fns';
 import { IoIosWarning } from "react-icons/io";
 import { FaRegCopy } from "react-icons/fa";
-import { ToastError, ToastSuccess } from "../../services/toastService";
+import { ToastError, ToastSuccess } from "../../../services/ToastService";
 import { loadStripe } from '@stripe/stripe-js';
 import { AddressForm } from "./AddressForm";
 import { ImCross } from 'react-icons/im';
 import { FaCheck, FaHouse } from "react-icons/fa6";
 import { BsTrash3 } from "react-icons/bs";
 import { IoMdAdd } from "react-icons/io";
+import { useTokenService } from "../../../services/TokenService";
+import { calculateTotal, convertToEuros } from "../../../services/PriceServices";
 
 export function PaymentForm() {
   const { hideNavbar, showNavbar } = useContext(NavbarVisibilityContext);

@@ -5,9 +5,9 @@ import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
 import '../../../assets/styles/components/checkoutform.css';
 import PropTypes from "prop-types";
-import { useTokenService } from '../services/tokenService';
 import { useNavigate } from "react-router-dom";
 import { CartContext } from '../../../contexts/CartContext';
+import { useTokenService } from '../../../services/TokenService';
 
 const CheckoutForm = forwardRef(({ cartData, selectedDate }, ref) => {
   const [isFormValid, setIsFormValid] = useState(false);

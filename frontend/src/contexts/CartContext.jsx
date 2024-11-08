@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { decodeToken } from 'react-jwt';
 import axios from 'axios';
 /* import { URL, URL_USER_CART } from '../constants/urls/URLBack'; */
-import { ToastCenteredWarning } from '../components/services/toastService';
+import { ToastCenteredWarning } from '../services/ToastService';
 
 const CartContext = createContext();
 

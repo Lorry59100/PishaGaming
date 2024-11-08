@@ -10,16 +10,16 @@ import { IoIosAddCircleOutline } from 'react-icons/io';
 import { PiPencilSimpleLineFill, PiUserBold } from 'react-icons/pi';
 import "../../assets/styles/components/singleproduct.css"
 import RatingCircle from './RatingCircle';
-import { calculateDiscountPercentage, convertToEuros } from './services/PriceServices';
-import { formatDate } from '../account/services/dateServices';
+import { calculateDiscountPercentage, convertToEuros } from '../../services/PriceServices';
 import { FaCheck, FaHeart, FaRegHeart } from "react-icons/fa";
 import parse from 'html-react-parser';
-import { useTokenService } from '../account/services/tokenService';
 import { CartContext } from '../../contexts/CartContext';
 import { LuThumbsDown, LuThumbsUp } from "react-icons/lu";
 import { LoginAndRegisterForm } from '../account/forms/LoginAndRegisterForm';
 import { TestForm } from '../account/forms/TestForm';
-import { dismissToast, ToastCenteredWarning } from '../services/toastService';
+import { dismissToast, ToastCenteredWarning } from '../../services/ToastService';
+import { formatDate } from '../../services/DateServices';
+import { useTokenService } from '../../services/TokenService';
 
 function parseHTML(html, maxLength = null) {
     const tempDiv = document.createElement('div');

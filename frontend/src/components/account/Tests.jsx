@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { useTokenService } from "./services/tokenService";
 import axios from "axios";
 import "../../assets/styles/components/tests.css";
 import RatingCircle from "../products/RatingCircle";
 import { PiPencilSimpleLineFill } from "react-icons/pi";
 import { IconContext } from "react-icons";
 import { useNavigate } from 'react-router-dom';
+import { useTokenService } from "../../services/TokenService";
 
 // Fonction utilitaire pour tronquer le texte
 const truncateText = (text, maxLength) => {

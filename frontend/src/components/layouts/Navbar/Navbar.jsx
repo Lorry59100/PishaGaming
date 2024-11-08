@@ -5,13 +5,13 @@ import { IconContext } from 'react-icons';
 import logo from '../../../assets/img/Logo.png';
 import Searchbar from './Searchbar';
 import '../../../assets/styles/components/navbar.css';
-import { useTokenService } from '../../account/services/tokenService';
 import { Link } from 'react-router-dom';
 import { LoginAndRegisterForm } from '../../account/forms/LoginAndRegisterForm';
 import { NavbarVisibilityContext } from '../../../contexts/NavbarVisibilityContext';
 import { useContext } from 'react';
 import { CartContext } from '../../../contexts/CartContext';
 import axios from 'axios';
+import { useTokenService } from '../../../services/TokenService';
 
 function Navbar() {
   const { userToken, decodedUserToken, logout, login } = useTokenService();
