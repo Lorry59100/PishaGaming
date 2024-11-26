@@ -30,7 +30,7 @@ class KeyGeneratorService
     {
         return match ($platform) {
             'PlayStation 5', 'PlayStation 4'=> $this->generateKeyWithLength(12),
-            'PC', 'iOS', 'Android', 'macOS', 'Linux', 'Nintendo Switch', 'Wii U', 'Wii', 'Classic Macintosh', 'Apple II'=> $this->generateKeyWithLength(16),
+            'PC', 'iOS', 'Android', 'macOS', 'Linux', 'Nintendo Switch', 'Classic Macintosh', 'Apple II'=> $this->generateKeyWithLength(16),
             'Xbox Series X', 'Xbox One', 'Xbox Series SX'=> $this->generateKeyWithLength(25),
             default => throw new \InvalidArgumentException('Plateforme non prise en charge'),
         };
