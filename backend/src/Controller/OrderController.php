@@ -104,8 +104,6 @@ class OrderController extends AbstractController
                 "macOS",
                 "Linux",
                 "Nintendo Switch",
-                "Wii U",
-                "Wii",
                 "Classic Macintosh",
                 "Apple II",
                 "Xbox Series X",
@@ -185,12 +183,6 @@ ActivationKeyRepository $activationKeyRepository, PlatformRepository $platformRe
         return new JsonResponse(['error' => 'Aucune commande trouvée pour cet utilisateur.'], 404);
     }
 
-    // RECUPERER LES CHAMPS ASSOCIES, SINON CELA RENVOIE UN OBJET VIDE
-    $userArray = [
-    'firstname' => $user->getFirstname(),
-    'lastname' => $user->getLastname(),
-    ];
-
     $orderDetailArray = [];
     foreach($orderDetails as $orderDetail) {
         $platform = $platformRepository->findOneBy(['name' => $orderDetail->getPlatform()]);
@@ -225,7 +217,7 @@ ActivationKeyRepository $activationKeyRepository, PlatformRepository $platformRe
         }
     }
 
-    return new JsonResponse([$userArray, $orderArray, $orderDetailArray, $keyArray], 200);
+    return new JsonResponse([$orderArray, $orderDetailArray, $keyArray], 200);
 }
 
 
