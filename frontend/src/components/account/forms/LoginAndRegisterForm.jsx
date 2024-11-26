@@ -27,7 +27,7 @@ export function LoginAndRegisterForm({ onCloseForm }) {
   };
 
   return (
-    <div className="add-product-panel">
+    <div className="double-form-container">
       <div className="form-container">
         <div className="logo-form">
           <a href="/">
