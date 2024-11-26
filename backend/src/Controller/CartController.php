@@ -96,6 +96,7 @@ class CartController extends AbstractController
         // Décrémenter la quantité du produit en stock
         $product->setStock($product->getStock() - $data['quantity']);
         $entityManager->persist($product);
+        $entityManager->flush();
 
         return new JsonResponse(['success' => true, 'message' => 'Product added to cart.']);
         }
