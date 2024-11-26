@@ -1,6 +1,5 @@
-import { URL_API_GOUV } from "../constants/urls/URLBack";
 import axios from "axios";
-
+const URL_API_GOUV = import.meta.env.VITE_API_GOUV
 const apiDataGouv = axios.create({
     baseURL: "https://api-adresse.data.gouv.fr",
   });
