@@ -29,10 +29,12 @@ class AddressController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $houseNumber = $data['housenumber'] ?? null;
-    $street = $data['street'] ?? null;
-    $postcode = $data['postcode'] ?? null;
-    $city = $data['city'] ?? null;
-    $email = $data['email'] ?? null;
+        $street = $data['street'] ?? null;
+        $postcode = $data['postcode'] ?? null;
+        $firstname = $data['firstname'];
+        $lastname = $data['lastname'];
+        $city = $data['city'] ?? null;
+        $email = $data['email'] ?? null;
         $user = $userRepository->findOneBy(['email' => $email]);
 
         // Vérifier si l'utilisateur a déjà des adresses
@@ -40,25 +42,25 @@ class AddressController extends AbstractController
 
         $address = new Address;
         // Vérifier et définir les valeurs non nulles
-    if ($houseNumber !== null) {
-        $address->setHousenumber($houseNumber);
-    }
-    if ($street !== null) {
-        $address->setStreet($street);
-    }
-    if ($postcode !== null) {
-        $address->setPostcode($postcode);
-    }
-    if ($city !== null) {
-        $address->setCity($city);
-    }
-
-
+        if ($houseNumber !== null) {
+            $address->setHousenumber($houseNumber);
+        }
+        if ($street !== null) {
+            $address->setStreet($street);
+        }
+        if ($postcode !== null) {
+            $address->setPostcode($postcode);
+        }
+        if ($city !== null) {
+            $address->setCity($city);
+        }
         if($hasAddresses == false) {
             $address->setIsActive(true);
         } else {
             $address->setIsActive(false);
         }
+        $address->setFirstname($firstname);
+        $address->setLastname($lastname);
 
         $user->addAddress($address);
         $em->persist($user);
@@ -72,6 +74,8 @@ class AddressController extends AbstractController
         'city' => $address->getCity() ?? null,
         'postcode' => $address->getPostcode() ?? null,
         'isActive' => $address->isIsActive(),
+        'firstname' => $address->getFirstname(),
+        'lastname' => $address->getLastname(),
         ];
 
         return new JsonResponse(['success' => true, 'data' => $addressData], 200);
@@ -98,6 +102,8 @@ class AddressController extends AbstractController
             'city' => $address->getCity(),
             'postcode' => $address->getPostcode(),
             'isActive' => $address->isIsActive(),
+            'firstname' => $address->getFirstname(),
+            'lastname' => $address->getLastname(),
         ];
     }
         return new JsonResponse($addressArray, 200);
@@ -206,6 +212,8 @@ public function changeAddress(AddressRepository $addressRepository, EntityManage
             'city' => $address->getCity(),
             'postcode' => $address->getPostcode(),
             'isActive' => $address->isIsActive(),
+            'firstname' => $address->getFirstname(),
+            'lastname' => $address->getLastname(),
         ];
     }
         return new JsonResponse($addressArray, 200);
