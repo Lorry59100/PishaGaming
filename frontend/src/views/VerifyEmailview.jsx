@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { ToastErrorWithLink, ToastSuccess } from "../services/toastService";
 import "react-toastify/dist/ReactToastify.css";
 import "../assets/styles/components/verify-account.css"
 import loader from "../assets/img/loader.gif"
+import { ToastErrorWithLink, ToastSuccess } from "../services/ToastService";
 
 export function VerifyEmailview() {
     const { token } = useParams();
