@@ -27,7 +27,7 @@ class LoginController extends AbstractController
     /**
      * @Route("/login", name="login", methods={"POST"})
      */
-    public function login(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher, JWTTokenManagerInterface $jwtManager, 
+    public function login(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher, JWTTokenManagerInterface $jwtManager,
     ProductRepository $productRepository, EntityManagerInterface $entityManager)
     {
         $data = json_decode($request->getContent(), true);
@@ -40,37 +40,72 @@ class LoginController extends AbstractController
 
         if ($user && $passwordHasher->isPasswordValid($user, $password)) {
             $payload = [
-                'firstname' => $user->getFirstname(),
-                'lastname' => $user->getLastname(),
                 'pseudo' => $user->getPseudo(),
                 'id' => $user->getId(),
             ];
             $token = $jwtManager->createFromPayload($user, $payload);
-            // Check if the user has a cart
-            if ($cart) {
-            $this->cartService->createCartEntities($user, $cart, $entityManager);
-            }
 
-            if($user->isIsVerified() == null) {
+            if ($user->isIsVerified() == null) {
                 return new JsonResponse(['error' => 'Vous devez valider votre compte avant de vous connecter'], 401);
             }
+
+            // Calculate the total amount of the existing cart
+            $totalAmount = 0;
+            foreach ($user->getCarts() as $cartItem) {
+                $productPrice = $cartItem->getProduct()->getPrice();
+                $quantity = $cartItem->getQuantity();
+                $totalAmount += $productPrice * $quantity;
+            }
+
+            // Calculate the total amount of the new cart items
+            $newCartTotal = 0;
+            foreach ($cart as $cartItem) {
+                $product = $productRepository->findOneBy(['id' => $cartItem['id']]);
+                if ($product) {
+                    $newCartTotal += $product->getPrice() * $cartItem['quantity'];
+                }
+            }
+
+            // Check if the total amount exceeds 400 euros
+            $exceedsLimit = false;
+            $errorMessage = null;
+            if ($totalAmount + $newCartTotal <= 40000) {
+                // Create or update cart entities
+                if ($cart) {
+                    $this->cartService->createCartEntities($user, $cart, $entityManager);
+                }
+            } else {
+                $exceedsLimit = true;
+                $errorMessage = 'Votre article n\'a pas été ajouté au panier car la valeur maximale aurait été dépassée.(400 euros maximum)';
+            }
+
+            // Recalculate the total amount if necessary
             $cartArray = [];
-            foreach($user->getCarts() as $cart) {
+            $totalAmount = 0;
+            foreach ($user->getCarts() as $cartItem) {
+                $productPrice = $cartItem->getProduct()->getPrice();
+                $quantity = $cartItem->getQuantity();
+                $totalAmount += $productPrice * $quantity;
+
                 $cartArray[] = [
-                    'id' => $cart->getId(),
-                    'quantity' => $cart->getQuantity(),
-                    'platform' => $cart->getPlatform(),
+                    'id' => $cartItem->getId(),
+                    'quantity' => $quantity,
+                    'platform' => $cartItem->getPlatform(),
+                    'price' => $productPrice,
                 ];
-            };
- 
+            }
+
             return new JsonResponse([
                 'user'  => $user->getUserIdentifier(),
                 'token' => $token,
                 'cart' => $cartArray,
+                'totalAmount' => $totalAmount,
+                'exceedsLimit' => $exceedsLimit,
+                'errorMessage' => $errorMessage,
             ]);
         }
+
         return new JsonResponse(['error' => 'Identifiants invalides'], 401);
-       
     }
 
     private function createCartEntities(User $user, ProductRepository $productRepository, array $cartItems, EntityManagerInterface $entityManager)
