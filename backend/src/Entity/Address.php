@@ -33,6 +33,12 @@ class Address
     #[ORM\Column]
     private ?bool $isActive = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $firstname = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $lastname = null;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -126,6 +132,30 @@ class Address
     public function setIsActive(bool $isActive): static
     {
         $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    public function getFirstname(): ?string
+    {
+        return $this->firstname;
+    }
+
+    public function setFirstname(string $firstname): static
+    {
+        $this->firstname = $firstname;
+
+        return $this;
+    }
+
+    public function getLastname(): ?string
+    {
+        return $this->lastname;
+    }
+
+    public function setLastname(string $lastname): static
+    {
+        $this->lastname = $lastname;
 
         return $this;
     }
