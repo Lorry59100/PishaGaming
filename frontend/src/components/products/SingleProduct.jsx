@@ -1,5 +1,5 @@
-import axios from 'axios'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import axios from 'axios';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { IconContext } from "react-icons";
 import { AiOutlineCheck, AiOutlineClose, AiOutlineMinusCircle } from 'react-icons/ai';
@@ -8,7 +8,7 @@ import { ImCross, ImPriceTag } from 'react-icons/im';
 import logo from '../../assets/img/Logo.png';
 import { IoIosAddCircleOutline } from 'react-icons/io';
 import { PiPencilSimpleLineFill, PiUserBold } from 'react-icons/pi';
-import "../../assets/styles/components/singleproduct.css"
+import "../../assets/styles/components/singleproduct.css";
 import RatingCircle from './RatingCircle';
 import { calculateDiscountPercentage, convertToEuros } from '../../services/PriceServices';
 import { FaCheck, FaHeart, FaRegHeart } from "react-icons/fa";
@@ -38,7 +38,7 @@ export function SingleProduct() {
     const [showFullDescription, setShowFullDescription] = useState(false);
     const [selectedPlatform, setSelectedPlatform] = useState('');
     const { decodedUserToken } = useTokenService();
-    const { updateCart } = useContext(CartContext)
+    const { updateCart } = useContext(CartContext);
     const navigate = useNavigate();
     const [showLoginAndRegisterForm, setShowLoginAndRegisterForm] = useState(false);
     const [showTestForm, setShowTestForm] = useState(false);
@@ -47,7 +47,8 @@ export function SingleProduct() {
     const [expandedComments, setExpandedComments] = useState({});
     const [wishlist, setWishlist] = useState([]);
     const [productQuantity, setProductQuantity] = useState(0);
-    const [ , setIsLoggedIn] = useState(false); // Ajout de l'état de connexion
+    const [ , setIsLoggedIn] = useState(false);
+    const descriptionRef = useRef(null);
     const URL = import.meta.env.VITE_BACKEND;
     const URL_ADD_TO_CART = import.meta.env.VITE_ADD_TO_CART;
     const URL_USER_CART = import.meta.env.VITE_USER_CART;
@@ -104,6 +105,9 @@ export function SingleProduct() {
 
     const toggleDescription = () => {
         setShowFullDescription(!showFullDescription);
+        if (descriptionRef.current) {
+            descriptionRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
     };
 
     const descriptionClassName = showFullDescription ? 'big-description full' : 'big-description';
@@ -144,26 +148,39 @@ export function SingleProduct() {
         }
     }, [decodedUserToken, getWishlist]);
 
-    const isProductInWishlist = (wishlist, productId) => {
+    const isProductInWishlist = (wishlist, productId, platform) => {
         return wishlist.some(item => {
-            if (item.product && typeof item.product.id !== 'undefined') {
-                return item.product.id == productId;
+            // Validation des données de l'élément
+            if (item && item.product && typeof item.product.id !== 'undefined') {
+                if (item.product.platform == platform) {
+                    return item.product.id == productId;
+                }
             } else {
-                console.error('item.product or item.product.id is undefined');
-                return false;
+                // Log si les données ne sont pas valides
+                console.error('Problème avec cet élément de wishlist:', item);
             }
+            // Retourne false si non conforme ou pas trouvé
+            return false;
+
         });
     };
 
-    const addToWishlist = async (productId, decodedUserToken) => {
+    const addToWishlist = async (productId, decodedUserToken, selectedPlatform) => {
         if (!decodedUserToken) {
             console.error('decodedUserToken is undefined');
             return;
         }
 
+        if (!selectedPlatform) {
+            console.error('selectedPlatform is undefined');
+            alert('Veuillez sélectionner une plateforme.');
+            return;
+        }
+
         try {
             const response = await axios.post(`${URL}${URL_ADD_TO_WISHLIST.replace(':id', productId)}`, {
-                userId: decodedUserToken.id
+                userId: decodedUserToken.id,
+                platform: selectedPlatform // Ajoutez la plateforme sélectionnée ici
             }, {
                 headers: {
                     'Content-Type': 'application/json'
@@ -367,8 +384,8 @@ export function SingleProduct() {
                 {product.stock > 0 && (
                     <div className="buy-info-container">
                         <IconContext.Provider value={{ size: "2em" }}>
-                            <button type="submit" onClick={() => addToWishlist(id, decodedUserToken)}>
-                                {isProductInWishlist(wishlist, id) ? (
+                            <button type="submit" className='heart-container' onClick={() => addToWishlist(id, decodedUserToken, selectedPlatform)}>
+                                {isProductInWishlist(wishlist, id, selectedPlatform) ? (
                                     <FaHeart className='heart' />
                                 ) : (
                                     <FaRegHeart className='heart' />
@@ -395,7 +412,10 @@ export function SingleProduct() {
                         </div>
 
                         <div className="platforms">
-                            <select className="platforms-dropdown" value={selectedPlatform} onChange={(e) => setSelectedPlatform(e.target.value)}>
+                            <select className="platforms-dropdown" value={selectedPlatform} onChange={(e) => {
+                                setSelectedPlatform(e.target.value);
+                                console.log("Plateforme sélectionnée:", e.target.value);
+                            }}>
                                 {product.plateformes.map(plateforme => (
                                     <option key={plateforme.id} value={plateforme.name} className='dropdown-options'>
                                         {plateforme.name}
@@ -468,7 +488,7 @@ export function SingleProduct() {
                 <div className="about-container">
                     <h1>À propos du jeu</h1>
                     <p>{parseHTML(product.description, 200)}</p>
-                    <a href="/">Voir plus</a>
+                    <a href="#desc" onClick={toggleDescription}>Voir plus</a>
                 </div>
                 <div className="rating-container">
                     <div className="test-number-container">
@@ -480,25 +500,25 @@ export function SingleProduct() {
                     </div>
                     <div className="sub-infos">
                         <div className="info-title">
-                            <h5>Installation:</h5>
-                            <h5>Développeur:</h5>
-                            <h5>Editeur:</h5>
-                            <h5>Date de sortie:</h5>
-                            <h5>Genre:</h5>
+                            <h4>Installation:</h4>
+                            <h4>Développeur:</h4>
+                            <h4>Editeur:</h4>
+                            <h4>Date de sortie:</h4>
+                            <h4>Genre:</h4>
                         </div>
                         <div className="content-info">
-                            <h5> <button className='invisible-button'> Comment installer le jeu </button></h5>
-                            <h5>{product.developer}</h5>
-                            <h5>{product.editor}</h5>
-                            <h5>{formatDate(product.release.date)}</h5>
-                            <h5 className='genres-list'>
+                            <h4> <button className='invisible-button'> Comment installer le jeu </button></h4>
+                            <h4>{product.developer}</h4>
+                            <h4>{product.editor}</h4>
+                            <h4>{formatDate(product.release.date)}</h4>
+                            <h4 className='genres-list'>
                                 {product.genres.map((genre, index) => (
                                     <span key={genre.id}>
                                         {genre.name}
                                         {index !== product.genres.length - 1 && <span className="comma">, </span>}
                                     </span>
                                 ))}
-                            </h5>
+                            </h4>
                         </div>
                     </div>
                 </div>
@@ -583,10 +603,10 @@ export function SingleProduct() {
                         </div>
                     </div>
                 </div>
-                <div className={descriptionClassName}>
-                    <h1>Description</h1>
+                <div className={descriptionClassName} ref={descriptionRef}>
+                    <h1 id='#desc'>Description</h1>
                     <div className='big-desc-container'>
-                        {parse(product.description, showFullDescription)}
+                        {showFullDescription ? parse(product.description) : parseHTML(product.description, 200)}
                     </div>
                 </div>
                 <button className='show' onClick={toggleDescription}>
