@@ -65,14 +65,13 @@ class RegistrationController extends AbstractController
         
         $user = new User();
         $user->setEmail($data['email'])
-            ->setFirstname($data['firstname'])
-            ->setLastname($data['lastname'])
             ->setBirthdate($dateBirthday)
             ->setPassword($passwordHasher->hashPassword($user, $data['password']))
             ->setToken($token)
             ->setTokenExpiration($dateTime)
             ->setIsVerified(false)
             ->setPseudo($pseudo)
+            ->setCreatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')))
             ->setRoles(['ROLE_USER']);
         $em->persist($user);
         $em->flush();
