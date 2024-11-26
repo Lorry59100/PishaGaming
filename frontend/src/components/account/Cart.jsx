@@ -7,7 +7,6 @@ import "../../assets/styles/components/form.css";
 import { Paybar } from '../layouts/Navbar/Paybar';
 import { NavbarVisibilityContext } from '../../contexts/NavbarVisibilityContext';
 import { useContext } from 'react';
-import { PLATFORM_IMG } from '../../constants/urls/URLFront';
 import { useNavigate } from 'react-router-dom';
 import { LoginAndRegisterForm } from './forms/LoginAndRegisterForm';
 import { CartContext } from '../../contexts/CartContext';
@@ -15,6 +14,7 @@ import { dismissToast, ToastCenteredWarning } from '../../services/ToastService'
 import { TiShoppingCart } from 'react-icons/ti';
 import { useTokenService } from '../../services/TokenService';
 import { calculateDifference, calculateTotal, calculateTotalOldPrice, convertToEuros } from '../../services/PriceServices';
+import { FaArrowUp } from 'react-icons/fa';
 
 export function Cart() {
   const { cart, updateCart } = useContext(CartContext);
@@ -24,22 +24,23 @@ export function Cart() {
   const difference = calculateDifference(cart);
   const { hideNavbar, showNavbar } = useContext(NavbarVisibilityContext);
   const [showLoginAndRegisterForm, setShowLoginAndRegisterForm] = useState(false);
+  const [wishlists, setWishlists] = useState([]);
   const navigate = useNavigate();
   const URL = import.meta.env.VITE_BACKEND;
   const URL_DELETE_ITEM = import.meta.env.VITE_DELETE_ITEM;
-  const URL_IMG = import.meta.env.VITE_IMG;
+  const URL_PLATFORM_IMG = import.meta.env.VITE_PLATFORM_IMG;
   const URL_MOVE_TO_WISHLIST = import.meta.env.VITE_MOVE_TO_WISHLIST;
   const URL_UPDATE_CART = import.meta.env.VITE_UPDATE_CART;
   const URL_USER_CART = import.meta.env.VITE_USER_CART;
-  const URL_VG_IMG = import.meta.env.VITE_VG_IMG;
-  const URL_VG_MAIN_IMG = import.meta.env.VITE_VG_MAIN_IMG;
+  const URL_MAIN_IMG = import.meta.env.VITE_MAIN_IMG;
   const URL_PAYMENT = import.meta.env.VITE_PAYMENT;
+  const URL_SEARCH = import.meta.env.VITE_SEARCH;
+  const URL_GET_WISHLIST = import.meta.env.VITE_GET_WISHLIST;
+  const URL_ADD_TO_CART = import.meta.env.VITE_ADD_TO_CART;
+  const URL_ADD_TO_WISHLIST = import.meta.env.VITE_ADD_TO_WISHLIST;
 
   useEffect(() => {
-    // Add a class to the body element when the component mounts
     document.body.classList.add('unset-padding');
-
-    // Remove the class when the component is unmounted
     return () => {
       document.body.classList.remove('unset-padding');
     };
@@ -47,46 +48,46 @@ export function Cart() {
 
   useEffect(() => {
     hideNavbar();
-
     return () => {
       showNavbar();
     };
   }, [hideNavbar, showNavbar]);
 
-  useEffect(() => {
-    // Vérifier si l'utilisateur est connecté avant de faire la requête
+  const fetchCart = useCallback(() => {
     if (decodedUserToken) {
-      const userId = decodedUserToken.id;
-      axios.get(`${URL}${URL_USER_CART}/${userId}`)
-        .then(response => {
-          if (response.data && response.data.carts) {
-            updateCart(response.data.carts);
-            if (response.data.message && response.data.message.trim() !== '') {
-              ToastCenteredWarning(response.data.message)
-            }
-          }
-        })
-        .catch(error => {
-          console.error('Erreur lors de la récupération du panier :', error);
-        });
+        const userId = decodedUserToken.id;
+        axios.get(`${URL}${URL_USER_CART}/${userId}`)
+            .then(response => {
+                if (response.data && response.data.carts) {
+                    updateCart(response.data.carts);
+                    if (response.data.message && response.data.message.trim() !== '') {
+                        ToastCenteredWarning(response.data.message);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Erreur lors de la récupération du panier :', error);
+            });
     } else {
-      const getCart = localStorage.getItem('cart');
-      if (getCart) {
-        const cartItems = JSON.parse(getCart);
-        // Afficher les produits du panier stockés localement
-        updateCart(cartItems);
-      }
+        const getCart = localStorage.getItem('cart');
+        if (getCart) {
+            const cartItems = JSON.parse(getCart);
+            updateCart(cartItems);
+        }
     }
-  }, [decodedUserToken, updateCart, URL_USER_CART, URL]);
+}, [decodedUserToken, updateCart, URL_USER_CART, URL]);
+
 
   const handlePaymentClick = () => {
     if (decodedUserToken) {
-      // Redirige vers la page de paiement si l'utilisateur est connecté
       navigate(URL_PAYMENT);
     } else {
-      // Affiche le formulaire de connexion si l'utilisateur n'est pas connecté
       setShowLoginAndRegisterForm(true);
     }
+  };
+
+  const handleDiscoverClick = () => {
+      navigate(URL_SEARCH);
   };
 
   const removeItem = useCallback(async (userId = null, itemId) => {
@@ -98,7 +99,6 @@ export function Cart() {
             itemId
           }
         });
-        // Mettre à jour l'état local du composant avec le nouveau panier
         const newCartData = cart.filter((item) => item.id !== itemId);
         updateCart(newCartData);
       } catch (error) {
@@ -108,7 +108,6 @@ export function Cart() {
       const cartItems = JSON.parse(localStorage.getItem('cart'));
       const newCartItems = cartItems.filter((item) => item.id !== itemId);
       localStorage.setItem('cart', JSON.stringify(newCartItems));
-      // Mettre à jour l'état local du composant avec le nouveau panier
       updateCart(newCartItems);
     }
   }, [decodedUserToken, cart, updateCart, URL, URL_DELETE_ITEM]);
@@ -122,7 +121,6 @@ export function Cart() {
         quantity,
         itemId
       });
-      // Mettre à jour l'état du composant avec la nouvelle quantité
       const newCartData = cart.map((cartItem) => {
         if (cartItem.id === itemId && cartItem.platform === platform) {
           return { ...cartItem, quantity: quantity };
@@ -137,35 +135,87 @@ export function Cart() {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Vérifiez si le clic est en dehors du toast container et non sur le bouton
       if (!event.target.closest('.Toastify__toast-container') && !event.target.closest('.submit-button')) {
         dismissToast();
       }
     };
-    // Ajoutez un écouteur d'événements pour les clics sur le document
     document.addEventListener('click', handleClickOutside);
-    // Nettoyez l'écouteur d'événements lorsque le composant est démonté
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
   }, []);
 
-  const moveToWishlist = useCallback(async (userId, productId) => {
-    try {
-      await axios.post(`${URL}${URL_MOVE_TO_WISHLIST.replace(':id', productId)}` , {
-        userId: userId
-      });
-      // Mettre à jour l'état local du composant avec le nouveau panier
-      const newCartData = cart.filter((item) => item.id !== productId);
-      updateCart(newCartData);
-    } catch (error) {
-      console.error(error);
+  const fetchWishlist = useCallback(() => {
+    if (!decodedUserToken) return;
+  
+    const headers = {
+        'Authorization': `Bearer ${decodedUserToken.username}`,
+    };
+  
+    axios.get(`${URL}${URL_GET_WISHLIST}`, { headers })
+        .then(response => {
+            setWishlists(response.data);
+        })
+        .catch(error => {
+            console.error('Erreur lors de la récupération des adresses :', error);
+        });
+  }, [decodedUserToken, URL, URL_GET_WISHLIST]);
+  
+  useEffect(() => {
+    if (decodedUserToken) {
+        fetchWishlist();
     }
-  }, [cart, updateCart, URL, URL_MOVE_TO_WISHLIST]);
+    fetchCart();
+  }, [decodedUserToken, fetchWishlist, fetchCart]);
+
+  const moveToWishlist = useCallback(async (userId, productId, platform) => {
+    try {
+        await axios.post(`${URL}${URL_MOVE_TO_WISHLIST.replace(':id', productId)}`, {
+            userId: userId,
+            platform: platform
+        });
+
+        // Supprimer tous les exemplaires du produit du panier
+        const newCartData = cart.filter((item) => item.productId !== productId || item.platform !== platform);
+        updateCart(newCartData);
+
+        fetchWishlist(); // Appeler fetchWishlist pour mettre à jour la wishlist
+    } catch (error) {
+        console.error(error);
+    }
+  }, [cart, updateCart, URL, URL_MOVE_TO_WISHLIST, fetchWishlist]);
+
+  const addToCartAndRemoveFromWishlist = useCallback(async (userId, productId, platform, quantity) => {
+    try {
+        // Ajouter le produit au panier
+        const addToCartResponse = await axios.post(`${URL}${URL_ADD_TO_CART}/${productId}`, {
+            userId: userId,
+            platform: platform,
+            quantity: quantity
+        });
+
+        if (addToCartResponse.data.success) {
+            // Supprimer le produit de la wishlist
+            await axios.post(`${URL}${URL_ADD_TO_WISHLIST.replace(':id', productId)}`, {
+                userId: userId,
+                platform: platform
+            });
+
+            // Mettre à jour le panier et la wishlist localement
+            fetchCart();
+            fetchWishlist();
+        } else {
+            ToastCenteredWarning(addToCartResponse.data.error);
+        }
+    } catch (error) {
+        console.error(error);
+        ToastCenteredWarning('Erreur lors de l\'ajout au panier ou de la suppression de la wishlist.');
+    }
+}, [URL, fetchCart, fetchWishlist]);
 
   return (
     <div className='tunnel-cart-container'>
-      <Paybar isPaymentFormContext={false} isActivationContext={false} />
+      <Paybar isPaymentFormContext={false} isActivationContext={false} isLoginFormVisible={showLoginAndRegisterForm} />
       <div className="cart-component-layout-container">
         <div className="cart-component-container">
           <div className="cart-container">
@@ -178,7 +228,7 @@ export function Cart() {
                   </IconContext.Provider>
                   <h3>Votre panier est vide</h3>
                   <p>Vous n'avez pas encore ajouté de jeux dans votre panier. <br /> Parcourez le site pour trouver des offres à votre goût.</p>
-                  <button className='discover-btn'>Découvrir des jeux</button>
+                  <button className='discover-btn' onClick={handleDiscoverClick}>Découvrir des jeux</button>
                 </div>
               )}
               {decodedUserToken && cart && cart.length > 0 && (
@@ -188,12 +238,12 @@ export function Cart() {
                       {index > 0 && <div className="cutline-form"></div>}
                       <div className='single-product-detail'>
                         <div className="product-img">
-                          <img src={`${URL}${URL_IMG}${URL_VG_IMG}${URL_VG_MAIN_IMG}/${item.img}`} alt={item.name} />
+                          <img src={`${URL}${URL_MAIN_IMG}/${item.img}`} alt={item.name} />
                         </div>
                         <div className="middle-content">
                           <div className="middle-head">
                             <div className="logo-img-container">
-                              <img src={`${PLATFORM_IMG}/${item.platform}.png`} alt={item.platform} className='logo-img' />
+                              <img src={`${URL_PLATFORM_IMG}/${item.platform}.png`} alt={item.platform} className='logo-img' />
                             </div>
                             <h4>{item.name}</h4>
                           </div>
@@ -201,8 +251,7 @@ export function Cart() {
                           <div className="middle-foot">
                             <button type='submit' onClick={() => removeItem(decodedUserToken.id, item.id)}><IconContext.Provider value={{ size: '1.2em' }}><BsTrash3 /></IconContext.Provider></button>
                             <div className="vertical-spacer"></div>
-                            <button onClick={() => moveToWishlist(decodedUserToken.id, item.productId)}>Déplacer en wishlist</button>
-
+                            <button onClick={() => moveToWishlist(decodedUserToken.id, item.productId, item.platform)}>Déplacer en wishlist</button>
                           </div>
                         </div>
                         <div className="quantity-selector">
@@ -240,7 +289,7 @@ export function Cart() {
                       {index > 0 && <div className="cutline-form"></div>}
                       <div className='single-product-detail'>
                         <div className="product-img">
-                          <img src={`${URL}${URL_IMG}${URL_VG_IMG}${URL_VG_MAIN_IMG}/${item.img}`} alt={item.name} />
+                          <img src={`${URL}${URL_MAIN_IMG}/${item.img}`} alt={item.name} />
                         </div>
                         <div className="middle-content">
                           <div className="middle-head">
@@ -288,6 +337,38 @@ export function Cart() {
                 </div>
               )}
             </div>
+            {decodedUserToken && wishlists && wishlists.length > 0 && (
+              <div className="wishlist-container">
+                <h2>Wishlist</h2>
+                <div className="wishlist-products">
+                  {wishlists.map((item, index) => (
+                    <React.Fragment key={`${item.id}-${item.platform}`}>
+                      {index > 0 && <div className="cutline-form"></div>}
+                      <div className='single-wishlist-product-detail'>
+                        <div className="wishlist-product-img">
+                          <img src={`${URL}${URL_MAIN_IMG}/${item.product.img}`} alt={item.product.name} />
+                        </div>
+                        <div className="wishlist-middle-content">
+                          <div className="wishlist-middle-head">
+                            <h4>{item.product.name}</h4>
+                            <h5>{item.product.platform}</h5>
+                          </div>
+                          <div className="wishlist-middle-foot">
+                            <h4>{convertToEuros(item.product.price)} €</h4>
+                          </div>
+                        </div>
+                        <div className="move-to-cart-container">
+                          <button className='move-to-cart-btn' onClick={() => addToCartAndRemoveFromWishlist(decodedUserToken.id, item.product.id, item.product.platform, 1)}>
+                            <h4>Ajouter au panier</h4>
+                            <FaArrowUp />
+                          </button>
+                        </div>
+                      </div>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
           <div className="summary-container">
             <h2>Résumé</h2>
@@ -305,7 +386,14 @@ export function Cart() {
                 <h2>{convertToEuros(totalPrice)} €</h2>
               </div>
               <div className="btn-container">
-                <button type="submit" className='submit-button submit-payment' onClick={handlePaymentClick}>Aller au paiement &gt;</button>
+              <button
+  type="submit"
+  className={`submit-payment ${cart.length > 0 ? 'submit-button' : 'disabled-button'}`}
+  onClick={handlePaymentClick}
+  disabled={cart.length === 0}
+>
+  Aller au paiement &gt;
+</button>
                 {showLoginAndRegisterForm && <LoginAndRegisterForm onCloseForm={() => setShowLoginAndRegisterForm(false)} />}
               </div>
               <div className="cutline-form first-cutline">
