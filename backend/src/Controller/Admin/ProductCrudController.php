@@ -33,7 +33,6 @@ class ProductCrudController extends AbstractCrudController
             AssociationField::new('platform')->hideOnIndex(),
             AssociationField::new('genre')->hideOnIndex(),
             AssociationField::new('tag')->hideOnIndex(),
-            BooleanField::new('isPhysical'),
             TextField::new('trailer')->hideOnIndex(),
             ImageField::new('img')->onlyOnIndex(),
             TextField::new('img')->onlyOnForms(),
