@@ -10,10 +10,15 @@ use Symfony\Component\HttpClient\HttpClient;
 class PlatformFixtures extends Fixture
 {
     private $apiKey;
+    private $nonPhysicalPlatforms;
 
     public function __construct($apiKey)
     {
         $this->apiKey = $apiKey;
+        $this->nonPhysicalPlatforms = [
+            'PlayStation 5', 'PlayStation 4', 'PC', 'iOS', 'Android', 'macOS', 'Linux', 'Nintendo Switch', 'Classic Macintosh', 'Apple II',
+            'Xbox Series X', 'Xbox One', 'Xbox Series S/X'
+        ];
     }
 
     public function load(ObjectManager $manager)
@@ -29,7 +34,12 @@ class PlatformFixtures extends Fixture
         foreach ($platforms as $platformData) {
             $platform = new Platform();
             $platform->setName($platformData['name']);
-            $platform->setIsPhysical(0);
+            // Définir setIsPhysical en fonction du nom de la plateforme
+            if (in_array($platformData['name'], $this->nonPhysicalPlatforms)) {
+                $platform->setIsPhysical(0);
+            } else {
+                $platform->setIsPhysical(1);
+            }
             $manager->persist($platform);
         }
         $manager->flush();

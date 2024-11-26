@@ -3,7 +3,6 @@
 namespace App\DataFixtures;
 
 use App\Entity\Product;
-use App\DataFixtures\GameFixtures;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\HttpClient\HttpClient;
@@ -20,7 +19,6 @@ class TrailerFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager)
     {
-        // Récupérer la liste des jeux en BDD
         $products = $manager->getRepository(Product::class)->findAll();
         $httpClient = HttpClient::create();
         $youtubeApiKey = $this->apiKey;
@@ -29,54 +27,65 @@ class TrailerFixtures extends Fixture implements DependentFixtureInterface
             $platforms = $product->getPlatform()->toArray();
             $firstPlatform = !empty($platforms) ? $platforms[0]->getName() : '';
             $trailerUrl = $this->getYoutubeTrailerUrl($httpClient, $product->getName(), $firstPlatform, $youtubeApiKey);
+
             if ($trailerUrl) {
-                $videoPath = __DIR__ . '/../../public/uploads/videos/videogames/trailer/' . uniqid() . '.%(ext)s';
+                $videoPath = realpath(__DIR__ . '/../../public/uploads/videos/videogames/trailer') . '/' . uniqid() . '.%(ext)s';
                 $videoFileName = $this->downloadVideo($trailerUrl, $videoPath);
+
                 if ($videoFileName) {
+                    dump("Trailer downloaded successfully: $videoFileName");
                     $product->setTrailer($videoFileName);
                 } else {
-                    $product->setTrailer('default_video_path.mp4'); // Chemin par défaut si le téléchargement échoue
+                    dump("Failed to download trailer, using default video for: " . $product->getName());
+                    $product->setTrailer('default_video_path.mp4');
                 }
-                $manager->persist($product);
+
+            } else {
+                dump("No videoFileName found, using default video for: " . $product->getName());
+                $product->setTrailer('default_video_path.mp4');
             }
+
+            $manager->persist($product);
         }
+        
         $manager->flush();
     }
 
     private function downloadVideo($url, $destination)
     {
-        // Utiliser yt-dlp pour télécharger la vidéo
-        $command = sprintf('yt-dlp -o "%s" "%s"', $destination, $url);
-        $output = shell_exec($command);
+        $outputDirectory = dirname($destination);
+        $baseFileName = basename($destination, '.%(ext)s');
 
-        // Vérifier si le fichier a été téléchargé correctement
-        $downloadedFiles = glob(dirname($destination) . '/' . basename($destination, '.%(ext)s') . '.*');
+        // Commande yt-dlp
+        $command = sprintf(
+            'yt-dlp -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4" -o "%s" "%s"',
+            $destination,
+            $url
+        );
 
-        if (count($downloadedFiles) > 0) {
-            $downloadedFile = $downloadedFiles[0];
-            $fileExtension = pathinfo($downloadedFile, PATHINFO_EXTENSION);
+        shell_exec($command);
 
-            // Si le fichier n'est pas en .mp4, le convertir
-            if ($fileExtension !== 'mp4') {
-                $mp4File = str_replace('.' . $fileExtension, '.mp4', $downloadedFile);
-                $convertCommand = sprintf('ffmpeg -i "%s" "%s"', $downloadedFile, $mp4File);
-                shell_exec($convertCommand);
+        // Vérifier la présence d'un fichier .mp4
+        $downloadedFiles = glob($outputDirectory . '/' . $baseFileName . '.*');
 
-                // Supprimer le fichier original après conversion
-                unlink($downloadedFile);
-
-                return basename($mp4File);
+        if ($downloadedFiles) {
+            foreach ($downloadedFiles as $file) {
+                if (pathinfo($file, PATHINFO_EXTENSION) === 'mp4') {
+                    dump("File successfully found: $file");
+                    return basename($file);
+                }
             }
-
-            return basename($downloadedFile);
         }
 
         return false;
     }
 
+
+
     private function getYoutubeTrailerUrl($httpClient, $gameName, $platform, $youtubeApiKey)
     {
         $searchQuery = $gameName . ' trailer ' . $platform . ' fr';
+
         $response = $httpClient->request('GET', 'https://www.googleapis.com/youtube/v3/search', [
             'query' => [
                 'part' => 'snippet',
@@ -89,17 +98,14 @@ class TrailerFixtures extends Fixture implements DependentFixtureInterface
 
         if (isset($youtubeData['items']) && count($youtubeData['items']) > 0) {
             $firstItem = $youtubeData['items'][0];
-
             if (isset($firstItem['id']['videoId'])) {
                 $videoId = $firstItem['id']['videoId'];
-
-                // Construct the direct video URL
                 $videoUrl = "https://www.youtube.com/watch?v={$videoId}";
-
                 return $videoUrl;
             }
         }
 
+        dump("No trailer found for: $gameName on platform: $platform");
         return null;
     }
 

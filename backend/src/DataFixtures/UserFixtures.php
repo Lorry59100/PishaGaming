@@ -5,7 +5,6 @@ namespace App\DataFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\String\Slugger\SluggerInterface;
 use App\Entity\User;
 
 class UserFixtures extends Fixture
@@ -28,7 +27,7 @@ class UserFixtures extends Fixture
         $token = $randomString . $timestamp;
         // Obtenir les 5 premiers chiffres du timestamp
         $timestampPrefix = substr($timestamp, 0, 5);
-        $pseudo = 'gamer-' . $timestampPrefix;
+        $pseudo = 'gamer-' . $timestampPrefix . '-0';
 
         /* $adminpassword = $_ENV['ADMIN_PASSWORD']; */
         $faker = \Faker\Factory::create('fr_FR');
@@ -36,40 +35,43 @@ class UserFixtures extends Fixture
 
         $admin->setRoles(['ROLE_ADMIN'])
             ->setEmail('pisha@hotmail.fr')
-            ->setFirstname('Lorry')
-            ->setLastname('Carrel')
             ->setBirthdate($dateBirthday)
             ->setPassword($this->passwordHasher->hashPassword($admin, $_ENV['ADMIN_PASSWORD']))
             ->setIsVerified(true)
-            ->setPseudo($pseudo);
+            ->setPseudo($pseudo)
+            ->setCreatedAt(new \DateTimeImmutable('now'));
 
         $manager->persist($admin);
 
         for ($i = 0; $i < 10; $i++) {
             $user = new User();
+            $timestamp = time();
+            $timestampPrefix = substr($timestamp, 0, 5);
+            $pseudo = 'gamer-' . $timestampPrefix . '-' . $i+1;
             $user->setRoles(['ROLE_USER'])
                 ->setEmail($faker->email())
-                ->setFirstname($faker->firstName())
-                ->setLastname($faker->lastName())
                 ->setPassword($this->passwordHasher->hashPassword($user, 'user'))
                 ->setToken($token)
                 ->setTokenExpiration($dateTime)
                 ->setIsVerified(false)
                 ->setBirthdate($dateBirthday)
-                ->setPseudo($pseudo);
+                ->setPseudo($pseudo)
+                ->setCreatedAt(new \DateTimeImmutable('now'));
             $manager->persist($user);
         }
 
         for ($i = 0; $i < 10; $i++) {
             $userConfirmed = new User();
+            $timestamp = time();
+            $timestampPrefix = substr($timestamp, 0, 5);
+            $pseudo = 'gamer-' . $timestampPrefix . '-' . $i+11;
             $userConfirmed->setRoles(['ROLE_USER'])
                 ->setEmail($faker->email())
-                ->setFirstname($faker->firstName())
-                ->setLastname($faker->lastName())
                 ->setPassword($this->passwordHasher->hashPassword($userConfirmed, 'user'))
                 ->setIsVerified(true)
                 ->setBirthdate(\DateTime::createFromFormat('Y-m-d', $faker->dateTimeBetween('-50 years', '-18 years')->format('Y-m-d')))
-                ->setPseudo($pseudo);
+                ->setPseudo($pseudo)
+                ->setCreatedAt(new \DateTimeImmutable('now'));
             $manager->persist($userConfirmed);
         }
 
