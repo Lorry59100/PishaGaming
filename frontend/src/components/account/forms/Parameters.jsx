@@ -20,6 +20,7 @@ import { FaCheck, FaHouse } from "react-icons/fa6";
 import { useTokenService } from '../../../services/TokenService';
 
 export function Parameters() {
+    const { onPseudoChange } = useOutletContext();
     const [activeTab, setActiveTab] = useState(0);
     const [isAddressFormVisible, setAddressFormVisible] = useState(false);
     const [isAddressModalVisible, setAddressModalVisible] = useState(false);
@@ -28,7 +29,6 @@ export function Parameters() {
     const fileInputRef = useRef(null);
     const [userData, setUserData] = useState(null);
     const [newPseudo, setNewPseudo] = useState('');
-    const { onPseudoChange } = useOutletContext();
     const URL = import.meta.env.VITE_BACKEND;
     const URL_CHANGE_MAIL = import.meta.env.VITE_CHANGE_MAIL;
     const URL_CHANGE_PASSWORD = import.meta.env.VITE_CHANGE_PASSWORD;
@@ -102,14 +102,13 @@ export function Parameters() {
         setAddresses(prevAddresses => [...prevAddresses, newAddress]);
         setAddressFormVisible(false);
     };
-    
-    
+
     useEffect(() => {
         if (decodedUserToken) {
             const headers = {
                 'Authorization': `Bearer ${decodedUserToken.username}`,
             };
-    
+
             axios.get(`${URL}${URL_GET_ADDRESS}`, { headers })
                 .then(response => {
                     const addresses = response.data;
@@ -135,7 +134,7 @@ export function Parameters() {
                 });
         }
     }, [decodedUserToken, URL, URL_GET_ADDRESS]);
-    
+
     const handleEmailFormSubmit = (values, actions) => {
         const { mail, mail_confirm, password } = values;
         const headers = {
@@ -190,7 +189,7 @@ export function Parameters() {
             'Authorization': `Bearer ${decodedUserToken.username}`,
             'Content-Type': 'application/json',
         };
-    
+
         axios.put(`${URL}${URL_CHANGE_ADDRESS}`, { addressId: address.id }, { headers })
             .then(()=> {
                 setAddressModalVisible(false);
@@ -203,32 +202,26 @@ export function Parameters() {
             .catch(error => {
                 console.error('Erreur lors du changement d\'adresse :', error);
             });
-    };    
+    };
 
     const deleteAddressSelect = (address) => {
         const headers = {
             'Authorization': `Bearer ${decodedUserToken.username}`,
         };
-    
+
         axios.delete(`${URL}${URL_DELETE_ADDRESS}`, {
             headers: headers,
             data: { addressId: address.id }
         })
-        .then(response => {    
-            // Ensure the response is an array
-            if (Array.isArray(response.data)) {
-                // Update the active address in the state
-                setAddresses(response.data);
-            } else {
-                console.error('Invalid response format:', response.data);
-            }
+        .then(response => {
+            // Mettre à jour l'état des adresses avec les données renvoyées par le backend
+            setAddresses(response.data);
         })
         .catch(error => {
             console.error('Erreur lors de la suppression de l\'adresse :', error);
         });
     };
-    
-    
+
     return (
         <div className="tab-and-content-container">
             <div className="tab-container">
@@ -339,7 +332,7 @@ export function Parameters() {
                         {addresses.find(address => address.isActive) && (
                             <div className="single-address-container">
                                 <div>
-                                    <h3>{decodedUserToken.lastname} {decodedUserToken.firstname}</h3>
+                                    <h3>{addresses.find(address => address.isActive).firstname} {addresses.find(address => address.isActive).lastname}</h3>
                                     <button onClick={handleEditAddressClick}>
                                         <IconContext.Provider value={{ size: "1.5em", color: "white" }}>
                                             <PiPencilSimpleLineFill />
@@ -367,30 +360,30 @@ export function Parameters() {
                                             </IconContext.Provider>
                                         </button>
                                     </div>
-                                        <h1>Vos adresses de facturation & livraison</h1>
+                                    <h1>Vos adresses de facturation & livraison</h1>
                                     {addresses.map(address => (
                                         <div key={address.id} className="single-address-container">
-                                            <h3>{decodedUserToken.lastname} {decodedUserToken.firstname}</h3>
+                                            <h3>{address.firstname} {address.lastname}</h3>
                                             <h4>{address.housenumber} {address.street} {address.postcode} {address.city}</h4>
                                             <div>
-                                                    {address.isActive ? (
-                                                        <button>
-                                                            <IconContext.Provider value={{ size: "1.5em", color: "green" }}>
-                                                                <FaCheck />
-                                                            </IconContext.Provider>
-                                                        </button>
-                                                        ) : (
-                                                        <button onClick={() => handleAddressSelect(address)}>
-                                                            <IconContext.Provider value={{ size: "1.5em", color: "white" }}>
-                                                                <FaHouse />
-                                                            </IconContext.Provider>
-                                                        </button>
-                                                    )}
-                                                        <button onClick={() => deleteAddressSelect(address)}>
-                                                            <IconContext.Provider value={{ size: "1.5em", color: "white" }}>
-                                                                <BsTrash3 />
-                                                            </IconContext.Provider>
-                                                        </button>
+                                                {address.isActive ? (
+                                                    <button>
+                                                        <IconContext.Provider value={{ size: "1.5em", color: "green" }}>
+                                                            <FaCheck />
+                                                        </IconContext.Provider>
+                                                    </button>
+                                                ) : (
+                                                    <button onClick={() => handleAddressSelect(address)}>
+                                                        <IconContext.Provider value={{ size: "1.5em", color: "white" }}>
+                                                            <FaHouse />
+                                                        </IconContext.Provider>
+                                                    </button>
+                                                )}
+                                                <button onClick={() => deleteAddressSelect(address)}>
+                                                    <IconContext.Provider value={{ size: "1.5em", color: "white" }}>
+                                                        <BsTrash3 />
+                                                    </IconContext.Provider>
+                                                </button>
                                             </div>
                                         </div>
                                     ))}
@@ -414,9 +407,5 @@ export function Parameters() {
 }
 
 Parameters.propTypes = {
-    onPseudoChange: PropTypes.func.isRequired,
-};
-
-Parameters.defaultProps = {
-    onPseudoChange: () => {},
+    onPseudoChange: PropTypes.func,
 };
