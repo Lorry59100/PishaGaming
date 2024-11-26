@@ -12,7 +12,14 @@ grid-column: span 4;
 }
 
 .summary-and-total-container {
-grid-column: span 2;
+    position: fixed;
+    top: 140px;
+    right: 250px;
+    width: 400px;
+    overflow-y: auto;
+    padding: 20px;
+    background: var(--ultra-dark);
+    border-radius: 10px;
 }
 
 .payment-layout-container {
@@ -124,6 +131,7 @@ margin-top: 0.5em;
 background: var(--grey);
 border-radius: 10px;
 padding-bottom: 0.5em;
+position: relative;
 }
 
 .multiple-items {
@@ -163,7 +171,6 @@ display: flex;
 flex-direction: column;
 justify-content: center;
 align-items: center;
-margin-bottom: 1em;
 }
 
 .datepicker-container>h5 {
@@ -266,6 +273,18 @@ top: -16px;
 .address-info-pay-no-address>* {
     margin: 0.5em 0;
 }
+
+a.pay-terms {
+    color: var(--medium-light);
+}
+
+.terms-and-politic {
+    padding: 1em;
+    border-radius: 10px;
+    color: var(--grey);
+}
+
+
 
 
 

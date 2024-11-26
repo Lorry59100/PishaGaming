@@ -200,3 +200,7 @@ justify-content: space-evenly;
 align-items: center;
 margin-top: 1em;
 }
+
+.footer-links>ul>li>a:hover {
+    color: var(--orange);
+}

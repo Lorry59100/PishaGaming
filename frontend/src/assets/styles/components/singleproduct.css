@@ -3,7 +3,7 @@
 .dual-cards-container {
 display: grid;
 grid-template-columns: 1fr 1fr;
-align-items: center;
+align-items: stretch;
 gap: 2em;
 margin-top: 15em;
 max-width: 1200px;
@@ -17,24 +17,21 @@ justify-content: center;
 }
 
 .single-product-img-container {
-display: flex;
-justify-content: center;
-height: 100%;
+height: 328px;
 }
 
 .single-product-img-container>img {
 border-radius: 10px;
 width: 584px;
-height: 328px;
+height: 100%;
 }
 
 .buy-info-container {
-height: 100%;
 color: white;
 display: flex;
 flex-direction: column;
 align-items: center;
-justify-content: space-evenly;
+justify-content: space-between;
 border-radius: 10px;
 backdrop-filter: blur(60px) saturate(100%);
 background-image: linear-gradient(1turn, var(--dark), rgba(39, 39, 39, 0) 70%);
@@ -45,7 +42,8 @@ align-self: center;
 }
 
 .buy-info-container>.title>h1 {
-margin-top: 1em;
+margin : 1em 1em 0 1em;
+text-align: center;
 }
 
 .logo-container {
@@ -225,34 +223,32 @@ margin-right: 0.5em;
 .rating-container {
 display: flex;
 flex-direction: column;
-justify-self: baseline;
-width: 85%;
+margin-left: 3em;
+margin-top: 2em;
 }
 
 .test-number-container {
 display: flex;
 align-items: center;
-justify-content: center;
-width: 50%;
 margin-bottom: 1em;
-margin-left: 1em;
 }
 
-.rating-container h4:first-of-type{
+.number h4:first-of-type{
 color: grey;
 margin: 0;
 }
 
-.rating-container h4:nth-of-type(2) {
+.number h4:nth-of-type(2) {
 color: white;
 margin: 0;
 }
 
 .sub-infos {
-width: 100%;
 display: flex;
-justify-content: space-evenly;
-margin: 0 1em;
+}
+
+.sub-infos>* {
+    margin: 0 0.5em;
 }
 
 .info-title {
@@ -263,15 +259,17 @@ color: grey;
 color: white;
 }
 
-.info-title>h5, .content-info>h5 {
+.info-title>h4, .content-info>h4 {
 margin: 0.2em;
 }
 
 .users-tags {
 grid-column: span 2;
 display: flex;
+flex-wrap: wrap;
 color: var(--grey);
 margin-bottom: 1em;
+height: 60px;
 }
 
 .tags-list {
@@ -315,7 +313,7 @@ border: 1px solid white;
 .invisible-button, .show {
 background: none;
 border: none;
-color: inherit;
+color: white;
 font: inherit;
 cursor: pointer;
 padding: 0;
@@ -490,11 +488,16 @@ border-radius: 50%;
 margin-bottom: 1em;
 }
 
+.heart-container {
+    margin-top: 0.5em;
+}
+
 .heart {
 position: absolute;
 top: 1em;
 right: 1em;
 color: var(--orange);
+width: 25px;
 }
 
 .heart:hover {

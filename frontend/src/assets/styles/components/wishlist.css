@@ -41,3 +41,21 @@ border-radius: 10px;
     -webkit-filter: drop-shadow( 4px 4px 2px rgba(0, 0, 0, .7));
     filter: drop-shadow( 4px 4px 2px rgba(0, 0, 0, .7));
 }
+
+.wishlist-count {
+    grid-column: span 3; 
+}
+
+.wishlist-platform-img {
+    position: absolute;
+    background-color: black;
+    padding: 1em;
+    border-radius: 50%;
+    left: 10px;
+    top: 10px;
+}
+
+.wishlist-platform-img>img {
+width: 30px;
+height: 30px;
+}

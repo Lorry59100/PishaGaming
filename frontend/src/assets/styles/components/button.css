@@ -20,3 +20,14 @@ justify-content: center;
 .submit-button:hover {
 background: var(--orange-gradient-hover);
 }
+
+.disabled-button {
+background: var(--ultra-dark);
+color: white;
+border: none;
+border-radius: 5px;
+padding: 15px 20px;
+font-size: 18px;
+cursor: default;
+transition: background-color 0.3s ease;
+}

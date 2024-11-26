@@ -1,5 +1,6 @@
 .user-tests-container {
     padding: 20px;
+    width: 100%;
 }
 
 .tests-grid {
@@ -54,4 +55,8 @@
 .test-user-item>.rating-circle {
     width: 65px;
     height: 65px;
+}
+
+.test-count {
+    margin-bottom: 1em;
 }

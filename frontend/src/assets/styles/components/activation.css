@@ -24,7 +24,7 @@ grid-column: span 6;
 
 .order-detail {
 background: var(--medium-dark);
-padding: 3em;
+padding: 3em 3em 1em 3em;
 margin: 1em;
 border-radius: 10px;
 }
@@ -54,10 +54,12 @@ align-items: center;
 display: flex;
 justify-content: center;
 width: 100%;
+margin-top: 1em;
 }
 
 .order-info-title>:first-child {
 margin-right: 0.5em;
+margin-bottom: 0.5em;
 display: flex;
 align-items: center;
 }
@@ -79,7 +81,6 @@ width: 400px;
 display: flex;
 justify-content: center;
 padding: 1.5em 2em;
-margin: 1em;
 border-radius: 10px;
 position: relative;
 height: 30px;
@@ -98,7 +99,7 @@ color: white;
 }
 
 .img-container {
-  position: relative;
+position: relative;
 }
 
 .platform-order-icon {

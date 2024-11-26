@@ -44,7 +44,7 @@ display: grid;
 grid-template-columns: repeat(2, 1fr);
 grid-gap: 1em;
 }
-.add-product-panel {
+.double-form-container {
 height: 101%;
 width: 101%;
 position: fixed;
@@ -53,8 +53,8 @@ left: 50%;
 transform: translate(-50%, -50%);
 padding: 20px;
 box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-z-index: 999;
 display: flex;
+z-index: 999;
 }
 .form-container {
 width: 50%;
@@ -279,11 +279,9 @@ z-index: 1000; /* Valeur arbitraire pour s'assurer que le formulaire est au-dess
 }
 
 .address-form-container {
-/* width: 500px;
-height: 500px; */
 background-color: var(--dark);
 width: calc(100% - 60px);
-max-width: 1000px;
+max-width: 700px;
 z-index: 1;
 padding: 3em;
 border-radius: 10px;
@@ -314,13 +312,15 @@ position: relative;
 width: -moz-available;
 position: relative;
 z-index: 2;
+margin-bottom: 1em;
 }
 
 .address-input-container>ul, .address-input-container>li {
 list-style: none;
 position: absolute;
 margin-top: 0;
-background: var(--grey-tr);
+background: var(--dark);
+z-index: 3;
 border-bottom-left-radius: 10px;
 border-bottom-right-radius: 10px;
 border: 0.1em solid white;
@@ -343,7 +343,7 @@ cursor: pointer;
 }
 
 .btn-address-container {
-margin-top: 9em;
+margin-top: 2em;
 }
 
 .token-again-form-container {
@@ -376,4 +376,12 @@ width: 100%;
 
 .no-scroll {
     overflow: hidden;
+}
+
+.address-user-info-container, .address-user-info-container>* {
+    width: 100%;
+}
+
+.address-user-info-container {
+    display: flex;
 }
