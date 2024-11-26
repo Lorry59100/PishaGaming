@@ -35,6 +35,9 @@ export function LoginForm({ toggleForm, onFormSuccess, onForgotPasswordClick }) 
         localStorage.removeItem('cart');
         updateCart(response.data.cart);
         onFormSuccess(); // Appel de la fonction de rappel après une soumission réussie
+        if (response.data.exceedsLimit) {
+          ToastError(response.data.errorMessage);
+        }
       }
     })
     .catch((error) => {
