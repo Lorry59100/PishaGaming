@@ -1,96 +1,116 @@
-import { useEffect, useState  } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { Formik, Form, Field } from 'formik';
-import "react-datepicker/dist/react-datepicker.css";
-import DatePicker from "react-datepicker";
-import { registerLocale } from "react-datepicker";
-import fr from "date-fns/locale/fr";
-registerLocale("fr", fr);
 import PropTypes from "prop-types";
-import {  ToastImportantSuccess ,ToastError } from "../../../services/ToastService";
+import { ToastImportantSuccess, ToastError } from "../../../services/ToastService";
+
 export function RegisterForm(props) {
   const [birthDate, setBirthDate] = useState(null);
   const URL = import.meta.env.VITE_BACKEND;
   const URL_REGISTER = import.meta.env.VITE_REGISTER;
-    // Logique de controle du formulaire
-    const initialValues= {
-      firstname: '',
-      lastname: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      };
 
-    const onSubmit=(values) => {
-      const cartItems = JSON.parse(localStorage.getItem('cart'));
-      axios.post(`${URL}${URL_REGISTER}`, {
-        firstname: values.firstname,
-        lastname: values.lastname,
-        email: values.email,
-        password: values.password,
-        birthDate: birthDate.toISOString(),
-        cart: cartItems,
-      })
-      .then((response) => {
-        if (response.status === 200) {
-            props.onFormSuccess();
-            localStorage.removeItem('cart');
-            ToastImportantSuccess(response.data.message);
-        }
-      })
-      .catch((error) => {
-        ToastError(error.response.data.error);
-        console.error('Erreur lors de la récupération des données :', error);
-      });
+  const initialValues = {
+    email: '',
+    password: '',
+    confirmPassword: '',
+    birthDate: '',
+  };
+
+  const onSubmit = (values) => {
+    const cartItems = JSON.parse(localStorage.getItem('cart'));
+    axios.post(`${URL}${URL_REGISTER}`, {
+      email: values.email,
+      password: values.password,
+      birthDate: birthDate ? birthDate.toISOString() : null,
+      cart: cartItems,
+    })
+    .then((response) => {
+      if (response.status === 200) {
+        props.onFormSuccess();
+        localStorage.removeItem('cart');
+        ToastImportantSuccess(response.data.message);
+      }
+    })
+    .catch((error) => {
+      ToastError(error.response.data.error);
+      console.error('Erreur lors de la récupération des données :', error);
+    });
+  };
+
+  useEffect(() => {
+    document.body.classList.add('no-scroll');
+    return () => {
+      document.body.classList.remove('no-scroll');
     };
+  }, []);
 
-    useEffect(() => {
-      // Ajouter une classe pour désactiver la barre de défilement
-      document.body.classList.add('no-scroll');
-  
-      // Nettoyer la classe lorsque le composant est démonté
-      return () => {
-        document.body.classList.remove('no-scroll');
-      };
-    }, []);
+  const formatDate = (value) => {
+    // Supprime tous les caractères non numériques
+    value = value.replace(/\D/g, '');
+
+    // Ajoute les '/' après chaque groupe de chiffres
+    if (value.length > 2) {
+      value = value.slice(0, 2) + '/' + value.slice(2);
+    }
+    if (value.length > 5) {
+      value = value.slice(0, 5) + '/' + value.slice(5);
+    }
+
+    return value;
+  };
+
+  const handleBirthDateChange = (e, setFieldValue) => {
+    const value = e.target.value;
+    const formattedValue = formatDate(value);
+    setFieldValue('birthDate', formattedValue);
+
+    if (formattedValue.length === 10) {
+      const [day, month, year] = formattedValue.split('/');
+      const date = new Date(`${year}-${month}-${day}`);
+      setBirthDate(date);
+    }
+  };
 
   return (
     <div className="little-form-container">
-            <Formik initialValues={initialValues} onSubmit={onSubmit}>
-              {({ setFieldValue }) => (
-              <Form>
-                <div className="register-fields-container">
-                  <Field type="text" name="firstname" placeholder="Prénom"/>
-                  <Field type="text" name="lastname" placeholder="Nom"/>
-                  <Field type="password" name="password" placeholder="Votre mot de passe"/>
-                  <Field type="password" name="confirmPassword" placeholder="Confirmez votre mot de passe"/>
-                  <Field type="email" name="email" placeholder="Email"/>
-                  <div className="datepicker-container">
-                  <DatePicker className="birthdate" dateFormat="dd/MM/yyyy" placeholderText="Date de naissance" locale={fr} selected={birthDate} onChange={(date) => {
-                    setFieldValue('birthDate', date); // Met à jour la valeur du champ
-                    setBirthDate(date); // Met à jour l'état local
-                  }}/>
-                  </div>
-                </div>
-                <div className="consent">
-                  <input type="checkbox" name="consent" id="" />
-                  <p className="preserve-space">
-                    J'accepte <a href="">les conditions de ventes</a> et <a href="">la politique de confidentialité</a>
-                  </p>
-                </div>
-                <div className="btn-container">
-                  <button className="submit-button middle-column" type="submit">
-                    Créer un compte
-                  </button>
-                </div>
-              </Form> 
-              )}
-            </Formik>
-            <div className="back">
-              <button onClick={() => props.toggleForm()}>&lt;&lt; Retour</button>
+      <Formik initialValues={initialValues} onSubmit={onSubmit}>
+        {({ setFieldValue, values }) => (
+          <Form>
+            <div className="register-fields-container">
+              <Field type="password" name="password" placeholder="Votre mot de passe" />
+              <Field type="password" name="confirmPassword" placeholder="Confirmez votre mot de passe" />
+              <Field type="email" name="email" placeholder="Email" />
+              <div className="datepicker-container">
+                <Field
+                  type="text"
+                  name="birthDate"
+                  className="birthdate"
+                  placeholder="Date de naissance"
+                  value={values.birthDate}
+                  onChange={(e) => handleBirthDateChange(e, setFieldValue)}
+                  maxLength={10}
+                />
+              </div>
             </div>
-          </div>
-  )
+            <div className="consent">
+              <input type="checkbox" name="consent" id="" />
+              <p className="preserve-space">
+                J'accepte <a href="">les conditions de ventes</a> et <a href="">la politique de confidentialité</a>
+              </p>
+            </div>
+            <div className="btn-container">
+              <button className="submit-button middle-column" type="submit">
+                Créer un compte
+              </button>
+            </div>
+          </Form>
+        )}
+      </Formik>
+      <div className="back">
+        <button onClick={() => props.toggleForm()}>&lt;&lt; Retour</button>
+      </div>
+    </div>
+  );
 }
 
 RegisterForm.propTypes = {
