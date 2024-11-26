@@ -42,7 +42,7 @@ export function Tests() {
 
     return (
         <div className="user-tests-container">
-            <h1>{tests.length} test(s) trouvé(s)</h1>
+            <h1 className="test-count">{tests.length} test(s) trouvé(s)</h1>
             <div className="tests-grid">
                 {tests.map(test => (
                     <div key={test.id} className="test-user-item">
