@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -162,6 +163,7 @@ class ParametersController extends AbstractController
             $userDataArray = [
                 'img' => $user->getImg(),
                 'pseudo' => $user->getPseudo(),
+                'createdAt' => $user->getCreatedAt(),
             ];
             return new JsonResponse($userDataArray, 200);
         } else {
@@ -170,44 +172,52 @@ class ParametersController extends AbstractController
     }
     
     /**
-     * @Route("/upload-user-image", name="upload_user_image", methods={"POST"})
-     */
-    public function uploadImage(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $file = $request->files->get('img');
+ * @Route("/upload-user-image", name="upload_user_image", methods={"POST"})
+ */
+public function uploadImage(Request $request, EntityManagerInterface $entityManager): Response
+{
+    $file = $request->files->get('img');
 
-        if ($file instanceof UploadedFile) {
-            $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            $newFilename = $originalFilename . '-' . uniqid() . '.' . $file->guessExtension();
+    if ($file instanceof UploadedFile) {
+        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $newFilename = $originalFilename . '-' . uniqid() . '.' . $file->guessExtension();
 
-            // Recadrer et redimensionner l'image
-            $resizedImagePath = $this->cropAndResizeImage($file->getPathname(), 150, 150);
+        // Recadrer et redimensionner l'image
+        $resizedImagePath = $this->cropAndResizeImage($file->getPathname(), 150, 150);
 
-            try {
-                // Déplacer l'image redimensionnée vers le répertoire de destination
-                copy($resizedImagePath, $this->getParameter('images_directory') . '/' . $newFilename);
-                unlink($resizedImagePath); // Supprimer l'image temporaire
-            } catch (FileException $e) {
-                return new Response('Erreur lors de l\'upload du fichier.', Response::HTTP_INTERNAL_SERVER_ERROR);
-            }
-
-            // Récupérer l'utilisateur actuellement authentifié
-            $user = $this->tokenService->getUserFromRequest($request);
-
-            if (!$user) {
-                return new Response('Utilisateur non authentifié.', Response::HTTP_UNAUTHORIZED);
-            }
-
-            // Enregistrez le nom du fichier dans la base de données si nécessaire
-            $user->setImg($newFilename);
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            return new Response('Fichier uploadé avec succès.', Response::HTTP_OK);
+        try {
+            // Déplacer l'image redimensionnée vers le répertoire de destination
+            $destinationPath = $this->getParameter('images_directory') . '/' . $newFilename;
+            copy($resizedImagePath, $destinationPath);
+            unlink($resizedImagePath); // Supprimer l'image temporaire
+        } catch (FileException $e) {
+            return new Response('Erreur lors de l\'upload du fichier.', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return new Response('Aucun fichier uploadé.', Response::HTTP_BAD_REQUEST);
+        // Récupérer l'utilisateur actuellement authentifié
+        $user = $this->tokenService->getUserFromRequest($request);
+
+        if (!$user) {
+            return new Response('Utilisateur non authentifié.', Response::HTTP_UNAUTHORIZED);
+        }
+
+        // Supprimer l'ancienne image si elle existe
+        $oldImagePath = $this->getParameter('images_directory') . '/' . $user->getImg();
+        if (file_exists($oldImagePath)) {
+            unlink($oldImagePath);
+        }
+
+        // Enregistrez le nom du fichier dans la base de données si nécessaire
+        $user->setImg($newFilename);
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return new Response('Fichier uploadé avec succès.', Response::HTTP_OK);
     }
+
+    return new Response('Aucun fichier uploadé.', Response::HTTP_BAD_REQUEST);
+}
+
 
     private function cropAndResizeImage($imagePath, $width, $height)
     {
