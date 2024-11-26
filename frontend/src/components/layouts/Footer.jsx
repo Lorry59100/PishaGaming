@@ -10,7 +10,9 @@ import { IconContext } from "react-icons";
 import "../../assets/styles/components/footer.css"
 
 export function Footer() {
-    
+    const URL_RGPD = import.meta.env.VITE_RGPD;
+    const URL_SALES_CONDITION = import.meta.env.VITE_SALES_CONDITION;
+
     return (
         <footer className='footer'>
             <div className="footer-main-container">
@@ -50,8 +52,8 @@ export function Footer() {
                 </div>
                 <div className="footer-links">
                     <ul>
-                        <li>Les conditions de vente</li>
-                        <li>Politique de confidentialité</li>
+                        <li><a href={URL_SALES_CONDITION}>Les conditions de vente</a></li>
+                        <li><a href={URL_RGPD}> Politique de confidentialité</a></li>
                         <li>Nous contacter</li>
                         <li>FAQ</li>
                         <li className='li-icons'>
