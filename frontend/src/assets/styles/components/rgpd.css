@@ -1,0 +1,22 @@
+.rgpd-view-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 100px 0;
+}
+
+.rgpd-container {
+    max-width: 1000px;
+}
+
+.rgpd-container>h1, .rgpd-container>h2 {
+    color: white;
+}
+
+.rgpd-container>h1 {
+    margin-bottom: 1em;
+}
+
+.rgpd-container>p, .rgpd-container>ul>li {
+    color: var(--grey-txt);
+}

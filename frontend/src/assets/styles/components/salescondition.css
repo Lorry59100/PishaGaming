@@ -1,0 +1,26 @@
+.sales-condition-view-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 100px 0;
+}
+
+.sales-condition-container {
+    max-width: 1000px;
+}
+
+.sales-condition-container {
+    max-width: 1000px;
+}
+
+.sales-condition-container>h1, .sales-condition-container>h2 {
+    color: white;
+}
+
+.sales-condition-container>h1 {
+    margin-bottom: 1em;
+}
+
+.sales-condition-container>p, .sales-condition-container>ul>li {
+    color: var(--grey-txt);
+}
