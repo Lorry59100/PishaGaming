@@ -11,6 +11,8 @@ import { ForgottenPasswordview } from "../views/ForgottenPasswordview";
 import { SingleOrderHistoricview } from "../views/SingleOrderHistoricview";
 import { Searchview } from "../views/Searchview";
 import ResetPasswordview from "../views/ResetPasswordview";
+import { Rgpdview } from "../views/Rgpdview";
+import { SalesConditionview } from "../views/SalesConditionview";
 
 function Routes() {
   const URL_HOME = import.meta.env.VITE_HOME;
@@ -25,6 +27,8 @@ function Routes() {
   const URL_RESET_PASSWORD = import.meta.env.VITE_RESET_PASSWORD_FRONT;
   const URL_SEARCH = import.meta.env.VITE_SEARCH;
   const URL_SINGLE_ORDER_HISTORIC = import.meta.env.VITE_SINGLE_ORDER_HISTORIC;
+  const URL_RGPD = import.meta.env.VITE_RGPD;
+  const URL_SALES_CONDITION = import.meta.env.VITE_SALES_CONDITION;
   return (
     <RoutesContainer>
         <Route path={URL_HOME} element={<Homeview />} />
@@ -39,6 +43,8 @@ function Routes() {
         <Route path={URL_RESET_PASSWORD + "/:token"} element={<ResetPasswordview />} />
         <Route path={URL_SEARCH} element={<Searchview/>} />
         <Route path={URL_SINGLE_ORDER_HISTORIC + "/:reference"} element={<SingleOrderHistoricview />} />
+        <Route path={URL_RGPD} element={<Rgpdview/>} />
+        <Route path={URL_SALES_CONDITION} element={<SalesConditionview/>} />
     </RoutesContainer>
   )
 }
