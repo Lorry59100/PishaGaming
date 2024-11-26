@@ -15,6 +15,7 @@ export function Wishlist() {
     const URL_MAIN_IMG = import.meta.env.VITE_MAIN_IMG;
     const URL_SINGLE_PRODUCT = import.meta.env.VITE_SINGLE_PRODUCT_FRONT;
     const URL_GET_WISHLIST = import.meta.env.VITE_GET_WISHLIST;
+    const URL_PLATFORM_IMG = import.meta.env.VITE_PLATFORM_IMG;
 
     const fetchWishlist = useCallback(() => {
         if (!decodedUserToken) return;
@@ -38,21 +39,22 @@ export function Wishlist() {
         }
     }, [decodedUserToken, fetchWishlist]);
 
-    const addToWishlist = async (productId, decodedUserToken) => {
+    const addToWishlist = async (productId, platform, decodedUserToken) => {
         if (!decodedUserToken) {
             console.error('decodedUserToken is undefined');
             return;
         }
-
+    
         try {
             const response = await axios.post(`${URL}${URL_ADD_TO_WISHLIST.replace(':id', productId)}`, {
-                userId: decodedUserToken.id
+                userId: decodedUserToken.id,
+                platform: platform
             }, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
-
+    
             if (response.data.success) {
                 // Refetch the wishlist after adding a product
                 fetchWishlist();
@@ -64,13 +66,19 @@ export function Wishlist() {
             alert('Une erreur s\'est produite lors de l\'ajout à la wishlist.');
         }
     };
-
+    
     return (
         <div className="wishlists-container">
+            <div className="wishlist-count">
+                <h1>{wishlists.length} jeu(x) en wishlist</h1>
+            </div>
             {wishlists.map(wishlist => (
                 <div key={wishlist.id} className="single-wishlist-container">
                     {wishlist && wishlist.product ? (
                         <div className="wishlist-user-item">
+                            <div className="wishlist-platform-img">
+                                <img src={`${URL_PLATFORM_IMG}/${wishlist.product.platform}.png`} alt={wishlist.product.platform} className='logo-img' />
+                            </div>
                             <Link to={`${URL_SINGLE_PRODUCT.replace(':id', wishlist.product.id)}`}>
                                 <img src={`${URL}${URL_MAIN_IMG}/${wishlist.product.img}`} alt={wishlist.product.name} />
                             </Link>
@@ -78,7 +86,7 @@ export function Wishlist() {
                                 <h5><strong>-</strong>{calculateDiscountPercentage(wishlist.product.old_price, wishlist.product.price)}</h5>
                             </div>
                             <div className="remove-close-icon">
-                                <button type="submit" onClick={() => addToWishlist(wishlist.product.id, decodedUserToken)}>
+                            <button type="submit" onClick={() => addToWishlist(wishlist.product.id, wishlist.product.platform, decodedUserToken)}>
                                     <IconContext.Provider value={{ size: "1.2em" }}>
                                         <ImCross className="shadow" />
                                     </IconContext.Provider>
