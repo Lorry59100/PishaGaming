@@ -38,9 +38,13 @@ class WishlistController extends AbstractController
         $userId = $data['userId'];
         $user = $userRepository->find($userId);
 
+        //Récupérer la plateforme
+        $platform = $data['platform'];
+
         $existingWishlistItem = $wishlistRepository->findOneBy([
             'user' => $user,
             'product' => $product,
+            'platform' => $platform,
         ]);
 
         if($existingWishlistItem) {
@@ -53,6 +57,7 @@ class WishlistController extends AbstractController
             $wishlistItem = new Wishlist();
             $wishlistItem->setProduct($product);
             $wishlistItem->setUser($user);
+            $wishlistItem->setPlatform($platform);
             $entityManager->persist($wishlistItem);
             $entityManager->flush();
             return new JsonResponse(['success' => true, 'message' => 'Product added to wislist.']);
@@ -76,6 +81,7 @@ class WishlistController extends AbstractController
                     'id' => $wishlist->getProduct()->getId(),
                     'name' => $wishlist->getProduct()->getName(),
                     'img' => $wishlist->getProduct()->getImg(),
+                    'platform'=> $wishlist->getPlatform(),
                     'old_price' => $wishlist->getProduct()->getOldPrice(),
                     'price' => $wishlist->getProduct()->getPrice(),
                 ],
@@ -85,37 +91,46 @@ class WishlistController extends AbstractController
     }
 
     /**
-     * @Route("/move-to-wishlist/{id}", name="move_to_wishlist", methods={"POST"})
-     */
-    public function moveToWishlist(Request $request, $id, ProductRepository $productRepository, WishlistRepository $wishlistRepository ,
-    UserRepository $userRepository, CartRepository $cartRepository ,EntityManagerInterface $entityManager) {
-        $data = json_decode($request->getContent(), true);
-        //get user
-        $userId = $data['userId'];
-        $user = $userRepository->find($userId);
-        //get product
-        $product = $productRepository->find($id);
-        //get wishlist
-        $existingWishlistItem = $wishlistRepository->findOneBy([
-            'user' => $user,
-            'product' => $product,
-        ]);
-        //check if already in wishlist
-        if(!$existingWishlistItem) {
-            $wishlistItem = new Wishlist();
-            $wishlistItem->setProduct($product);
-            $wishlistItem->setUser($user);
-            $entityManager->persist($wishlistItem);
-            $entityManager->flush();
-        } 
-        //remove item from cart
-        $itemToUpdate= $cartRepository->findOneBy([
-            'user' => $user,
-            'product' => $product,
-        ]);
-        $entityManager->remove($itemToUpdate);
+ * @Route("/move-to-wishlist/{id}", name="move_to_wishlist", methods={"POST"})
+ */
+public function moveToWishlist(Request $request, $id, ProductRepository $productRepository, WishlistRepository $wishlistRepository,
+UserRepository $userRepository, CartRepository $cartRepository, EntityManagerInterface $entityManager) {
+    $data = json_decode($request->getContent(), true);
+    //get user
+    $userId = $data['userId'];
+    $user = $userRepository->find($userId);
+    //get product
+    $product = $productRepository->find($id);
+    //get platform
+    $platform = $data['platform'];
+    //get wishlist
+    $existingWishlistItem = $wishlistRepository->findOneBy([
+        'user' => $user,
+        'product' => $product,
+    ]);
+    //check if already in wishlist
+    if(!$existingWishlistItem) {
+        $wishlistItem = new Wishlist();
+        $wishlistItem->setProduct($product);
+        $wishlistItem->setUser($user);
+        $wishlistItem->setPlatform($platform);
+        $entityManager->persist($wishlistItem);
         $entityManager->flush();
-        //response
-        return new JsonResponse(['success' => true, 'message' => 'Product moved to wislist.']);
     }
+    //remove all items from cart
+    $itemsToUpdate = $cartRepository->findBy([
+        'user' => $user,
+        'product' => $product,
+        'platform' => $platform,
+    ]);
+    foreach ($itemsToUpdate as $item) {
+        //Incrémenter le stock en BDD
+        $product->setStock($product->getStock() + $item->getQuantity());
+        $entityManager->remove($item);
+    }
+    $entityManager->flush();
+    //response
+    return new JsonResponse(['success' => true, 'message' => 'Product moved to wishlist.']);
+}
+
 }
