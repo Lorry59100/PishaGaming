@@ -20,6 +20,7 @@ import { BsTrash3 } from "react-icons/bs";
 import { IoMdAdd } from "react-icons/io";
 import { useTokenService } from "../../../services/TokenService";
 import { calculateTotal, convertToEuros } from "../../../services/PriceServices";
+import { useNavigate } from "react-router-dom";
 
 export function PaymentForm() {
   const { hideNavbar, showNavbar } = useContext(NavbarVisibilityContext);
@@ -31,18 +32,22 @@ export function PaymentForm() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [dateError, setDateError] = useState(false);
-  const [isAddressModalVisible, setAddressModalVisible] = useState(false); // État pour gérer la visibilité du modal d'adresses
-  const [isAddressFormVisible, setAddressFormVisible] = useState(false); // État pour gérer la visibilité du formulaire d'adresse
-  const [addresses, setAddresses] = useState([]); // État pour stocker les adresses
+  const [deliveryError, setDeliveryError] = useState(false);
+  const [isAddressModalVisible, setAddressModalVisible] = useState(false);
+  const [isAddressFormVisible, setAddressFormVisible] = useState(false);
+  const [addresses, setAddresses] = useState([]);
+  const [isUserLoaded, setIsUserLoaded] = useState(false);
   const stripePromise = useMemo(() => loadStripe(import.meta.env.VITE_STRIPE), []);
+  const navigate = useNavigate();
   const URL = import.meta.env.VITE_BACKEND;
-  const URL_IMG = import.meta.env.VITE_IMG;
+  const URL_HOME = import.meta.env.VITE_HOME;
   const URL_USER_CART = import.meta.env.VITE_USER_CART;
-  const URL_VG_IMG = import.meta.env.VITE_VG_IMG;
-  const URL_VG_MAIN_IMG = import.meta.env.VITE_VG_MAIN_IMG;
   const URL_GET_ADDRESS = import.meta.env.VITE_GET_ADDRESS;
   const URL_DELETE_ADDRESS = import.meta.env.VITE_DELETE_ADDRESS;
   const URL_CHANGE_ADDRESS = import.meta.env.VITE_CHANGE_ADDRESS;
+  const URL_RGPD = import.meta.env.VITE_RGPD;
+  const URL_SALES_CONDITION = import.meta.env.VITE_SALES_CONDITION;
+  const URL_MAIN_IMG = import.meta.env.VITE_MAIN_IMG;
 
   useEffect(() => {
     document.body.classList.add('unset-padding');
@@ -51,21 +56,6 @@ export function PaymentForm() {
       document.body.classList.remove('unset-padding');
     };
   }, []);
-
-  const handlePayClick = (event) => {
-    if (cartData.carts.some(item => item.isPhysical) && !selectedDate) {
-      ToastError('Vous devez sélectionner une date de livraison')
-      setDateError(true);
-      return;
-    }
-    if (!activeAddress) {
-      ToastError('Vous devez sélectionner une adresse de facturation/livraison');
-      return;
-    }
-    setDateError(false);
-    setIsLoading(true);
-    checkoutFormRef.current.handleSubmit(event);
-  };
 
   useEffect(() => {
     const fetchStripe = async () => {
@@ -95,9 +85,7 @@ export function PaymentForm() {
           console.error('Erreur lors de la récupération du panier :', error);
         });
     }
-    if (!decodedUserToken) {
-      ToastError('Vous devez être connecté pour accéder à cette page.');
-    }
+    setIsUserLoaded(true);
   }, [decodedUserToken, URL, URL_USER_CART]);
 
   useEffect(() => {
@@ -132,6 +120,13 @@ export function PaymentForm() {
     }
   }, [decodedUserToken, URL, URL_GET_ADDRESS]);
 
+  useEffect(() => {
+    if (isUserLoaded && !decodedUserToken) {
+      navigate(URL_HOME);
+      ToastError('Vous devez être connecté pour accéder à cette page.');
+    }
+  }, [isUserLoaded, decodedUserToken, navigate]);
+
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text).then(() => {
       ToastSuccess('Numéro de carte copié dans le presse-papiers !');
@@ -159,6 +154,7 @@ export function PaymentForm() {
   const handleAddressAdded = (newAddress) => {
     setAddresses(prevAddresses => [...prevAddresses, newAddress]);
     setAddressFormVisible(false);
+    setDeliveryError(false);
   };
 
   const handleAddressSelect = (address) => {
@@ -206,6 +202,29 @@ export function PaymentForm() {
 
   const activeAddress = addresses.find(address => address.isActive);
 
+  const handlePayClick = (event) => {
+    if (cartData.carts.some(item => item.isPhysical) && !selectedDate) {
+      ToastError('Vous devez sélectionner une date de livraison')
+      setDateError(true);
+      return;
+    }
+    if (!activeAddress) {
+      ToastError('Vous devez sélectionner une adresse de facturation/livraison');
+      setDeliveryError(true);
+      return;
+    }
+    setDateError(false);
+    setDeliveryError(false);
+    setIsLoading(true);
+
+    // Appeler handleSubmit du composant CheckoutForm avant de mettre à jour isLoading
+    checkoutFormRef.current.handleSubmit(event).then(() => {
+      setIsLoading(true);
+    }).catch(() => {
+      setIsLoading(false);
+    });
+  };
+
   return (
     <div>
       <Paybar isPaymentFormContext={true} isActivationContext={true} />
@@ -214,13 +233,12 @@ export function PaymentForm() {
           <div className="address-and-payform-container">
             <div className="address-container">
               <h2>Adresse de facturation</h2>
-              <div className="info-change-container">
-                
+              <div className={`info-change-container ${deliveryError ? 'error-border' : ''}`}>
                   {activeAddress ? (
                     <>
                     <div className="address-info address-info-pay">
                       <div className="address-info-container">
-                        <h3>{decodedUserToken.lastname} {decodedUserToken.firstname}</h3>
+                        <h3>{activeAddress.lastname} {activeAddress.firstname}</h3>
                         <h4>{activeAddress.housenumber} {activeAddress.street}, {activeAddress.postcode} {activeAddress.city}</h4>
                       </div>
                       <div className="change-address">
@@ -233,7 +251,7 @@ export function PaymentForm() {
                   ) : (
                     <>
                     <div className="address-info address-info-pay-no-address">
-                    <h4>Vous n'avez pas d'addresse de facturation/livraison renseignée.
+                    <h4>Vous n'avez pas d'adresse de facturation/livraison renseignée.
                       <br /> Vous devez en avoir une pour passer commande.
                     </h4>
                       <button className="submit-button create-address-pay" onClick={handleOpenAddressForm}>
@@ -243,7 +261,7 @@ export function PaymentForm() {
                     </>
                   )}
                 </div>
-            
+
               {isAddressModalVisible && (
                 <div className="address-modal">
                   <div className="address-modal-content">
@@ -257,7 +275,7 @@ export function PaymentForm() {
                     <h1>Vos adresses de facturation & livraison</h1>
                     {addresses.map(address => (
                       <div key={address.id} className="single-address-container">
-                        <h3>{decodedUserToken.lastname} {decodedUserToken.firstname}</h3>
+                        <h3>{address.lastname} {address.firstname}</h3>
                         <h4>{address.housenumber} {address.street} {address.postcode} {address.city}</h4>
                         <div>
                           {address.isActive ? (
@@ -310,13 +328,16 @@ export function PaymentForm() {
                         placeholderText="Date de livraison"
                         selected={selectedDate}
                         minDate={addDays(new Date(), 2)}
-                        onChange={date => setSelectedDate(date)}
+                        onChange={date => {
+                          setSelectedDate(date);
+                          setDateError(false);
+                        }}
                       />
                     </div>
                     <div className="delivery-items-container">
                       {cartData.carts && cartData.carts.filter(item => (item.category === 'Hardware' || (item.category === 'Jeux Vidéos' && item.isPhysical))).map((item, index) => (
                         <div key={index} className="physical-product">
-                          <img src={`${URL}${URL_IMG}${URL_VG_IMG}${URL_VG_MAIN_IMG}/${item.img}`} alt={item.name} />
+                          <img src={`${URL}${URL_MAIN_IMG}/${item.img}`} alt={item.name} />
                           <h4 className="physical-product-name">{item.name}</h4>
                           <div className="multiple-items">
                             <div className="delivery-platform">
@@ -363,9 +384,11 @@ export function PaymentForm() {
             </div>
             <div className="payform-container">
               <h2>Méthode de paiement</h2>
-              <Elements stripe={stripe}>
-                <CheckoutForm cartData={cartData.carts} selectedDate={selectedDate} ref={checkoutFormRef} />
-              </Elements>
+              {stripe && (
+                <Elements stripe={stripe}>
+                  <CheckoutForm cartData={cartData.carts} selectedDate={selectedDate} ref={checkoutFormRef} />
+                </Elements>
+              )}
             </div>
           </div>
           <div className="summary-and-total-container">
@@ -400,11 +423,11 @@ export function PaymentForm() {
               </button>
             </div>
             <span>
-              <div>
-                En cliquant sur "Payer" je reconnais avoir lu et accepté les
-                <a href=""> termes et conditions</a>,
-                et la
-                <a href=""> politique de confidentialité</a>.
+              <div className="terms-and-politic">
+                En cliquant sur "Payer" je reconnais avoir lu et accepté les&nbsp;
+                  <a href={URL_SALES_CONDITION} className="pay-terms" target="_blank" rel="noopener noreferrer">termes et conditions</a>,
+                et la&nbsp;
+                  <a href={URL_RGPD} className="pay-terms" target="_blank" rel="noopener noreferrer">politique de confidentialité</a>.
               </div>
             </span>
           </div>
