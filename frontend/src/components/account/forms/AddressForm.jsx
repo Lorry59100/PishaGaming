@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ImCross } from "react-icons/im";
 import { IconContext } from "react-icons";
 import axios from "axios";
-import { Formik, Form } from "formik";
+import { Formik, Form, Field } from "formik";
 import { getSuggestions, handleAddressChange, handleAddressClick } from '../../../services/AddressServices';
 import { useTokenService } from '../../../services/TokenService';
 
@@ -33,7 +33,7 @@ export function AddressForm({ onClose, onAddressAdded }) {
         handleAddressClick(selectedLabel, suggestions, setSelectedSuggestion, setSelectedAddress, setSuggestions);
     };
 
-    const onSubmit = () => {
+    const onSubmit = (values) => {
         if (decodedUserToken) {
             const street = selectedSuggestion.properties.street || selectedSuggestion.properties.locality;
             axios.post(`${URL}${URL_ADD_ADDRESS}`, {
@@ -42,6 +42,8 @@ export function AddressForm({ onClose, onAddressAdded }) {
                 street: street,
                 postcode: selectedSuggestion.properties.postcode,
                 city: selectedSuggestion.properties.city,
+                firstname: values.firstname,
+                lastname: values.lastname,
             })
             .then((response) => {
                 if (response.status === 200) {
@@ -80,6 +82,10 @@ export function AddressForm({ onClose, onAddressAdded }) {
                                 ))}
                             </ul>
                         )}
+                        <div className='address-user-info-container'>
+                            <Field type="text" name="firstname" placeholder="Prénom" />
+                            <Field type="text" name="lastname" placeholder="Nom" />
+                        </div>
                     </div>
                     <div className="btn-container btn-address-container">
                         <button className="submit-button" type="submit"> Ajouter une adresse</button>
