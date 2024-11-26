@@ -5,10 +5,10 @@ import { IconContext } from 'react-icons';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-export function Paybar({ isPaymentFormContext, isActivationContext }) {
+export function Paybar({ isPaymentFormContext, isActivationContext, isLoginFormVisible }) {
     const URL_HOME = import.meta.env.VITE_HOME;
     return (
-        <div className="buying-tunnel-layout-container">
+        <div className={`buying-tunnel-layout-container ${isLoginFormVisible ? 'login-form-visible' : ''}`}>
             <div className="logo-paybar-container">
                 <Link to={`${URL_HOME}`}>
                     <img src={logo} alt="logo" className="orange-logo" />
@@ -43,7 +43,6 @@ export function Paybar({ isPaymentFormContext, isActivationContext }) {
                     <h5>256-bit SSL Secured</h5>
                 </div>
             </div>
-
         </div>
     )
 }
@@ -51,4 +50,5 @@ export function Paybar({ isPaymentFormContext, isActivationContext }) {
 Paybar.propTypes = {
     isPaymentFormContext: PropTypes.bool.isRequired,
     isActivationContext: PropTypes.bool.isRequired,
-  };
+    isLoginFormVisible: PropTypes.bool.isRequired,
+};
