@@ -5,7 +5,6 @@ import "../../assets/styles/components/singleorder.css";
 import { IoChevronBackOutline } from "react-icons/io5";
 import { IconContext } from "react-icons";
 import { FaShippingFast, FaCheck } from "react-icons/fa";
-import { PLATFORM_IMG } from "../../constants/urls/URLFront";
 import { formatDate } from "../../services/DateServices";
 
 function SingleOrderHistoric() {
@@ -15,6 +14,7 @@ function SingleOrderHistoric() {
   const URL_USER_SINGLE_ORDER = import.meta.env.VITE_USER_SINGLE_ORDER;
   const URL_ACCOUNT = import.meta.env.VITE_ACCOUNT;
   const URL_ORDER_HISTORIC = import.meta.env.VITE_ORDER_HISTORIC;
+  const URL_PLATFORM_IMG = import.meta.env.VITE_PLATFORM_IMG;
 
   useEffect(() => {
     axios.get(`${URL}${URL_USER_SINGLE_ORDER}/${reference}`)
@@ -64,16 +64,16 @@ function SingleOrderHistoric() {
             <div className="img-container">
               <img src={`${URL}/uploads/images/products/videogames/main_img/${orderDetail.img}`} alt={orderDetail.product} />
               <div className="logo-img-order-container">
-                <img src={`${PLATFORM_IMG}/${orderDetail.platform}.png`} alt={orderDetail.platform} className='logo-img' />
+                <img src={`${URL_PLATFORM_IMG}/${orderDetail.platform}.png`} alt={orderDetail.platform} className='logo-img' />
               </div>
             </div>
             <h2> {orderDetail.product} {orderDetail.quantity > 1 ? ` x${orderDetail.quantity}` : ''} </h2>
             
-            {orderDetail.productType === false && (
-              <p>est maintenant prêt à être activé</p>
-            )}
-            {orderDetail.productType === true && (
+            {orderDetail.activationKeys && orderDetail.activationKeys.length === 0 && (
               <p>Livraison prévue le : {formatDate(orderDetail.delivery.date)} </p>
+            )}
+            {orderDetail.activationKeys && orderDetail.activationKeys.length > 0 && (
+              <p>est maintenant prêt à être activé</p>
             )}
 
             {orderDetail.activationKeys && orderDetail.activationKeys.map(activationKey => (
