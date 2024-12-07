@@ -27,14 +27,26 @@ class Order
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\OneToMany(mappedBy: 'orders', targetEntity: OrderDetails::class, cascade: ['persist'])]
+    #[ORM\OneToMany(mappedBy: 'orders', targetEntity: OrderDetails::class, cascade: ['persist', 'remove'])]
     private Collection $orderDetails;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $delivery_date = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $status = null;
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private ?bool $status = null;
+
+    #[ORM\Column]
+    private ?int $TotalPrice = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $deliveryAddress = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $deliveryFirstname = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $deliveryLastname = null;
 
     public function __construct()
     {
@@ -124,14 +136,62 @@ class Order
         return $this;
     }
 
-    public function getStatus(): ?int
+    public function getStatus(): ?bool
     {
         return $this->status;
     }
 
-    public function setStatus(?int $status): static
+    public function setStatus(?bool $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getTotalPrice(): ?int
+    {
+        return $this->TotalPrice;
+    }
+
+    public function setTotalPrice(int $TotalPrice): static
+    {
+        $this->TotalPrice = $TotalPrice;
+
+        return $this;
+    }
+
+    public function getDeliveryAddress(): ?string
+    {
+        return $this->deliveryAddress;
+    }
+
+    public function setDeliveryAddress(string $deliveryAddress): static
+    {
+        $this->deliveryAddress = $deliveryAddress;
+
+        return $this;
+    }
+
+    public function getDeliveryFirstname(): ?string
+    {
+        return $this->deliveryFirstname;
+    }
+
+    public function setDeliveryFirstname(string $deliveryFirstname): static
+    {
+        $this->deliveryFirstname = $deliveryFirstname;
+
+        return $this;
+    }
+
+    public function getDeliveryLastname(): ?string
+    {
+        return $this->deliveryLastname;
+    }
+
+    public function setDeliveryLastname(string $deliveryLastname): static
+    {
+        $this->deliveryLastname = $deliveryLastname;
 
         return $this;
     }
