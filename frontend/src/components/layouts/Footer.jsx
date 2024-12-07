@@ -57,13 +57,13 @@ export function Footer() {
                         <li>Nous contacter</li>
                         <li>FAQ</li>
                         <li className='li-icons'>
-                            <IconContext.Provider value={{ size: "1.5em", color:"#ff5400" }}>
+                            <IconContext.Provider value={{ size: "1.5em" }}>
                                 <BiGift/>
                             </IconContext.Provider>
                                 Utiliser une Carte Cadeau
                         </li>
                         <li className='li-icons'>
-                            <IconContext.Provider value={{ size: "1.5em", color:"#ff5400" }}>
+                            <IconContext.Provider value={{ size: "1.5em"}}>
                                 <GiNotebook/>
                             </IconContext.Provider>
                             Retrouve les dernières actus jeu vidéo
