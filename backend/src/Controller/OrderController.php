@@ -43,6 +43,9 @@ class OrderController extends AbstractController
         $cartData = $data['cartData'];
         $userId = $data['userId'];
         $user = $userRepository->find($userId);
+        $address = $data['orderData']['addressInfo']['address'];
+        $firstname = $data['orderData']['addressInfo']['firstname'];
+        $lastname = $data['orderData']['addressInfo']['lastname'];
 
         /* $date = isset($data['selectedDate']) ? new \DateTime($data['selectedDate']) : null; */
 
@@ -126,6 +129,16 @@ class OrderController extends AbstractController
                 }
             }
         }
+        // Calculer le prix total de la commande
+        $totalOrderPrice = 0;
+        foreach ($order->getOrderDetails() as $orderDetail) {
+            $totalOrderPrice += $orderDetail->getPrice();
+        }
+        $order->setTotalPrice($totalOrderPrice);
+        $order->setDeliveryAddress($address);
+        $order->setDeliveryFirstname($firstname);
+        $order->setDeliveryLastname($lastname);
+
         // On persiste et flush les données
         $entityManager->persist($order);
         $entityManager->flush();
@@ -135,6 +148,7 @@ class OrderController extends AbstractController
             'order' => [
                 'id' => $order->getId(),
                 'reference' => $order->getReference(),
+                'totalPrice' => $order->getTotalPrice(),
                 // ... autres champs
             ],
             'orderDetails' => [],
