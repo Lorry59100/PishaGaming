@@ -33,19 +33,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $birthdate = null;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Test::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Test::class, cascade: ['remove'])]
     private Collection $tests;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Order::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Order::class, cascade: ['remove'])]
     private Collection $orders;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Cart::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Cart::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $carts;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ActivationKey::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ActivationKey::class, cascade: ['remove'])]
     private Collection $activation_keys;
 
-    #[ORM\ManyToMany(targetEntity: Address::class, inversedBy: 'users', cascade: ['persist'])]
+    #[ORM\ManyToMany(targetEntity: Address::class, inversedBy: 'users', cascade: ['persist', 'remove'])]
     private Collection $address;
 
     #[ORM\Column]
@@ -72,10 +72,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $img = null;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Vote::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Vote::class, cascade: ['remove'])]
     private Collection $votes;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Wishlist::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Wishlist::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $wishlists;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -514,5 +514,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->createdAt = $createdAt;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->email;
     }
 }
