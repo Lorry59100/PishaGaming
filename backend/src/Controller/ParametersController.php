@@ -179,8 +179,8 @@ public function uploadImage(Request $request, EntityManagerInterface $entityMana
     $file = $request->files->get('img');
 
     if ($file instanceof UploadedFile) {
-        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-        $newFilename = $originalFilename . '-' . uniqid() . '.' . $file->guessExtension();
+        // Générer un nom de fichier unique sans le nom original
+        $newFilename = uniqid() . '.' . $file->guessExtension();
 
         // Recadrer et redimensionner l'image
         $resizedImagePath = $this->cropAndResizeImage($file->getPathname(), 150, 150);
@@ -203,7 +203,7 @@ public function uploadImage(Request $request, EntityManagerInterface $entityMana
 
         // Supprimer l'ancienne image si elle existe
         $oldImagePath = $this->getParameter('images_directory') . '/' . $user->getImg();
-        if (file_exists($oldImagePath)) {
+        if (file_exists($oldImagePath) && is_file($oldImagePath)) {
             unlink($oldImagePath);
         }
 
@@ -217,6 +217,8 @@ public function uploadImage(Request $request, EntityManagerInterface $entityMana
 
     return new Response('Aucun fichier uploadé.', Response::HTTP_BAD_REQUEST);
 }
+
+
 
 
     private function cropAndResizeImage($imagePath, $width, $height)
