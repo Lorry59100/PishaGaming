@@ -37,9 +37,9 @@ function OrderHistoric() {
                 <div key={order.id} className="order-layout-container">
                     <Link to={`${URL_SINGLE_ORDER_HISTORIC}/${order.reference}`}>
                         <div className="order-container">
-                            {order.status === 1 ? (
+                            {order.status === true ? (
                                 <span className="order-status order-done">Terminée</span>
-                            ) : order.status === 0 ? (
+                            ) : order.status === false ? (
                                 <span className="order-status order-incoming">En cours de livraison</span>
                             ) : (
                                 <p>Le statut n'est ni égal à 1 ni égal à 0</p>
@@ -74,9 +74,9 @@ function OrderHistoric() {
                     </Link>
                     <div className="sub-order-container">
                         <p>Commande {order.reference} • {formatDate(order.created_at.date)}</p>
-                            {order.status === 1 ? (
+                            {order.status === true ? (
                                 <p>Délivrée le: {formatDate(order.delivery_date.date)}</p>
-                            ) : order.status === 0 ? (
+                            ) : order.status === false ? (
                                 <p>Livraison prévue le: {formatDate(order.delivery_date.date)}</p>
                             ) : (
                                 <p>Le statut n'est ni égal à 1 ni égal à 0</p>
