@@ -12,6 +12,7 @@ import { useContext } from 'react';
 import { CartContext } from '../../../contexts/CartContext';
 import axios from 'axios';
 import { useTokenService } from '../../../services/TokenService';
+import { MdToggleOff, MdToggleOn } from 'react-icons/md';
 
 function Navbar() {
   const { userToken, decodedUserToken, logout, login } = useTokenService();
@@ -24,6 +25,9 @@ function Navbar() {
   const { isNavbarVisible } = useContext(NavbarVisibilityContext);
   const { cart, resetCart } = useContext(CartContext);
   const [userData, setUserData] = useState(null);
+  const [isNeonTheme, setIsNeonTheme] = useState(() => {
+    return localStorage.getItem('isNeonTheme') === 'true';
+  });
   const URL = import.meta.env.VITE_BACKEND;
   const URL_ADMIN = import.meta.env.VITE_ADMIN;
   const URL_IMG = import.meta.env.VITE_IMG;
@@ -124,10 +128,35 @@ function Navbar() {
     };
   }, [profileContentRef]);
 
+  useEffect(() => {
+    if (isNeonTheme) {
+      // BLEU
+      document.documentElement.style.setProperty('--orange', '#009dff');
+      document.documentElement.style.setProperty('--orange-gradient', 'linear-gradient(10deg, #66c4ff, transparent) #4169e1');
+      document.documentElement.style.setProperty('--orange-gradient-hover', 'linear-gradient(190deg, #33b1ff, transparent) #66c4ff');
+      document.documentElement.style.setProperty('--orange-logo-filter', 'invert(56%) sepia(92%) saturate(500%) hue-rotate(180deg) brightness(104%) contrast(105%)');
+      document.documentElement.style.setProperty('--orange-smooth-gradient', 'linear-gradient(to right, transparent, #66c4ff, #009dff, #66c4ff, transparent)');
+    } else {
+      // ORANGE
+      document.documentElement.style.setProperty('--orange', '#ff5400');
+      document.documentElement.style.setProperty('--orange-gradient', 'linear-gradient(10deg, #ff8000, transparent) #ff4020');
+      document.documentElement.style.setProperty('--orange-gradient-hover', 'linear-gradient(190deg, #ff2020, transparent) #ff8000');
+      document.documentElement.style.setProperty('--orange-logo-filter', 'invert(56%) sepia(92%) saturate(1011%) hue-rotate(0deg) brightness(104%) contrast(105%)');
+      document.documentElement.style.setProperty('--orange-smooth-gradient', 'linear-gradient(to right, transparent, #ff8000, #ff5400, #ff8000, transparent)');
+    }
+  }, [isNeonTheme]);
+
   const handleLinkClick = () => {
     // Close the profile content when clicking on a link
     setIsProfileVisible(false);
   };
+
+  const handleNeonThemeClick = () => {
+    const newIsNeonTheme = !isNeonTheme;
+    setIsNeonTheme(newIsNeonTheme);
+    localStorage.setItem('isNeonTheme', newIsNeonTheme);
+  };
+  
 
   return (
     // Utilisation de la condition isNavbarVisible pour rendre la Navbar visible ou non
@@ -177,7 +206,7 @@ function Navbar() {
               )}
             </IconContext.Provider>
             {userToken && isProfileVisible && (
-              <div className="profile-content" ref={profileContentRef}>
+              <div className={`profile-content ${isNeonTheme ? 'neon-theme' : ''}`} ref={profileContentRef}>
                 <ul>
                   <li>
                     <Link to={`${URL_ACCOUNT}${URL_PARAMETERS}`} onClick={handleLinkClick}>Paramètres</Link>
@@ -200,6 +229,12 @@ function Navbar() {
                       )}
                     </div>
                   )}
+                  <li className='neon-toggle-btn-container'>
+                    <button className='neon-toggle-btn' onClick={handleNeonThemeClick}>
+                      Thème
+                      {isNeonTheme ? <MdToggleOn className="neon-theme-active-check" /> : <MdToggleOff className="theme-active-check" />}
+                    </button>
+                  </li>
                 </ul>
               </div>
             )}
