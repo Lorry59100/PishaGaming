@@ -202,6 +202,13 @@ export function PaymentForm() {
 
   const activeAddress = addresses.find(address => address.isActive);
 
+  // Créer un objet contenant les informations nécessaires
+  const addressInfo = activeAddress ? {
+    firstname: activeAddress.firstname,
+    lastname: activeAddress.lastname,
+    address: `${activeAddress.housenumber} ${activeAddress.street}, ${activeAddress.postcode} ${activeAddress.city}`
+  } : null;
+
   const handlePayClick = (event) => {
     if (cartData.carts.some(item => item.isPhysical) && !selectedDate) {
       ToastError('Vous devez sélectionner une date de livraison')
@@ -386,7 +393,7 @@ export function PaymentForm() {
               <h2>Méthode de paiement</h2>
               {stripe && (
                 <Elements stripe={stripe}>
-                  <CheckoutForm cartData={cartData.carts} selectedDate={selectedDate} ref={checkoutFormRef} />
+                  <CheckoutForm cartData={cartData.carts} selectedDate={selectedDate} addressInfo={addressInfo} ref={checkoutFormRef} />
                 </Elements>
               )}
             </div>
