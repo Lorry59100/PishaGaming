@@ -10,7 +10,7 @@ import { CartContext } from '../../../contexts/CartContext';
 import { useTokenService } from '../../../services/TokenService';
 import { ToastError } from '../../../services/ToastService';
 
-const CheckoutForm = forwardRef(({ cartData, selectedDate }, ref) => {
+const CheckoutForm = forwardRef(({ cartData, selectedDate, addressInfo }, ref) => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [hasError, setHasError] = useState(false); // État pour suivre les erreurs
   const stripe = useStripe();
@@ -161,8 +161,14 @@ const CheckoutForm = forwardRef(({ cartData, selectedDate }, ref) => {
         } else {
           console.log('Paiement confirmé avec succès !');
           const userId = decodedUserToken.id;
+          const orderData = {
+            cartData,
+            userId,
+            selectedDate,
+            addressInfo,
+          };
           // Redirigez l'utilisateur vers votre URL de réussite ou effectuez d'autres actions nécessaires
-          axios.post(`${URL}${URL_ORDER}`, { cartData, userId, selectedDate })
+          axios.post(`${URL}${URL_ORDER}`, { cartData, userId, selectedDate, orderData })
             .then(response => {
               console.log(response.data)
               if (response.status === 200) {
@@ -234,6 +240,11 @@ const CheckoutForm = forwardRef(({ cartData, selectedDate }, ref) => {
 CheckoutForm.propTypes = {
   cartData: PropTypes.array, // Adjust the prop type based on the actual type of cartData
   selectedDate: PropTypes.instanceOf(Date),
+  addressInfo: PropTypes.shape({
+    firstname: PropTypes.string,
+    lastname: PropTypes.string,
+    address: PropTypes.string,
+  }),
 };
 
 CheckoutForm.displayName = 'CheckoutForm';
