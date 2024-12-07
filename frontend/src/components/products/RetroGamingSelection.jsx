@@ -23,8 +23,11 @@ export function RetroGamingSelection() {
                     return releaseYear >= 1970 && releaseYear <= 1999;
                 });
 
+                // Mélanger les jeux filtrés
+                const shuffledGames = filteredGames.sort(() => 0.5 - Math.random());
+
                 // Limiter le nombre de jeux à 6
-                const limitedGames = filteredGames.slice(0, 6);
+                const limitedGames = shuffledGames.slice(0, 6);
                 setGames(limitedGames);
             })
             .catch(error => {
