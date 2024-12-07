@@ -63,4 +63,9 @@ class ActivationKey
 
         return $this;
     }
+
+    public function __toString(): string
+    {
+        return $this->activation_key;
+    }
 }
