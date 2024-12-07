@@ -191,7 +191,7 @@ margin-top: 1em;
 .wishlist-product-img>img {
     width: 150px;
     border-radius: 10px;
-    max-height: 84px;
+    height: 84px;
 }
 
 .unset-padding {

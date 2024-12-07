@@ -5,6 +5,10 @@
     margin-top: 5em;
 }
 
+.order-historic-container {
+    min-height: 1200px;
+}
+
 .order-historic-container>h2 {
     color: white;
 }

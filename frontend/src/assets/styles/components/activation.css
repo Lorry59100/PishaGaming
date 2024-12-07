@@ -73,6 +73,7 @@ display: flex;
 justify-content: center;
 align-items: center;
 color: white;
+margin: 0.5em 0;
 }
 
 .single-key {

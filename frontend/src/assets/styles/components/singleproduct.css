@@ -370,7 +370,7 @@ border-radius: 20px;
 }
 
 .big-description {
-color: white;
+color: var(--grey);
 grid-column: span 2;
 }
 

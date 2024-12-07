@@ -5,6 +5,8 @@
 --orange-gradient: linear-gradient(10deg, #ff8000, transparent) #ff4020;
 --orange-gradient-hover: linear-gradient(190deg, #ff2020, transparent) #ff8000;
 --orange: #ff5400;
+--orange-smooth-gradient : linear-gradient(to right, transparent, #ff8000, #ff5400, #ff8000, transparent);
+--orange-logo-filter: invert(56%) sepia(92%) saturate(1011%) hue-rotate(0deg) brightness(104%) contrast(105%);
 --grey : #919191;
 --grey-txt : #999;
 --grey-txt-light : #6d6d6d;

@@ -214,7 +214,7 @@ margin-right: 10px;
 
 .active .active-link-line, .active .active-parameters-line {
     height: 1px;
-    background: linear-gradient(to right, transparent, #ff8000, #ff5400, #ff8000, transparent);
+    background: var(--orange-smooth-gradient);
     margin-top: 2.5em;
     width: 150px;
     position: absolute;
