@@ -31,10 +31,10 @@ class Test
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\OneToMany(mappedBy: 'test', targetEntity: Vote::class)]
+    #[ORM\OneToMany(mappedBy: 'test', targetEntity: Vote::class, cascade: ['persist', 'remove'])]
     private Collection $vote;
 
-    #[ORM\OneToMany(mappedBy: 'test', targetEntity: Point::class, cascade: ['persist'])]
+    #[ORM\OneToMany(mappedBy: 'test', targetEntity: Point::class, cascade: ['persist', 'remove'])]
     private Collection $points;
 
     public function __construct()
@@ -166,5 +166,19 @@ class Test
         }
 
         return $this;
+    }
+
+    public function getPositiveVotesCount(): int
+    {
+        return $this->getVote()->filter(function($vote) {
+            return $vote->isVote() === true;
+        })->count();
+    }
+
+    public function getNegativeVotesCount(): int
+    {
+        return $this->getVote()->filter(function($vote) {
+            return $vote->isVote() === false;
+        })->count();
     }
 }
