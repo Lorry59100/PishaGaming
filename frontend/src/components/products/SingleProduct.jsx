@@ -588,7 +588,7 @@ export function SingleProduct() {
                         </video>
                     </div>
                     <div className="screenshots-container">
-                        <div className="main-img">
+                        <div className="main-img" >
                             <img src={`${URL}${URL_MAIN_IMG}/${product.img}`} alt={product.name} />
                         </div>
                         <div className="gallery">
@@ -596,15 +596,15 @@ export function SingleProduct() {
                                 <img src={`${URL}${URL_MAIN_IMG}/${product.img}`} alt={product.name} />
                                 <img src={`${URL}${URL_MAIN_IMG}/${product.img}`} alt={product.name} />
                             </div>
-                            <div className="gallery-line">
+                            <div className="gallery-line" ref={descriptionRef}>
                                 <img src={`${URL}${URL_MAIN_IMG}/${product.img}`} alt={product.name} />
                                 <img src={`${URL}${URL_MAIN_IMG}/${product.img}`} alt={product.name} />
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className={descriptionClassName} ref={descriptionRef}>
-                    <h1 id='#desc'>Description</h1>
+                <div className={descriptionClassName} >
+                    <h1>Description</h1>
                     <div className='big-desc-container'>
                         {showFullDescription ? parse(product.description) : parseHTML(product.description, 200)}
                     </div>
