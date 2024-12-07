@@ -20,6 +20,7 @@ class Point
     private ?bool $isPositive = null;
 
     #[ORM\ManyToOne(inversedBy: 'points')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Test $test = null;
 
     public function getId(): ?int
@@ -61,5 +62,10 @@ class Point
         $this->test = $test;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->description;
     }
 }
