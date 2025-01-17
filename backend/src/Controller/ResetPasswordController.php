@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use DateTime;
+use DateTimeZone;
 use App\Service\EmailService;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,33 +24,35 @@ class ResetPasswordController extends AbstractController
     }
 
     /**
-     * @Route("/forgot-password", name="forgot_password", methods={"POST"})
-     */
-    public function forgotPassword(Request $request, UserRepository $userRepository, EntityManagerInterface $em): JsonResponse
-    {
-        /* Récupérer les données, puis l'utilisateur à partir de ces données */
-        $data = json_decode($request->getContent(), true);
-        if ($data === null) {
-            return new JsonResponse(['error' => 'Une erreur est survenue'], 404);
-        }
-        $user = $userRepository->findOneBy(['email' => $data['email']]);
-        if (!$user) {
-            return new JsonResponse(['message' => 'Si une adresse mail correspondate existe, un mail pour 
-            changer votre mot de passe a été envoyé. Pensez à vérifier vos spams'], 200);
-        } else {
-            /* Créer un token */
-            $randomString = bin2hex(random_bytes(16));
-            $timestamp = time();
-            $expirationTimestamp = $timestamp + 86400;
-            $dateTime = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
-            $dateTime->setTimestamp($expirationTimestamp);
-            $token = $randomString . $timestamp;
-            $user->setTokenPassword($token);
-            $user->setPasswordExpiration($dateTime);
-            $em->persist($user);
-            $em->flush();
+ * @Route("/forgot-password", name="forgot_password", methods={"POST"})
+ */
+public function forgotPassword(Request $request, UserRepository $userRepository, EntityManagerInterface $em): JsonResponse
+{
+    /* Récupérer les données, puis l'utilisateur à partir de ces données */
+    $data = json_decode($request->getContent(), true);
+    if ($data === null) {
+        return new JsonResponse(['error' => 'Une erreur est survenue'], 404);
+    }
+    $user = $userRepository->findOneBy(['email' => $data['email']]);
+    if (!$user) {
+        return new JsonResponse(['message' => 'Si une adresse mail correspondante existe, un mail pour changer votre mot de passe a été envoyé. Pensez à vérifier vos spams'], 200);
+    } else {
+        /* Créer un token */
+        $randomString = bin2hex(random_bytes(16));
+        $timestamp = time();
+        $expirationTimestamp = $timestamp + 86400;
+        $dateTime = new DateTime('now', new DateTimeZone('Europe/Paris'));
+        $dateTime->setTimestamp($expirationTimestamp);
+        $token = $randomString . $timestamp;
+        $user->setTokenPassword($token);
+        $user->setPasswordExpiration($dateTime);
+        $em->persist($user);
+        $em->flush();
+
+        // Ajoute un message de débogage
+        try {
             $this->emailService->sendWithTemplate(
-                'pishagaming.noreply@gmail.com.com',
+                'pishagaming.noreply@gmail.com',
                 $user->getEmail(),
                 'Réinitialisation de votre mot de passe',
                 'emails/resetpassword.html.twig',
@@ -56,10 +60,15 @@ class ResetPasswordController extends AbstractController
                     'token' => $user->getTokenPassword(),
                 ]
             );
-            return new JsonResponse(['message' => 'Si une adresse mail correspondate existe, un mail pour 
-            changer votre mot de passe a été envoyé. Pensez à vérifier vos spams'], 200);
+        } catch (\Exception $e) {
+            // Ajoute un message de débogage
+            return new JsonResponse(['error' => 'Une erreur est survenue lors de l\'envoi de l\'email: ' . $e->getMessage()], 500);
         }
+
+        return new JsonResponse(['message' => 'Un mail pour changer votre mot de passe a été envoyé. Pensez à vérifier vos spams'], 200);
     }
+}
+
 
     /**
      * @Route("/check-token", name="check-token", methods={"POST"})
