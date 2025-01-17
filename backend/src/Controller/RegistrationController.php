@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Service\CartService;
 use App\Service\EmailService;
 use App\Repository\UserRepository;
+use App\Service\MailJetService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -89,7 +90,6 @@ class RegistrationController extends AbstractController
                 'token' => $user->getToken(),
             ]
         );
-        
             return new JsonResponse(['message' => 'Un mail vous a été envoyé pour valider votre compte. Pensez à vérifier vos spams']);
     }
 
