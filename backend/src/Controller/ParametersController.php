@@ -30,7 +30,7 @@ class ParametersController extends AbstractController
     /**
      * @Route("/change-mail", name="change_mail", methods={"POST"})
      */
-    public function changeMail(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em) : JsonResponse
+    public function changeMail(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $user = $this->tokenService->getUserFromRequest($request);
@@ -38,13 +38,13 @@ class ParametersController extends AbstractController
 
         //Vérifier si l'utilisateur existe en BDD
         $userInDb = $userRepository->findOneBy(['email' => $email]);
-        if($userInDb) {
+        if ($userInDb) {
             return new JsonResponse(['error' => 'Une erreur est survenue.'], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         //Vérifier si le mail à update existe déja en BDD
         $newMailInDb = $userRepository->findOneBy(['mailToUpdate' => $email]);
-        if($newMailInDb) {
+        if ($newMailInDb) {
             return new JsonResponse(['error' => 'Une erreur est survenue.'], JsonResponse::HTTP_BAD_REQUEST);
         }
 
@@ -82,13 +82,13 @@ class ParametersController extends AbstractController
     /**
      * @Route("/check-mail", name="check_mail", methods={"POST"})
      */
-    public function checkMail(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em) : JsonResponse
+    public function checkMail(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $token = $data['token'];
         $user = $userRepository->findOneBy(['tokenMail' => $token]);
         $email = $user->getMailToUpdate();
-        
+
         $now = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
         $expirationDate = new \DateTime($user->getMailExpiration()->format('Y-m-d H:i:s'), new \DateTimeZone('Europe/Paris'));
 
@@ -114,7 +114,7 @@ class ParametersController extends AbstractController
     /**
      * @Route("/change-password", name="change_password", methods={"POST"})
      */
-    public function changePassword(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em) : JsonResponse
+    public function changePassword(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $password = $data['password'];
@@ -135,7 +135,7 @@ class ParametersController extends AbstractController
     /**
      * @Route("/change-pseudo", name="change_pseudo", methods={"POST"})
      */
-    public function changePseudo(Request $request, EntityManagerInterface $em) : JsonResponse
+    public function changePseudo(Request $request, EntityManagerInterface $em): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $pseudo = $data['pseudo'];
@@ -153,70 +153,71 @@ class ParametersController extends AbstractController
 
 
     /**
-    * @Route("/get-user-data", name="get_user_data", methods={"GET"})
-    */
-    public function getUserData(Request $request): JsonResponse
+     * @Route("/get-user-data", name="get_user_data", methods={"GET"})
+     */
+    public function getUserData(Request $request, TokenService $tokenService)
     {
-        $user = $this->tokenService->getUserFromRequest($request);
-
-        if ($user) {
-            $userDataArray = [
-                'img' => $user->getImg(),
-                'pseudo' => $user->getPseudo(),
-                'createdAt' => $user->getCreatedAt(),
-            ];
-            return new JsonResponse($userDataArray, 200);
-        } else {
-            return new JsonResponse(['error' => 'une erreur est survenue'], 500);
-        }
-    }
-    
-    /**
- * @Route("/upload-user-image", name="upload_user_image", methods={"POST"})
- */
-public function uploadImage(Request $request, EntityManagerInterface $entityManager): Response
-{
-    $file = $request->files->get('img');
-
-    if ($file instanceof UploadedFile) {
-        // Générer un nom de fichier unique sans le nom original
-        $newFilename = uniqid() . '.' . $file->guessExtension();
-
-        // Recadrer et redimensionner l'image
-        $resizedImagePath = $this->cropAndResizeImage($file->getPathname(), 150, 150);
-
-        try {
-            // Déplacer l'image redimensionnée vers le répertoire de destination
-            $destinationPath = $this->getParameter('images_directory') . '/' . $newFilename;
-            copy($resizedImagePath, $destinationPath);
-            unlink($resizedImagePath); // Supprimer l'image temporaire
-        } catch (FileException $e) {
-            return new Response('Erreur lors de l\'upload du fichier.', Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-
-        // Récupérer l'utilisateur actuellement authentifié
-        $user = $this->tokenService->getUserFromRequest($request);
+        $user = $tokenService->getUserFromRequest($request);
 
         if (!$user) {
-            return new Response('Utilisateur non authentifié.', Response::HTTP_UNAUTHORIZED);
+            return new JsonResponse(['error' => 'User not found'], 404);
         }
 
-        // Supprimer l'ancienne image si elle existe
-        $oldImagePath = $this->getParameter('images_directory') . '/' . $user->getImg();
-        if (file_exists($oldImagePath) && is_file($oldImagePath)) {
-            unlink($oldImagePath);
-        }
-
-        // Enregistrez le nom du fichier dans la base de données si nécessaire
-        $user->setImg($newFilename);
-        $entityManager->persist($user);
-        $entityManager->flush();
-
-        return new Response('Fichier uploadé avec succès.', Response::HTTP_OK);
+        // Retournez les données de l'utilisateur sous forme de tableau
+        return $this->json([
+            'createdAt' => $user->getCreatedAt(),
+            'pseudo' => $user->getPseudo(),
+            'img' => $user->getImg(),
+            // autres champs...
+        ]);
     }
 
-    return new Response('Aucun fichier uploadé.', Response::HTTP_BAD_REQUEST);
-}
+    /**
+     * @Route("/upload-user-image", name="upload_user_image", methods={"POST"})
+     */
+    public function uploadImage(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $file = $request->files->get('img');
+
+        if ($file instanceof UploadedFile) {
+            // Générer un nom de fichier unique sans le nom original
+            $newFilename = uniqid() . '.' . $file->guessExtension();
+
+            // Recadrer et redimensionner l'image
+            $resizedImagePath = $this->cropAndResizeImage($file->getPathname(), 150, 150);
+
+            try {
+                // Déplacer l'image redimensionnée vers le répertoire de destination
+                $destinationPath = $this->getParameter('images_directory') . '/' . $newFilename;
+                copy($resizedImagePath, $destinationPath);
+                unlink($resizedImagePath); // Supprimer l'image temporaire
+            } catch (FileException $e) {
+                return new Response('Erreur lors de l\'upload du fichier.', Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            // Récupérer l'utilisateur actuellement authentifié
+            $user = $this->tokenService->getUserFromRequest($request);
+
+            if (!$user) {
+                return new Response('Utilisateur non authentifié.', Response::HTTP_UNAUTHORIZED);
+            }
+
+            // Supprimer l'ancienne image si elle existe
+            $oldImagePath = $this->getParameter('images_directory') . '/' . $user->getImg();
+            if (file_exists($oldImagePath) && is_file($oldImagePath)) {
+                unlink($oldImagePath);
+            }
+
+            // Enregistrez le nom du fichier dans la base de données si nécessaire
+            $user->setImg($newFilename);
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            return new Response('Fichier uploadé avec succès.', Response::HTTP_OK);
+        }
+
+        return new Response('Aucun fichier uploadé.', Response::HTTP_BAD_REQUEST);
+    }
 
 
 

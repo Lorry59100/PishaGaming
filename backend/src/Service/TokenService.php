@@ -2,38 +2,42 @@
 
 namespace App\Service;
 
+use App\Entity\User;
 use App\Repository\UserRepository;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class TokenService
 {
     private $userRepository;
+    private $jwtManager;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, JWTTokenManagerInterface $jwtManager)
     {
         $this->userRepository = $userRepository;
+        $this->jwtManager = $jwtManager;
     }
 
-    public function getUserFromRequest(Request $request): mixed
+    public function getUserFromRequest(Request $request): ?User
     {
-        // Récupérez les en-têtes de la requête
-        $headers = $request->headers;
-        $authorizationHeader = $headers->get('Authorization');
-        $bearerToken = null;
+        $authorizationHeader = $request->headers->get('Authorization');
 
         if ($authorizationHeader && preg_match('/Bearer\s+(.+)/i', $authorizationHeader, $matches)) {
-            $bearerToken = $matches[1];
+            $jwt = $matches[1];
+
+            try {
+                $data = $this->jwtManager->parse($jwt);
+
+                if (isset($data['id'])) {
+                    return $this->userRepository->find($data['id']);
+                }
+            } catch (\Exception $e) {
+                // Log the exception or handle it as needed
+                return null;
+            }
         }
 
-        // Trouver l'utilisateur par son adresse e-mail
-        $user = $this->userRepository->findOneBy(['email' => $bearerToken]);
-
-        if (!$user) {
-            // L'utilisateur n'a pas été trouvé, gestion de l'erreur si nécessaire
-            return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
-        }
-
-        return $user;
+        return null;
     }
 }
+
