@@ -42,7 +42,6 @@ export function Parameters() {
 
   useEffect(() => {
     if (decodedUserToken) {
-      console.log(userToken);
       const headers = {
         Authorization: `Bearer ${userToken}`,
       };
