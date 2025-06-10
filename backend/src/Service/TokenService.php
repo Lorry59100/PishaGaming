@@ -40,4 +40,3 @@ class TokenService
         return null;
     }
 }
-
