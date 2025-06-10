@@ -168,7 +168,7 @@ class ParametersController extends AbstractController
             'createdAt' => $user->getCreatedAt(),
             'pseudo' => $user->getPseudo(),
             'img' => $user->getImg(),
-            // autres champs...
+            'createdAt' => $user->getCreatedAt(),
         ]);
     }
 
