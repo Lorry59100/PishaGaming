@@ -95,7 +95,7 @@ function Account() {
               />
             )}
             <h1>{userData.pseudo}</h1>
-            <h4>Membre depuis le : {formatDate(userData.createdAt.date)}</h4>
+            <h4>Membre depuis le : {formatDate(userData.createdAt)}</h4>
           </div>
         )}
         <div className="links-selector">
