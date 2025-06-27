@@ -1,43 +1,77 @@
 .genres-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2em;
-    margin: 1em 1em;
-    padding: 5em 20em 5em 20em;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2em;
+  margin: 1em 1em;
+  padding: 5em 20em 5em 20em;
 }
 
 .genre-container {
-    position: relative;
+  position: relative;
 }
 
 .genre-chara {
-    position: absolute;
-    bottom: 4.2px;
-    right: 0%;
-    will-change: transform;
-    transition: 0.3s;
+  position: absolute;
+  bottom: 4.2px;
+  right: 0%;
+  will-change: transform;
+  transition: 0.3s;
 }
 
 .genre-name {
-    position: absolute;
-    top: 45%;
-    left: 10px;
-    color: white;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 45%;
+  left: 10px;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .genre-background {
-    height: 200px;
-    width: 100%;
-    border-radius: 10px;
+  height: 200px;
+  width: 100%;
+  border-radius: 10px;
 }
 
 .genre-container:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .genre-container:hover .genre-chara {
-    transform: scale(1.1);
-    bottom: 14px;
-    right: 22px;
+  transform: scale(1.1);
+  bottom: 14px;
+  right: 22px;
+}
+
+@media only screen and (min-width: 967px) and (max-width: 1280px) {
+  .genres-container {
+    padding: 5em 2em 5em 2em;
   }
+
+  .genre-chara {
+    height: 85%;
+  }
+}
+
+@media only screen and (min-width: 800px) and (max-width: 966px) {
+  /*style petites-moyennes tablettes */
+  .genres-container {
+    padding: unset;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .genre-chara {
+    height: 85%;
+  }
+}
+
+@media only screen and (min-width: 321px) and (max-width: 799px) {
+  /*style smartphones et petites tablettes en portrait*/
+  .genres-container {
+    padding: unset;
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .genre-chara {
+    height: 85%;
+  }
+}

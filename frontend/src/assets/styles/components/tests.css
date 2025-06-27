@@ -1,63 +1,102 @@
 .user-tests-container {
-    padding: 20px;
-    width: 100%;
-    min-height: 1200px;
+  padding: 20px;
+  width: 100%;
+  min-height: 1200px;
 }
 
 .tests-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2em;
-    list-style-type: none;
-    padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2em;
+  list-style-type: none;
+  padding: 0;
 }
 
 .test-user-item {
-    background-color: var(--medium-dark);
-    padding: 0;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
+  background-color: var(--medium-dark);
+  padding: 0;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.test-user-item>img {
-    width: 100%;
-    height: 200px;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+.test-user-item > img {
+  width: 100%;
+  height: 200px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 }
 
-.test-user-item>* {
-    margin: 0 0 1em;
+.test-user-item > * {
+  margin: 0 0 1em;
 }
 
-.test-user-item>h5{
-    color: var(--grey-txt);
-    font-family: arial,sans-serif;
-    font-weight: 600;
+.test-user-item > h5 {
+  color: var(--grey-txt);
+  font-family: arial, sans-serif;
+  font-weight: 600;
 }
 
 .user-test-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.user-test-btn>h4 {
-    margin-right: 0.3em;
+.user-test-btn > h4 {
+  margin-right: 0.3em;
 }
 
 .test-desc {
-    padding: 0 1.2em;
+  padding: 0 1.2em;
 }
 
-.test-user-item>.rating-circle {
-    width: 65px;
-    height: 65px;
+.test-user-item > .rating-circle {
+  width: 65px;
+  height: 65px;
 }
 
 .test-count {
-    margin-bottom: 1em;
+  margin-bottom: 1em;
+}
+
+@media only screen and (min-width: 967px) and (max-width: 1280px) {
+  .test-count {
+    margin-left: 1em;
+  }
+
+  .tests-grid {
+    padding: 1em;
+  }
+}
+
+@media only screen and (min-width: 800px) and (max-width: 966px) {
+  /*style petites-moyennes tablettes */
+  .test-count {
+    margin-left: 1em;
+  }
+
+  .tests-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 1em;
+  }
+}
+
+@media only screen and (min-width: 321px) and (max-width: 799px) {
+  /*style smartphones et petites tablettes en portrait*/
+
+  .test-count {
+    margin-left: 0.5em;
+  }
+
+  .tests-grid {
+    grid-template-columns: repeat(1, 1fr);
+    padding: 1em;
+  }
+
+  .user-tests-container {
+    width: unset;
+  }
 }

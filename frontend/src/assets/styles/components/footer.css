@@ -1,207 +1,327 @@
 /* FOOTER */
 
 footer {
-background-color: black;
-color: white;
-padding:15px 30px 30px 30px;
-margin-top: 1em;
+  background-color: black;
+  color: white;
+  padding: 15px 30px 30px 30px;
+  margin-top: 1em;
 }
 
 .footer-main-container {
-display: flex;
-justify-content: space-evenly;
-margin: 0 2em;
-min-height: 200px;
+  display: flex;
+  justify-content: space-evenly;
+  margin: 0 2em;
+  min-height: 200px;
 }
 
 .logo-footer {
-display: flex;
-justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
-.logo-footer>img {
-width: 30%;
+.logo-footer > img {
+  width: 30%;
 }
 
-.logos, .medias {
-display: flex;
-flex-direction: column;
-justify-content: space-between;
+.logos,
+.medias {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .media-dl {
-display: flex;
-justify-content: space-evenly;
+  display: flex;
+  justify-content: space-evenly;
 }
 
 .trustpilot {
-display: flex;
-flex-direction: column;
-align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .trustpilot-title-container {
-display: flex;
-align-items: center;
-margin-bottom: 0.5em;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5em;
 }
 
-.trustpilot-title-container>h3 {
-margin: 0;
-margin-left: 0.2em;
+.trustpilot-title-container > h3 {
+  margin: 0;
+  margin-left: 0.2em;
 }
 
 .trustpilot-stars-container {
-display: flex;
+  display: flex;
 }
 
 .star-container {
-padding: 0.2em;
-background-color: #00B67A;
-display: flex;
-margin: 0 0.1em;
+  padding: 0.2em;
+  background-color: #00b67a;
+  display: flex;
+  margin: 0 0.1em;
 }
 
 .media-icons a {
-display: inline-flex;
-align-items: center;
-justify-content: center;
-position: relative;
-margin: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 0 10px;
 }
 
 .media-icons a svg {
-padding: 0.3em;
-border-radius: 50%;
-transition: transform 0.3s ease-in-out;
+  padding: 0.3em;
+  border-radius: 50%;
+  transition: transform 0.3s ease-in-out;
 }
 
 .media-icons a:hover svg {
-transform: scale(1.2); 
+  transform: scale(1.2);
 }
 
-.discord>svg {
-background-color: #1E213E;
-color: #5865F2;
+.discord > svg {
+  background-color: #1e213e;
+  color: #5865f2;
 }
 
-.twitter>svg {
-background-color: #0D2F3D;
-color: #00ACED;
+.twitter > svg {
+  background-color: #0d2f3d;
+  color: #00aced;
 }
 
-.instagram>svg {
-background-color: #56413A;
-color: #BD8A77;
+.instagram > svg {
+  background-color: #56413a;
+  color: #bd8a77;
 }
 
-.facebook>svg {
-background-color: #11253E;
-color: #1877F2;
+.facebook > svg {
+  background-color: #11253e;
+  color: #1877f2;
 }
 
-.youtube>svg {
-background-color: #3A1514;
-color: #E22B26;
+.youtube > svg {
+  background-color: #3a1514;
+  color: #e22b26;
 }
 
-.twitch>svg {
-background-color: #2B2040;
-color: #9861FF;
+.twitch > svg {
+  background-color: #2b2040;
+  color: #9861ff;
 }
 
 .download-btn {
-margin: 0;
-outline: none;
-background: none;
-font-family: inherit;
-font-size: inherit;
-color: inherit;
-cursor: pointer;
-display: flex;
-align-items: center;
-padding: 0.5em 1em;
-border-radius: 10px;
-border: 1px solid white;
-background-color: #101010;
+  margin: 0;
+  outline: none;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0.5em 1em;
+  border-radius: 10px;
+  border: 1px solid white;
+  background-color: #101010;
 }
 
 .download-btn:hover {
-background-color: #939393;
-transition: .2s
+  background-color: #939393;
+  transition: 0.2s;
 }
 
-.download-btn>.dl-text>p {
-margin: 0;
-padding: 0;
-font-size: 0.7em;
+.download-btn > .dl-text > p {
+  margin: 0;
+  padding: 0;
+  font-size: 0.7em;
 }
 
-.download-btn>svg {
-margin-right: 0.5em;
+.download-btn > svg {
+  margin-right: 0.5em;
 }
 
-.download-btn>.dl-text>h4 {
-margin: 0;
+.download-btn > .dl-text > h4 {
+  margin: 0;
 }
 
 .footer-links ul {
-display: flex;
-flex-direction: column;
-justify-content: space-around;
-height: 100%;
-list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 100%;
+  list-style-type: none;
 }
 
 .footer-links ul li:hover {
-cursor: pointer;
-color: var(--primary-nogradient);
+  cursor: pointer;
+  color: var(--primary-nogradient);
 }
 
 .li-icons {
-display: flex;
-align-items: center;
+  display: flex;
+  align-items: center;
 }
 
-.li-icons>svg {
-margin-right: 0.5em;
-color: var(--orange);
+.li-icons > svg {
+  margin-right: 0.5em;
+  color: var(--orange);
 }
 
 .cutline {
-height: 1px;
-background: linear-gradient(to right, rgba(204, 204, 204, 0), rgba(204, 204, 204, 1), rgba(204, 204, 204, 0));
-margin-top: 20px;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    rgba(204, 204, 204, 0),
+    rgba(204, 204, 204, 1),
+    rgba(204, 204, 204, 0)
+  );
+  margin-top: 20px;
 }
 
 .locale-info {
-display: flex;
-align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .locale-info:hover {
-color: var(--primary-nogradient);
-cursor: pointer;
+  color: var(--primary-nogradient);
+  cursor: pointer;
 }
 
-.locale-info>svg {
-margin-right: 0.2em;
+.locale-info > svg {
+  margin-right: 0.2em;
 }
 
 .white-spacer {
-background-color: white;
-width: 1px;
-height: 20px;
-margin: 0 10px;
+  background-color: white;
+  width: 1px;
+  height: 20px;
+  margin: 0 10px;
 }
 
 .infos {
-display: flex;
-justify-content: space-evenly;
-align-items: center;
-margin-top: 1em;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-top: 1em;
 }
 
-.footer-links>ul>li>a:hover {
-    color: var(--orange);
+.footer-links > ul > li > a:hover {
+  color: var(--orange);
+}
+
+@media only screen and (min-width: 967px) and (max-width: 1280px) {
+  .footer-links ul {
+    align-items: center;
+  }
+
+  .logos {
+    justify-content: space-evenly;
+  }
+
+  .media-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .media-icons a {
+    flex: 1 1 calc(33% - 10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 5px;
+    text-align: center;
+  }
+}
+
+@media only screen and (min-width: 321px) and (max-width: 799px) {
+  /*style smartphones et petites tablettes en portrait*/
+  .logo-footer {
+    display: none;
+  }
+
+  .footer {
+    padding: 0.5em 0.5em 0.5em 0.5em;
+  }
+
+  .footer-main-container {
+    flex-direction: column;
+    margin: unset;
+  }
+
+  .footer-links ul {
+    align-items: center;
+    margin-right: 2.5em;
+  }
+  .footer-links > ul > li {
+    margin-bottom: 0.2em;
+  }
+
+  .trustpilot-title-container > svg {
+    width: 20px;
+  }
+  .trustpilot-title-container {
+    margin-bottom: unset;
+  }
+
+  .trustpilot {
+    flex-direction: unset;
+    justify-content: space-evenly;
+  }
+
+  .footer-main-container
+    > .logos
+    > .trustpilot
+    > .trustpilot-stars-container
+    > .star-container
+    > svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .logos {
+    justify-content: space-evenly;
+  }
+
+  .media-icons {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.5em;
+  }
+
+  .media-icons a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 5px;
+    text-align: center;
+  }
+
+  .media-icons > a > svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .media-dl {
+    align-items: center;
+  }
+
+  .dl-text > p {
+    display: none;
+  }
+
+  .infos {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .copyright {
+    margin-bottom: 0.5em;
+  }
 }
