@@ -500,7 +500,7 @@ export function SingleProduct() {
 
             <div className="cart-and-buy">
               <div className="cart-btn">
-                <IconContext.Provider value={{ size: "2em" }}>
+
                   <button
                     type="submit"
                     className="submit-button"
@@ -509,7 +509,7 @@ export function SingleProduct() {
                     {" "}
                     <TiShoppingCart />
                   </button>
-                </IconContext.Provider>
+
               </div>
               <div className="buy-btn">
                 <button

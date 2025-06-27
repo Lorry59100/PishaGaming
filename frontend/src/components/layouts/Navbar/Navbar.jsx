@@ -214,7 +214,7 @@ function Navbar() {
         </div>
 
         <div className="profile-container">
-          <div className="cart-profile">
+          <div className={`cart-profile ${userToken ? 'connected' : ''} ${itemCount === 0 ? 'empty-cart' : ''}`}>
             <IconContext.Provider value={{ size: "2em" }}>
               <Link to={`${URL_CART}`}>
                 <TiShoppingCart />
@@ -224,7 +224,7 @@ function Navbar() {
               )}
               {!decodedUserToken && (
                 <button onClick={handleLoginButtonClick}>
-                  <PiUserBold />
+                  <PiUserBold className="user-icon-not-connected"/>
                 </button>
               )}
               {decodedUserToken && (!userData || !userData.img) && (

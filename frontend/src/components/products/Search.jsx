@@ -7,6 +7,7 @@ import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { IconContext } from "react-icons";
 import { FaChevronDown, FaTimes } from "react-icons/fa";
 import { calculateDiscountPercentage, convertToEuros } from "../../services/PriceServices";
+import { truncate } from "../../services/TruncateService";
 
 function Search() {
   const [games, setGames] = useState([]);
@@ -28,6 +29,7 @@ function Search() {
   const [maxPrice, setMaxPrice] = useState(parseInt(searchParams.get('maxPrice')) || 500);
   const [selectedSort, setSelectedSort] = useState(searchParams.get('sort') || "default-value");
   const searchQuery = searchParams.get('q') || "";
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   const URL = import.meta.env.VITE_BACKEND;
   const URL_GENRES_LIST = import.meta.env.VITE_GENRES_LIST;
@@ -35,6 +37,17 @@ function Search() {
   const URL_PLATFORMS_LIST = import.meta.env.VITE_PLATFORMS_LIST;
   const URL_PRODUCTS_LIST = import.meta.env.VITE_PRODUCTS_LIST;
   const URL_SINGLE_PRODUCT = import.meta.env.VITE_SINGLE_PRODUCT_BACK;
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth <= 799); // Ajustez cette valeur selon vos besoins
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     axios.get(`${URL}${URL_PRODUCTS_LIST}`)
@@ -194,7 +207,7 @@ function Search() {
   };
 
   return (
-    <div className='game-list-container'>
+    <div className='search-container'>
       <div className="form-search">
         <div className="form-search-select-container">
           <select className="form-search-select" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
@@ -223,15 +236,17 @@ function Search() {
           <span className="select-arrow"><FaChevronDown /></span>
         </div>
         <div className="form-search-price-container">
-          <label>
-            <span className="label-text">Entre</span>
-            <input type="number" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} />
-          </label>
-          <label>
-            <span className="label-text">Et</span>
-            <input type="number" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} />
-            <span className="label-text-last">€</span>
-          </label>
+          <div className="labels-container">
+            <label>
+              <span className="label-text">Entre</span>
+              <input type="number" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} />
+            </label>
+            <label>
+                <span className="label-text">Et</span>
+                <input type="number" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} />
+                <span className="label-text-last">€</span>
+            </label>
+          </div>
           <div className="vertical-medium-spacer"></div>
           <div className="order-result-container">
             <select className="form-order-results" value={selectedSort} onChange={(e) => setSelectedSort(e.target.value)}>
@@ -271,20 +286,22 @@ function Search() {
           </button>
         </div>
       ) : (
-        currentProducts.map(game => (
-          <div key={game.id} className='game-container'>
-            <div className="game-card">
-              <Link to={`${URL_SINGLE_PRODUCT}/${game.id}`}><img src={`${URL}${URL_MAIN_IMG}/${game.img}`} alt={game.name} /></Link>
-              <div className="discount-label-cards">
-                <h5><strong>-</strong>{calculateDiscountPercentage(game.old_price, game.price)}</h5>
+        <div className="games-container"> {/* Nouvelle div encapsulante */}
+          {currentProducts.map(game => (
+            <div key={game.id} className='game-container'>
+              <div className="game-card">
+                <Link to={`${URL_SINGLE_PRODUCT}/${game.id}`}><img src={`${URL}${URL_MAIN_IMG}/${game.img}`} alt={game.name} /></Link>
+                <div className="discount-label-cards">
+                  <h5><strong>-</strong>{calculateDiscountPercentage(game.old_price, game.price)}</h5>
+                </div>
+              </div>
+              <div className="sub-title">
+                <h4>{isSmallScreen ? truncate(game.name, 15) : game.name}</h4>
+                <h2>{convertToEuros(game.price)} €</h2>
               </div>
             </div>
-            <div className="sub-title">
-              <h4>{game.name}</h4>
-              <h2>{convertToEuros(game.price)} €</h2>
-            </div>
-          </div>
-        ))
+          ))}
+        </div>
       )}
       {/* Boutons de navigation pour la pagination */}
       {filteredGames.length > productsPerPage && (

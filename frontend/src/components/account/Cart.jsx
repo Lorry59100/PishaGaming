@@ -297,75 +297,81 @@ export function Cart() {
                           </div>
                           <div className="middle-content">
                             <div className="middle-head">
-                              <div className="logo-img-container">
-                                <img
-                                  src={`${URL_PLATFORM_IMG}/${item.platform}.png`}
-                                  alt={item.platform}
-                                  className="logo-img"
-                                />
-                              </div>
                               <h4>{item.name}</h4>
+                              <div className="platform-container">
+                                <div className="logo-img-container">
+                                  <img
+                                    src={`${URL_PLATFORM_IMG}/${item.platform}.png`}
+                                    alt={item.platform}
+                                    className="logo-img"
+                                  />
+                                </div>
+                                  <span className="platform-name">{item.platform}</span>
+                              </div>
                             </div>
-                            <span>{item.platform}</span>
-                            <div className="middle-foot">
-                              <button
-                                type="submit"
-                                onClick={() =>
-                                  removeItem(decodedUserToken.id, item.id)
-                                }
-                              >
-                                <IconContext.Provider value={{ size: "1.2em" }}>
-                                  <BsTrash3 />
-                                </IconContext.Provider>
-                              </button>
-                              <div className="vertical-spacer"></div>
-                              <button
-                                onClick={() =>
-                                  moveToWishlist(
+                            
+                          </div>
+                          <div className="price-container">
+                            <div className="quantity-selector">
+                              <h3>
+                                {convertToEuros(item.price * item.quantity)} €
+                              </h3>
+                              <select
+                                className="quantity-dropdown"
+                                value={item.quantity}
+                                onChange={(e) => {
+                                  const newQuantity = parseInt(e.target.value);
+                                  updateQuantity(
                                     decodedUserToken.id,
                                     item.productId,
-                                    item.platform
-                                  )
-                                }
-                              >
-                                Déplacer en wishlist
-                              </button>
-                            </div>
-                          </div>
-                          <div className="quantity-selector">
-                            <h3>
-                              {convertToEuros(item.price * item.quantity)} €
-                            </h3>
-                            <select
-                              className="quantity-dropdown"
-                              value={item.quantity}
-                              onChange={(e) => {
-                                const newQuantity = parseInt(e.target.value);
-                                updateQuantity(
-                                  decodedUserToken.id,
-                                  item.productId,
-                                  item.platform,
-                                  newQuantity,
-                                  item.id
-                                );
-                              }}
-                            >
-                              {(() => {
-                                const options = [];
-                                for (let i = 1; i <= 10; i++) {
-                                  options.push(
-                                    <option
-                                      key={i}
-                                      value={i}
-                                      className="dropdown-quantity-options"
-                                    >
-                                      {i}
-                                    </option>
+                                    item.platform,
+                                    newQuantity,
+                                    item.id
                                   );
-                                }
-                                return options;
-                              })()}
-                            </select>
+                                }}
+                              >
+                                {(() => {
+                                  const options = [];
+                                  for (let i = 1; i <= 10; i++) {
+                                    options.push(
+                                      <option
+                                        key={i}
+                                        value={i}
+                                        className="dropdown-quantity-options"
+                                      >
+                                        {i}
+                                      </option>
+                                    );
+                                  }
+                                  return options;
+                                })()}
+                              </select>
+                            </div>
+                            <div className="cutline-price-container"></div>
+                              <div className="middle-foot">
+                                <button
+                                  type="submit"
+                                  onClick={() =>
+                                    removeItem(decodedUserToken.id, item.id)
+                                  }
+                                >
+                                  <IconContext.Provider value={{ size: "1.2em" }}>
+                                    <BsTrash3 />
+                                  </IconContext.Provider>
+                                </button>
+                                <div className="vertical-spacer"></div>
+                                <button
+                                  onClick={() =>
+                                    moveToWishlist(
+                                      decodedUserToken.id,
+                                      item.productId,
+                                      item.platform
+                                    )
+                                  }
+                                >
+                                  Déplacer en wishlist
+                                </button>
+                              </div>
                           </div>
                         </div>
                       </React.Fragment>
@@ -389,7 +395,7 @@ export function Cart() {
                             <div className="middle-head">
                               <h4>{item.name}</h4>
                             </div>
-                            <span>{item.platform}</span>
+                            <span className="platform-name">{item.platform}</span>
                             <div className="middle-foot">
                               <button
                                 type="submit"

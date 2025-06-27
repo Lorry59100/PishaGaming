@@ -96,7 +96,7 @@ function Searchbar() {
   const isSearchPage = location.pathname === "/search";
 
   return (
-    <div className={`searchbar ${isSearchExpanded ? "expanded" : ""}`} ref={searchbarRef}>
+    <div className={`searchbar ${isSearchClicked ? 'search-clicked' : ''} ${isSearchExpanded ? "expanded" : ""}`} ref={searchbarRef}>
       <div className="searchbar-layout-container">
       <div className={`consoles ${isSearchPage ? "search-page" : ""}`}>
           {areConsolesVisible && (
@@ -151,7 +151,7 @@ function Searchbar() {
             </>
           )}
         </div>
-        <div className={`searchbar-container ${isSearchExpanded ? "expanded" : ""}`}>
+        <div className={`searchbar-container ${isSearchExpanded ? "expanded" : ""} ${isSearchClicked ? "search-clicked" : ""}`}>
           {isSearchClicked && (
             <form className="search-input" onSubmit={handleSubmit}>
               <input
