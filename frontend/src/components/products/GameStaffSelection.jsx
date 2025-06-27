@@ -3,12 +3,25 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import "../../assets/styles/components/gamestaffselection.css"
 import { calculateDiscountPercentage, convertToEuros } from "../../services/PriceServices";
+import { truncate } from "../../services/TruncateService";
 
 export function GameStaffSelection() {
     const [games, setGames] = useState([]);
+    const [isSmallScreen, setIsSmallScreen] = useState(false);
     const URL = import.meta.env.VITE_BACKEND;
     const URL_SINGLE_PRODUCT = import.meta.env.VITE_SINGLE_PRODUCT_BACK;
     const URL_PRODUCTS_LIST = import.meta.env.VITE_PRODUCTS_LIST;
+
+    useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth <= 799); // Ajustez cette valeur selon vos besoins
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
     useEffect(() => {
         axios.get(`${URL}${URL_PRODUCTS_LIST}`)
@@ -47,7 +60,7 @@ export function GameStaffSelection() {
                         </div>
                     </div>
                     <div className="sub-title">
-                        <h4>{game.name}</h4>
+                        <h4>{isSmallScreen ? truncate(game.name, 15) : game.name}</h4>
                         <h2>{convertToEuros(game.price)} €</h2>
                     </div>
                 </div>
